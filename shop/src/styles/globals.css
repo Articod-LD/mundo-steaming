@@ -1,0 +1,200 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Oswald Variable", sans-serif;
+}
+
+/* RC Table */
+.rc-table {
+  @apply border-separate;
+  border-spacing: 0;
+}
+
+.rc-table th,
+.rc-table td {
+  @apply !border-black !border-dashed;
+}
+
+.rc-table .rc-table-content,
+.rc-table .rc-table-body,
+.rc-table .rc-table-header {
+  @apply border-0;
+}
+
+.rc-table tr th,
+.rc-table tr td {
+  @apply border-0 font-body;
+}
+.rc-table tr td {
+  @apply border-b border-dashed;
+}
+
+.rc-table thead.rc-table-thead th {
+  @apply px-3 py-3 text-sm font-semibold whitespace-nowrap bg-gray-50 font-body  first:rounded-tl first:rounded-bl first:ps-5 last:rounded-tr last:rounded-br last:pe-5;
+}
+
+.rc-table tr.rc-table-row:hover {
+  background-color: inherit;
+}
+
+.rc-table tr.rc-table-row td {
+  @apply px-3 py-4 text-sm font-normal cursor-default font-body first:ps-5 last:pe-5;
+}
+.rc-table tr.rc-table-row td.rc-table-cell-row-hover {
+  @apply bg-gray-100;
+}
+
+.rc-table tr.rc-table-row-level-1 td,
+.rc-table tr.rc-table-row-level-1 td {
+  @apply bg-gray-100;
+}
+
+.rc-table tr.rc-table-row:last-child td {
+  @apply border-b-0;
+}
+
+.rc-table tr.rc-table-expanded-row > td {
+  @apply p-0 whitespace-normal bg-gray-200 border border-gray-50;
+}
+
+.rc-table tr.rc-table-expanded-row tr.rc-table-row {
+  cursor: default;
+}
+
+.rc-table .rc-table-row-expand-icon {
+  @apply inline-flex items-center justify-center;
+}
+
+.rc-table .rc-table-expanded-row-fixed::after {
+  border-width: 0;
+}
+
+.rc-pagination {
+  @apply flex flex-wrap items-center;
+}
+/*
+group
+*/
+.rc-pagination .rc-pagination-item,
+.rc-pagination .rc-pagination-prev,
+.rc-pagination .rc-pagination-next,
+.rc-pagination.rc-pagination-simple .rc-pagination-prev,
+.rc-pagination.rc-pagination-simple .rc-pagination-next {
+  @apply flex items-center justify-center w-8 h-8 m-0 mt-2 border rounded  bg-gray-50 me-2;
+}
+
+.rc-pagination-prev,
+.rc-pagination-next,
+.rc-pagination-jump-prev,
+.rc-pagination-jump-next {
+  @apply !m-0 !mt-2 !me-2;
+}
+
+.rc-pagination .rc-pagination-prev svg,
+.rc-pagination .rc-pagination-next svg,
+.rc-pagination.rc-pagination-simple .rc-pagination-prev svg,
+.rc-pagination.rc-pagination-simple .rc-pagination-next svg {
+  @apply rtl:rotate-180;
+}
+
+.rc-pagination .rc-pagination-item a {
+  @apply text-sm font-body;
+}
+
+.rc-pagination .rc-pagination-jump-prev button,
+.rc-pagination .rc-pagination-jump-next button {
+  @apply h-8  focus:outline-none focus:ring-1;
+}
+
+.rc-pagination .rc-pagination-item.rc-pagination-item-active {
+  @apply text-light border-red-600;
+}
+
+.rc-pagination .rc-pagination-item.rc-pagination-item-active a {
+  @apply text-black;
+}
+
+.rc-pagination .rc-pagination-options .rc-pagination-options-quick-jumper,
+.rc-pagination.rc-pagination-simple .rc-pagination-simple-pager {
+  @apply flex items-center text-sm font-body;
+}
+
+.rc-pagination .rc-pagination-options .rc-pagination-options-quick-jumper input,
+.rc-pagination.rc-pagination-simple .rc-pagination-simple-pager input {
+  @apply h-8 px-2 text-sm border rounded  bg-gray-50 font-body focus:outline-none;
+}
+
+/* Check Box */
+.pb-checkbox {
+  position: absolute;
+  opacity: 0;
+}
+
+.pb-checkbox + label {
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  @apply text-gray-700 font-bold;
+}
+
+.pb-checkbox + label:before {
+  content: "";
+  margin-right: 10px;
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  background-color: #ffffff;
+  border: 1px solid gray;
+}
+
+[dir="rtl"] .pb-checkbox + label:before {
+  margin-right: 0;
+  margin-left: 10px;
+}
+
+.pb-checkbox:focus + label:before {
+  border-color: red;
+}
+
+.pb-checkbox:checked + label:before {
+  background-color: red;
+  border-color: red;
+}
+
+.pb-checkbox:disabled + label {
+  color: rgb(var(--text-base));
+  cursor: auto;
+}
+
+.pb-checkbox:disabled + label:before {
+  box-shadow: none;
+  background: rgb(var(--color-gray-300));
+  border-color: rgb(var(--color-gray-400));
+  cursor: not-allowed;
+}
+
+.pb-checkbox:checked + label:after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  /* top: 9px; */
+  top: 50%;
+  margin-top: -1px;
+  background: #ffffff;
+  width: 2px;
+  height: 2px;
+  box-shadow: 2px 0 0 #ffffff, 4px 0 0 #ffffff, 4px -2px 0 #ffffff,
+    4px -4px 0 #ffffff, 4px -6px 0 #ffffff, 4px -8px 0 #ffffff;
+  transform: rotate(45deg);
+}
+
+[dir="rtl"] .pb-checkbox:checked + label:after {
+  left: auto;
+  right: 12px;
+}

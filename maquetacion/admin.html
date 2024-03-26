@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Mundo Streamig</title>
+</head>
+
+<body class="bg-secondary">
+
+  <aside
+    class="fixed top-0 left-0 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 bg-black py-11 px-9 -z-10">
+    <div class="w-full flex justify-center border-b-2 pb-11 border-dotted">
+      <img class="w-[152px] h-[70px]" src="assets/img/Logo.svg" alt="Logo Mundo Streaming">
+    </div>
+    <div class=" mt-14">
+      <ul class="gap-12 flex flex-col">
+        <li class="flex justify-center gap-3 text-white uppercase font-bold">
+          <span>Ventas</span>
+        </li>
+        <li class="flex justify-center gap-3 text-white uppercase font-bold">
+          <span>Ventas</span>
+        </li>
+        <li class="flex justify-center gap-3 text-white uppercase font-bold">
+          <span>Ventas</span>
+        </li>
+      </ul>
+    </div>
+  </aside>
+
+  <main class="p-4 sm:ml-64 px-12">
+    <div class="mt-14 flex justify-between text-white">
+      <div>buscar</div>
+      <div class="flex gap-5 justify-center items-center">
+        <span class="sm:flex hidden">Hola, Nombre Administrador</span>
+        <div class="bg-primary w-16 h-16 rounded-full">
+        </div>
+      </div>
+    </div>
+    <div class=" w-full  flex justify-between mt-12">
+      <div
+        class="inline-block relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-1/2 after:border-2 after:border-primary  text-white">
+        <h4 class="font-bold text-3xl uppercase">NUESTROS BENEFICIOS</h4>
+      </div>
+      <button
+        class="p-2 bg-primary rounded-xl mt-4 transition ease-in-out hover:scale-105 hover:bg-red-800 duration-30 uppercase text-white">
+        + Agregar Usuario
+      </button>
+    </div>
+
+
+    <section class="w-full h-[615px] py-9">
+      <div class="bg-white w-full h-full rounded-xl py-2">
+        <table class="bg-white w-full table-fixed text-center text-xl font-light">
+          <thead>
+            <tr class="text-primary">
+              <th>Nombre</th>
+              <th>Documento de Identidad</th>
+              <th>Correo Electronico</th>
+              <th>Telefono</th>
+              <th>Domicilio</th>
+              <th>Saldo Pendiente</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b-2">
+              <td>Juan Peréz</td>
+              <td>101520200</td>
+              <td>correo@cliente.com</td>
+              <td>3102020205</td>
+              <td>Cra11#11-20</td>
+              <td>$300.000</td>
+            </tr>
+            <tr class="border-b-2">
+              <td>Juan Peréz</td>
+              <td>101520200</td>
+              <td>correo@cliente.com</td>
+              <td>3102020205</td>
+              <td>Cra11#11-20</td>
+              <td>$300.000</td>
+            </tr>
+            <tr class="border-b-2">
+              <td>Juan Peréz</td>
+              <td>101520200</td>
+              <td>correo@cliente.com</td>
+              <td>3102020205</td>
+              <td>Cra11#11-20</td>
+              <td>$300.000</td>
+            </tr>
+            <tr class="border-b-2">
+              <td>Juan Peréz</td>
+              <td>101520200</td>
+              <td>correo@cliente.com</td>
+              <td>3102020205</td>
+              <td>Cra11#11-20</td>
+              <td>$300.000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+
+  <footer class="bg-primary text-white flex flex-col justify-between items-center z-20 ">
+    <div class="w-full flex justify-center font-bold py-3">
+      Mundostreaming © 2023. Todos los derechos reservados
+    </div>
+  </footer>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ED1C24',
+            secondary: '#1B1B1B'
+          }
+        }
+      }
+    }
+  </script>
+
+</body>
+
+</html>

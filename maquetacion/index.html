@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <title>Mundo Streamig</title>
+</head>
+
+<body class="bg-secondary">
+  <section class="h-20 w-full bg-black px-20 py-2">
+    <nav class="flex justify-center sm:justify-between">
+      <img src="assets/img/Logo.svg" alt="Logo Mundo Streaming">
+      <ul class="hidden sm:flex text-white justify-center items-center gap-5 uppercase">
+        <li><a class="text-primary" href="#">Home</a></li>
+        <li><a href="#">Tienda</a></li>
+        <li><a href="#">Sobre Nosotros</a></li>
+        <li><a href="#">Soporte</a></li>
+        <li><a href="#">Cerrar Sesión</a></li>
+        <a href="/admin.html"
+          class="p-2 bg-primary rounded-xl uppercase transition ease-in-out hover:scale-105 hover:bg-red-800 duration-30">
+          Suscribirme
+        </a>
+      </ul>
+    </nav>
+  </section>
+
+  <main>
+    <section class="swiper">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div
+            class="w-full h-[640px] bg-[url('assets/img/hero.png')] bg-no-repeat bg-cover flex justify-start items-center text-white">
+            <div class="px-20 w-[600px]">
+              <h1 class="font-bold text-5xl mb-3">LOREM IPSUM DOLOR SIT AMET</h1>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut
+                laoreet
+                dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ul</p>
+              <button
+                class="p-2 bg-primary rounded-xl mt-4 uppercase transition ease-in-out hover:scale-105 hover:bg-red-800 duration-30">
+                Suscribirme
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div
+            class="w-full h-[640px] bg-primary bg-[url('assets/img/hero.png')] bg-no-repeat bg-cover flex justify-start items-center text-white">
+            <div class="px-20 w-[600px]">
+              <h1 class="font-bold text-5xl mb-3">LOREM IPSUM DOLOR SIT AMET</h1>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut
+                laoreet
+                dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ul</p>
+              <button
+                class="p-2 bg-primary rounded-xl mt-4 transition ease-in-out hover:scale-105 hover:bg-red-800 duration-30">
+                Suscribirme
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div
+            class="w-full h-[640px] bg-primary bg-[url('assets/img/hero.png')] bg-no-repeat bg-cover flex justify-start items-center text-white">
+            <div class="px-20 w-[600px]">
+              <h1 class="font-bold text-5xl mb-3">LOREM IPSUM DOLOR SIT AMET</h1>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut
+                laoreet
+                dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ul</p>
+              <button
+                class="p-2 bg-primary rounded-xl mt-4 transition ease-in-out hover:scale-105 hover:bg-red-800 duration-30">
+                Suscribirme
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </section>
+
+    <section class="px-20 py-14 text-white">
+      <div
+        class="inline-block relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-1/2 after:border-2 after:border-primary pb-2">
+        <h4 class="font-bold text-3xl uppercase">Populares</h4>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-5 gap-5 mt-7">
+        <div class="bg-white h-36 rounded-xl"></div>
+        <div class="bg-white h-36 rounded-xl"></div>
+        <div class="bg-white h-36 rounded-xl"></div>
+        <div class="bg-white h-36 rounded-xl"></div>
+        <div class="bg-white h-36 rounded-xl"></div>
+      </div>
+    </section>
+
+    <section class="px-20 py-12 text-white">
+      <div
+        class="inline-block relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-1/2 after:border-2 after:border-primary pb-2">
+        <h4 class="font-bold text-3xl">MIS SUSCRIPCIONES</h4>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-5 gap-5 mt-7">
+        <div class="bg-white h-36 rounded-xl"></div>
+        <div class="bg-white h-36 rounded-xl"></div>
+        <div class="bg-white h-36 rounded-xl"></div>
+      </div>
+    </section>
+
+    <section class="px-20 py-12 text-white">
+      <div
+        class="inline-block relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-1/2 after:border-2 after:border-primary pb-2">
+        <h4 class="font-bold text-3xl">CATEGORÍAS</h4>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-4 gap-5 mt-7">
+        <div
+          class="bg-white h-[275px] rounded-xl bg-[url('/resources/img/cat-entretenimiento.png')] bg-cover bg-no-repeat relative">
+          <div
+            class="absolute uppercase left-0 bottom-4 bg-white px-5 py-3 text-black font-bold text-xl rounded-tr-lg rounded-br-lg">
+            entretenimiento</div>
+        </div>
+        <div
+          class="bg-white h-[275px] rounded-xl bg-[url('/resources/img/cat-deportes.png')] bg-cover bg-no-repeat relative">
+          <div
+            class="absolute uppercase left-0 bottom-4 bg-white px-5 py-3 text-black font-bold text-xl rounded-tr-lg rounded-br-lg">
+            deportes</div>
+        </div>
+        <div
+          class="bg-white h-[275px] rounded-xl bg-[url('/resources/img/cat-catoon.png')] bg-cover bg-no-repeat relative">
+          <div
+            class="absolute uppercase left-0 bottom-4 bg-white px-5 py-3 text-black font-bold text-xl rounded-tr-lg rounded-br-lg">
+            cartoon</div>
+        </div>
+        <div
+          class="bg-white h-[275px] rounded-xl bg-[url('/resources/img/cat-podcast.png')] bg-cover bg-no-repeat relative">
+          <div
+            class="absolute uppercase left-0 bottom-4 bg-white px-5 py-3 text-black font-bold text-xl rounded-tr-lg rounded-br-lg">
+            podcast</div>
+        </div>
+
+      </div>
+
+      <div class="w-full flex justify-center items-center mt-3">
+        <button
+          class="p-2 bg-primary rounded-xl mt-4 transition ease-in-out hover:scale-105 hover:bg-red-800 duration-30 uppercase">
+          Ver todas
+        </button>
+      </div>
+    </section>
+
+    <section class="px-20 py-12 text-white ">
+      <div
+        class="inline-block relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-1/2 after:border-2 after:border-primary pb-2">
+        <h4 class="font-bold text-3xl uppercase">NUESTROS BENEFICIOS</h4>
+      </div>
+
+      <div
+        class="w-full bg-[url('/assets/img/beneficios.png')] h-[450px] bg-cover bg-no-repeat mt-4 flex justify-end items-center sm:px-28 rounded-lg">
+
+        <div class="w-full sm:w-[500px] ">
+          <ul class="grid grid-cols-1">
+            <li class="flex gap-4 justify-center items-center my-4 ">
+              <img class="w-12 h-12" src="assets/img/iconmovie.png" alt="">
+              <div>
+                <h5 class="font-bold text-base">LOREM IPSUM DOLOR SIT AMET</h5>
+                <p class="font-normal text-sm">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
+                  nonummy nibh euismod tincidunt ut laoreet dolore magna.</p>
+              </div>
+            </li>
+            <li class="flex gap-4 justify-center items-center my-4">
+              <img class="w-12 h-12" src="{{ Vite::asset('resources/img/iconmovie2.png') }}" alt="">
+              <div>
+                <h5 class="font-bold text-base">LOREM IPSUM DOLOR SIT AMET</h5>
+                <p class="font-normal text-sm">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
+                  nonummy nibh euismod tincidunt ut laoreet dolore magna.</p>
+              </div>
+            </li>
+            <li class="flex gap-4 justify-center items-center my-4">
+              <img class="w-12 h-12" src="{{ Vite::asset('resources/img/escudo.png') }}" alt="">
+              <div>
+                <h5 class="font-bold text-base">LOREM IPSUM DOLOR SIT AMET</h5>
+                <p class="font-normal text-sm">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
+                  nonummy nibh euismod tincidunt ut laoreet dolore magna.</p>
+              </div>
+            </li>
+            <li class="flex gap-4 justify-center items-center my-4">
+              <img class="w-12 h-12" src="{{ Vite::asset('resources/img/megafono.png') }}" alt="">
+              <div>
+                <h5 class="font-bold text-base">LOREM IPSUM DOLOR SIT AMET</h5>
+                <p class="font-normal text-sm">Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
+                  nonummy nibh euismod tincidunt ut laoreet dolore magna.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="bg-black text-white h-[345px] flex flex-col">
+      <div class="flex flex-col justify-center items-center py-12">
+        <img class="w-[152px] h-[70px]" src="assets/img/Logo.svg" alt="Logo Mundo Streaming">
+        <div class="flex my-5 gap-3">
+          <img class="w-8 h-8" src="{{ Vite::asset('resources/img/facebook.png') }}" alt="Icon Facebook">
+          <img class="w-8 h-8" src="{{ Vite::asset('resources/img/instagram.png') }}" alt="Icon Instagram">
+          <img class="w-8 h-8" src="{{ Vite::asset('resources/img/linkedin.png') }}" alt="Icon Linkeding">
+        </div>
+        <p>
+          Lorem ipsum dolor sit Lorem ipsum dolor sit <br>
+          Lorem ipsum dolor sit Lorem ipsum dolor sit
+        </p>
+        <p class="mt-6">Lorem ipsum dolor sit</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-primary text-white flex flex-col justify-between items-center ">
+    <div class="w-full flex justify-center font-bold py-3">
+      Mundostreaming © 2023. Todos los derechos reservados
+    </div>
+  </footer>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ED1C24',
+            secondary: '#1B1B1B'
+          }
+        }
+      }
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+  <script>
+
+    const swiper = new Swiper('.swiper', {
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination',
+      },
+      autoplay: {
+        delay: 3500,
+        disableOnInteraction: false
+      }
+    });
+  </script>
+</body>
+
+</html>
