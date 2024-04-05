@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\Permission;
 use App\Exceptions\ShopException;
+use App\Http\Requests\actualizarBilleteraRequest;
 use App\Http\Requests\authRequest;
 use App\Http\Requests\ChagePassRequest;
 use App\Http\Requests\udapteUserProfileRequest;
@@ -120,7 +121,7 @@ class UserController extends Controller
         if ((isset($request->permission->value) && in_array($request->permission->value, $notAllowedPermissions)) || (isset($request->permission) && in_array($request->permission, $notAllowedPermissions))) {
             throw new AuthorizationException('NOT_AUTHORIZED');
         }
-        $permissions = [Permission::CUSTOMER];
+        $permissions = [];
         if (isset($request->permission)) {
             $permissions[] = isset($request->permission->value) ? $request->permission->value : $request->permission;
         }
@@ -156,6 +157,20 @@ class UserController extends Controller
             ->with(['suscription', 'permissions'])
             ->whereHas('permissions', function ($query) {
                 $query->where('name', Permission::CUSTOMER);
+            })
+            ->paginate($limit);
+
+        return $clientes;
+    }
+
+    function providers(Request $request)
+    {
+        $limit = $request->limit ? $request->limit : 15;
+        $clientes = $this->repository
+            ->where('is_active', true)
+            ->with(['suscription', 'permissions'])
+            ->whereHas('permissions', function ($query) {
+                $query->where('name', Permission::PROVIDER);
             })
             ->paginate($limit);
 
@@ -212,5 +227,28 @@ class UserController extends Controller
         $user->update($data);
 
         return response()->json(['message' => 'Usuario actualizado correctamente'], 200);
+    }
+
+
+    public function updateWallet(actualizarBilleteraRequest $request)
+    {
+        $user = User::findOrFail($request->userId);
+        if ($request->operation !== 'add' &&  $request->operation !== 'subtract') {
+            return response()->json(['error' => 'Operación no válida'], 422);
+        }
+
+        if ($request->operation === 'add') {
+            $user->billetera += $request->amount;
+        } else {
+            $user->billetera -= $request->amount;
+            if ($user->wallet < 0) {
+                return response()->json(['error' => 'No tienes suficientes fondos en tu billetera'], 422);
+            }
+        }
+
+        // Guardar los cambios en la base de datos
+        $user->save();
+
+        return response()->json(['message' => 'Billetera actualizada exitosamente', 'new_balance' => $user->billetera]);
     }
 }

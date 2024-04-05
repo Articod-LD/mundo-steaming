@@ -21,8 +21,6 @@ const ListPlataformas: React.FC<{}> = () => {
     limit: 20,
   });
 
-  console.log(plataformas);
-
   const { me } = useMe();
   const router = useRouter();
 
@@ -50,8 +48,6 @@ const ListPlataformas: React.FC<{}> = () => {
               (suscription) =>
                 suscription?.credential?.tipo?.id === Number(plataforma.id)
             );
-
-            console.log({ suscriptionExistente, solicitudExistente });
 
             return (
               <SwiperSlide key={i}>

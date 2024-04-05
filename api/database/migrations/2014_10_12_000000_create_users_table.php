@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('documento');
             $table->string('telefono');
             $table->string('direccion');
+            $table->integer('billetera')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

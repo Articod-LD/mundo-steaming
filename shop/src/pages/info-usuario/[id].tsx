@@ -30,15 +30,6 @@ export default function Dashboard({
     openModal("AGREGAR_PLATAFORMA_USUARIO", id);
   }
 
-  // Usamos el método reduce para sumar los precios de las suscripciones no pagadas
-  const sumaPrecios = client.suscription?.reduce((total, suscripcion) => {
-    if (suscripcion.pagado === 0) {
-      return total + suscripcion.precio;
-    } else {
-      return total;
-    }
-  }, 0);
-
   if (loading) return <Loader text="Cargando" />;
 
   return (
@@ -84,16 +75,16 @@ export default function Dashboard({
               </div> */}
             </div>
             <div className="w-full">
-              <p className="font-bold">saldo a pagar</p>
+              <p className="font-bold">En billetera</p>
               <div className="flex justify-between">
                 <span className="text-red-500 text-4xl font-bold">
-                  ${sumaPrecios}
+                  ${client.billetera}
                 </span>
-                {client.suscription && (
+                {/* {client.suscription && (
                   <div className="py-1 px-2 bg-[#84BB2E] rounded-2xl text-white flex items-center justify-center w-20">
                     Cancelado
                   </div>
-                )}
+                )} */}
               </div>
             </div>
           </div>

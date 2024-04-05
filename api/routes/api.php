@@ -26,7 +26,9 @@ Route::post('/update_profile/{user_id}', [UserController::class, 'updateProfile'
 Route::post('/logout', [UserController::class, 'logout']);
 Route::get('me', [UserController::class, 'me']);
 Route::get('/clientes/list', [UserController::class, 'clientes']);
+Route::get('/providers/list', [UserController::class, 'providers']);
 Route::get('/clientes/{client_id}', [UserController::class, 'findOne']);
+Route::post('/clientes/billtera/update', [UserController::class, 'updateWallet']);
 Route::post('/plataforma/register', [PlataformaController::class, 'create']);
 Route::get('/plataforma/list', [PlataformaController::class, 'index']);
 Route::post('/credencial/register', [CredencialesController::class, 'create']);

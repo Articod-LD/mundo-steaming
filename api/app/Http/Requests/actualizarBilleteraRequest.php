@@ -5,8 +5,9 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
-class PlataformaCreateRequest extends FormRequest
+class actualizarBilleteraRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +25,9 @@ class PlataformaCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255', 'unique:suscription_types'],
-            'image_url' => ['required', 'string'],
-            'precio' => ['required', 'string'],
-            'precio_provider' => ['required', 'string'],
+            'userId' => ['required', 'exists:users,id'],
+            'amount' => ['required', 'integer', 'min:1'],
+            'operation' => ['required', Rule::in(['add', 'subtract'])],
         ];
     }
 

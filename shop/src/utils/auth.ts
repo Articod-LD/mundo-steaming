@@ -1,17 +1,25 @@
 import Cookie from "js-cookie";
 import SSRCookie from "cookie";
 
-import { COSTUMER, PERMISSIONS, SUPER_ADMIN, TOKEN } from "./constants";
+import {
+  COSTUMER,
+  PERMISSIONS,
+  PROVIDER,
+  SUPER_ADMIN,
+  TOKEN,
+} from "./constants";
 export const adminOnly = [SUPER_ADMIN];
 
 const AUTH_TOKEN_KEY = process.env.NEXT_PUBLIC_AUTH_TOKEN_KEY ?? "authToken";
 
-export const allowedRoles = [SUPER_ADMIN, COSTUMER];
+export const allowedRoles = [SUPER_ADMIN, COSTUMER, PROVIDER];
 
 export function hasAccess(
   _allowedRoles: string[],
   _userPermissions: string[] | undefined | null
 ) {
+  console.log({ _allowedRoles, _userPermissions });
+
   if (_userPermissions) {
     return Boolean(
       _allowedRoles?.find((aRole) => _userPermissions.includes(aRole))

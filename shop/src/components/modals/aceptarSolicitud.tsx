@@ -8,6 +8,7 @@ import PasswordInput from "../ui/password-input";
 import {
   useAceptarSolicitudMutation,
   useRegisterPlataformaMutation,
+  useUpdateWalletMutation,
 } from "@/data/user";
 import Alert from "../ui/alert";
 import DatePicker from "react-datepicker";
@@ -34,10 +35,24 @@ const AceptarSolicitudSchema = yup.object().shape({
 });
 
 function AceptarSolicitud({ data }: { data?: any }) {
+  console.log(data);
+
   const { mutate: createPlataforma, isLoading } = useAceptarSolicitudMutation();
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { closeModal } = useModalAction();
+
+  const { mutate: updateWallet } = useUpdateWalletMutation();
+
+  function getPrice() {
+    const precio = data.solicitud.user.permissions.some(
+      (permission: any) => permission.name === "provider"
+    )
+      ? data.solicitud.tipo.precio_provider
+      : data.solicitud.tipo.precio;
+
+    return precio;
+  }
 
   function onSubmit({
     email,
@@ -66,6 +81,24 @@ function AceptarSolicitud({ data }: { data?: any }) {
         onSuccess(data, variables, context) {
           toast.success("usuario suscrito");
           closeModal();
+
+          updateWallet(
+            {
+              variables: {
+                operation: "subtract",
+                userId: data.solicitud.user.id,
+                amount: getPrice(),
+              },
+            },
+            {
+              onSuccess(data, variables, context) {
+                toast.success("billetera actualizada correctamente");
+              },
+              onError(error, variables, context) {
+                toast.error("error actualizando billetera");
+              },
+            }
+          );
         },
       }
     );
@@ -91,7 +124,7 @@ function AceptarSolicitud({ data }: { data?: any }) {
                 variant="outline"
                 className="mb-4"
                 isEditar={true}
-                defaultValue={data.solicitud.tipo.precio}
+                defaultValue={getPrice()}
                 error={errors?.precio?.message!}
               />
 

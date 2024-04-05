@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
     {
         Permission::firstOrCreate(['name' => EnumsPermission::SUPER_ADMIN]);
         Permission::firstOrCreate(['name' => EnumsPermission::CUSTOMER]);
+        Permission::firstOrCreate(['name' => EnumsPermission::PROVIDER]);
 
 
         $user = User::create([

@@ -14,7 +14,8 @@ class suscriptionType extends Model
         'image_url',
         'precio',
         'credenciales',
-        'solicitudes_id'
+        'solicitudes_id',
+        'precio_provider'
     ];
 
 

@@ -78,6 +78,7 @@ export interface User {
   telefono: string;
   created_at: string;
   updated_at: string;
+  billetera: string;
 }
 
 export interface LoginInput {
@@ -115,6 +116,7 @@ export interface AuthResponse {
 export enum Permission {
   super_admin = "super_admin",
   Customer = "customer",
+  provider = "provider",
 }
 export interface RegisterInput {
   email: string;
@@ -192,12 +194,14 @@ export interface Plataforma {
   name: string;
   image_url: string;
   precio: string;
+  precio_provider: string;
 }
 
 export interface PlataformaInput {
   name: string;
   image_url: string;
   precio: string;
+  precio_provider: string;
 }
 export interface ISolicitud {
   id: string;
@@ -231,4 +235,10 @@ export interface CrearSuscripcionInput {
   password: string;
   tipo_id: number;
   usuario_id: number;
+}
+
+export interface walletInput {
+  userId: string;
+  amount: number;
+  operation: string;
 }

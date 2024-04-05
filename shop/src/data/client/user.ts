@@ -15,6 +15,7 @@ import {
   User,
   UserPaginator,
   UserQueryOptions,
+  walletInput,
 } from "@/types";
 import { HttpClient } from "./http-client";
 import { API_ENDPOINTS } from "./api-endpoints";
@@ -59,6 +60,12 @@ export const userClient = {
   },
   fetchClients: ({ ...params }: Partial<UserQueryOptions>) => {
     return HttpClient.get<UserPaginator>(API_ENDPOINTS.CLIENT_LIST, {
+      ...params,
+    });
+  },
+
+  fetchProviders: ({ ...params }: Partial<UserQueryOptions>) => {
+    return HttpClient.get<UserPaginator>(API_ENDPOINTS.PROVIDERS_LIST, {
       ...params,
     });
   },
@@ -117,5 +124,9 @@ export const userClient = {
 
   crearSuscripcion: ({ variables }: { variables: CrearSuscripcionInput }) => {
     return HttpClient.post<any>(API_ENDPOINTS.CREAR_SUSCRIPCION, variables);
+  },
+
+  updatewalletClient({ variables }: { variables: walletInput }) {
+    return HttpClient.post<any>(API_ENDPOINTS.UPDATE_WALLET_CLIENT, variables);
   },
 };
