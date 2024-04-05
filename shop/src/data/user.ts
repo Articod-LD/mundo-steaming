@@ -51,9 +51,8 @@ export const useRegisterMutation = () => {
       toast.success("Registrado Correctamente");
     },
     onSettled() {
-      queryClient.invalidateQueries({
-        queryKey: [API_ENDPOINTS.REGISTER],
-      });
+      queryClient.invalidateQueries([API_ENDPOINTS.PROVIDERS_LIST]);
+      queryClient.invalidateQueries([API_ENDPOINTS.CLIENT_LIST]);
     },
   });
 };
@@ -97,6 +96,23 @@ export const useClientsQuery = (params: Partial<QueryOptionsType>) => {
 
   return {
     clients: data?.data ?? [],
+    paginatorInfo: mapPaginatorData(data as any),
+    loading: isLoading,
+    error,
+  };
+};
+
+export const useProvidersQuery = (params: Partial<QueryOptionsType>) => {
+  const { data, isLoading, error } = useQuery<UserPaginator, Error>(
+    [API_ENDPOINTS.PROVIDERS_LIST, params],
+    () => userClient.fetchProviders(params),
+    {
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    providers: data?.data ?? [],
     paginatorInfo: mapPaginatorData(data as any),
     loading: isLoading,
     error,
@@ -259,6 +275,22 @@ export const useCreateSuscripcionMutation = () => {
       toast.success("La suscripcion ha sido aceptada correctamente", {
         duration: 5000,
       });
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.CLIENT_LIST],
+      });
+    },
+  });
+};
+
+export const useUpdateWalletMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.updatewalletClient,
+    onSuccess() {
+      toast.success("Datos Actualizados Correctamente");
     },
     onSettled() {
       queryClient.invalidateQueries({

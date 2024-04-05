@@ -96,7 +96,7 @@ class SolicitudController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
         $solicitudes = $this->repository
-            ->with(['user', 'tipo'])
+            ->with(['user', 'tipo', 'user.permissions'])
             ->paginate($limit);
 
         return $solicitudes;

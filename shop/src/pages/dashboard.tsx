@@ -11,7 +11,11 @@ export default function Dashboard({
   userPermissions: string[];
 }) {
   const router = useRouter();
-  if (userPermissions.includes("customer")) {
+
+  if (
+    userPermissions.includes("customer") ||
+    userPermissions.includes("provider")
+  ) {
     router.push(routes.plataformasClientes);
   }
 

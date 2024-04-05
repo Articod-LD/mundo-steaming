@@ -2,13 +2,19 @@ import { Plataforma } from "@/types";
 import React, { useEffect } from "react";
 import Button from "../ui/button";
 import Image from "../ui/image";
-import { useMe, useRegisterSolicitudMutation } from "@/data/user";
+import {
+  useMe,
+  useRegisterSolicitudMutation,
+  useUpdateWalletMutation,
+} from "@/data/user";
 import { useModalAction } from "../ui/modal/modal.context";
 import toast from "react-hot-toast";
 
 function SolicitarPlataforma({ plataforma }: { plataforma: Plataforma }) {
   const { me } = useMe();
   const { mutate: createSolicitudMutation } = useRegisterSolicitudMutation();
+  const { mutate: updateWallet } = useUpdateWalletMutation();
+
   const { closeModal } = useModalAction();
 
   function CreateSolicitud() {
@@ -17,6 +23,24 @@ function SolicitarPlataforma({ plataforma }: { plataforma: Plataforma }) {
       {
         onSuccess(data, variables, context) {
           closeModal();
+
+          updateWallet(
+            {
+              variables: {
+                operation: "add",
+                userId: me!.id,
+                amount: +getPrecio(),
+              },
+            },
+            {
+              onSuccess(data, variables, context) {
+                toast.success("billetera actualizada correctamente");
+              },
+              onError(error, variables, context) {
+                toast.error("error actualizando billetera");
+              },
+            }
+          );
         },
         onError(error: any) {
           toast.error(error.response.data.error);
@@ -24,6 +48,16 @@ function SolicitarPlataforma({ plataforma }: { plataforma: Plataforma }) {
         },
       }
     );
+  }
+
+  function getPrecio() {
+    const permissions = me!.permissions;
+
+    const isProvider = permissions.some(
+      (permission) => permission.name === "provider"
+    );
+
+    return isProvider ? plataforma.precio_provider : plataforma.precio;
   }
 
   return (
@@ -40,7 +74,7 @@ function SolicitarPlataforma({ plataforma }: { plataforma: Plataforma }) {
           alt="img banner"
         />
         <p className="text-sm text-brand mt-2">
-          El Precio de la plataforma es de ${plataforma.precio}
+          El Precio de la plataforma es de ${getPrecio()}
         </p>
       </div>
 

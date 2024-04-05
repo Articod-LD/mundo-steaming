@@ -40,6 +40,7 @@ const SideBarGroup = () => {
   const permissionName = me!.permissions[0].name as any;
 
   let menuItems: any;
+
   if (Object.values(Permission).includes(permissionName)) {
     menuItems = siteSettings.sidebarLinks?.[permissionName] as any;
   }

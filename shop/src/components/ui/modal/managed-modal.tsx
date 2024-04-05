@@ -9,6 +9,7 @@ import SolicitarPlataforma from "@/components/modals/solicitarPlataforma";
 import DeleteSolicitud from "@/components/modals/deleteSolicitud";
 import AceptarSolicitud from "@/components/modals/aceptarSolicitud";
 import VerInfoPlataforma from "@/components/modals/verInfoPlataforma";
+import AgregateProvidersModal from "@/components/modals/agregarProviders";
 
 function renderModal(view: MODAL_VIEWS | undefined, data: any) {
   console.log(data);
@@ -39,6 +40,9 @@ function renderModal(view: MODAL_VIEWS | undefined, data: any) {
 
     case "VER_INFO_PLATAFORMA":
       return <VerInfoPlataforma data={data} />;
+
+    case "PROVIDER_SOLICITAR_PLATAFORMA":
+      return <AgregateProvidersModal />;
     default:
       return null;
   }

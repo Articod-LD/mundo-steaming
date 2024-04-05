@@ -14,4 +14,5 @@ final class Permission extends Enum
 {
     public const SUPER_ADMIN = 'super_admin';
     public const CUSTOMER = 'customer';
+    public const PROVIDER =  'provider';
 }

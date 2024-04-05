@@ -6,6 +6,7 @@ export const API_ENDPOINTS = {
   UPDATE_PROFILE: "update_profile/",
   ME: "me",
   CLIENT_LIST: "clientes/list",
+  PROVIDERS_LIST: "providers/list",
   ONE_CLIENT: "clientes/",
   PLATAFORMA_DISPONIBLES: "/plataforma/disponibles",
   PLATAFORMA_LIST: "/plataforma/list",
@@ -15,4 +16,5 @@ export const API_ENDPOINTS = {
   CREATE_SOLICITUD: "/solicitud/register",
   ACEPTAR_SOLICITUD: "/solicitud/aceptar/",
   CREAR_SUSCRIPCION: "/suscriptions/register",
+  UPDATE_WALLET_CLIENT: "/clientes/billtera/update",
 };

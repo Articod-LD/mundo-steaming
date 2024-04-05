@@ -35,6 +35,12 @@ export const siteSettings: any = {
             permissions: ["super_admin"],
           },
           {
+            href: routes.providers,
+            label: "Proveedores",
+            icon: "UsersIcon",
+            permissions: ["super_admin"],
+          },
+          {
             href: routes.plataformas,
             label: "Plataformas",
             icon: "ProductsIcon",
@@ -60,6 +66,21 @@ export const siteSettings: any = {
             label: "Plataformas",
             icon: "ProductsIcon",
             permissions: ["customer", "super_admin"],
+          },
+        ],
+      },
+    },
+    provider: {
+      root: {
+        href: routes.plataformasClientes,
+        label: "Inicio",
+        icon: "DashboardIcon",
+        childMenu: [
+          {
+            href: routes.plataformasClientes,
+            label: "Plataformas",
+            icon: "ProductsIcon",
+            permissions: ["provider", "super_admin"],
           },
         ],
       },

@@ -43,7 +43,7 @@ const LoginForm = () => {
               router.push(routes.home);
               return;
             }
-            setErrorMessage("form:error-enough-permission");
+            setErrorMessage("Error de permisos");
           } else {
             console.log("no llego token");
 

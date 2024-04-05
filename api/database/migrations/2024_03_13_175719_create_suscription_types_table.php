@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name')->unique();
             $table->string('image_url')->unique();
             $table->integer('precio');
+            $table->integer('precio_provider');
             $table->timestamps();
         });
     }

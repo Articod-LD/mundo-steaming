@@ -30,6 +30,13 @@ const createPlataformaFormSchema = yup.object().shape({
       /^\d+(\.\d{1,2})?$/,
       "El precio debe ser un número válido con hasta 2 decimales"
     ),
+  precio_provider: yup
+    .string()
+    .required("El precio es requerido")
+    .matches(
+      /^\d+(\.\d{1,2})?$/,
+      "El precio debe ser un número válido con hasta 2 decimales"
+    ),
 });
 
 function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
@@ -40,10 +47,15 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
   const queryClient = useQueryClient();
   const { closeModal } = useModalAction();
 
-  function onSubmit({ image_url, name, precio }: PlataformaInput) {
+  function onSubmit({
+    image_url,
+    name,
+    precio,
+    precio_provider,
+  }: PlataformaInput) {
     if (!plataforma) {
       createPlataforma(
-        { image_url, name, precio },
+        { image_url, name, precio, precio_provider },
         {
           onSuccess(data, variables, context) {
             toast.success("Plataforma creada correctamente");
@@ -100,7 +112,16 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
                 defaultValue={plataforma?.precio}
                 error={errors?.precio?.message!}
               />
-
+              <Input
+                label="Precio Proveedor"
+                type="Number"
+                {...register("precio_provider")}
+                variant="outline"
+                className="mb-4"
+                isEditar={true}
+                defaultValue={plataforma?.precio_provider}
+                error={errors?.precio?.message!}
+              />
               <Button
                 className="w-full uppercase"
                 isLoading={isLoading}
