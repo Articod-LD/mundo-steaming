@@ -3,10 +3,7 @@ import * as yup from "yup";
 import Input from "../ui/input";
 import Button from "../ui/button";
 import { useState } from "react";
-import {
-  useRegisterPlataformaMutation,
-  useUpdateProfileMutation,
-} from "@/data/user";
+import { useRegisterPlataformaMutation } from "@/data/user";
 import Alert from "../ui/alert";
 import { PlataformaInput } from "@/types";
 import toast from "react-hot-toast";
@@ -30,6 +27,13 @@ const createPlataformaFormSchema = yup.object().shape({
       /^\d+(\.\d{1,2})?$/,
       "El precio debe ser un número válido con hasta 2 decimales"
     ),
+  precio_provider: yup
+    .string()
+    .required("El precio es requerido")
+    .matches(
+      /^\d+(\.\d{1,2})?$/,
+      "El precio debe ser un número válido con hasta 2 decimales"
+    ),
 });
 
 function CrearPlataformaModal() {
@@ -40,9 +44,14 @@ function CrearPlataformaModal() {
   const queryClient = useQueryClient();
   const { closeModal } = useModalAction();
 
-  function onSubmit({ image_url, name, precio }: PlataformaInput) {
+  function onSubmit({
+    image_url,
+    name,
+    precio,
+    precio_provider,
+  }: PlataformaInput) {
     createPlataforma(
-      { image_url, name, precio },
+      { image_url, name, precio, precio_provider },
       {
         onSuccess(data, variables, context) {
           toast.success("Plataforma creada correctamente");
@@ -94,7 +103,15 @@ function CrearPlataformaModal() {
                 isEditar={true}
                 error={errors?.precio?.message!}
               />
-
+              <Input
+                label="Precio Provider"
+                type="Number"
+                {...register("precio_provider")}
+                variant="outline"
+                className="mb-4"
+                isEditar={true}
+                error={errors?.precio_provider?.message!}
+              />
               <Button
                 className="w-full uppercase"
                 isLoading={isLoading}
