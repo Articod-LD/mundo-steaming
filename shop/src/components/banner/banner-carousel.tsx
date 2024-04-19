@@ -34,7 +34,7 @@ export default function HeroCarousel() {
             <div className="w-full h-[740px] flex justify-center items-center md:justify-start">
               <Image
                 className="-z-10 opacity-60"
-                src="/hero.png"
+                src="/hero2.png"
                 layout="fill"
                 objectFit="cover"
                 quality={100}

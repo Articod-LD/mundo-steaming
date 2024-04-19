@@ -6,6 +6,7 @@ import { useIsMounted } from "@/lib/hooks/use-is-mounted";
 import { useIsDarkMode } from "@/lib/hooks/use-is-dark-mode";
 import { siteSettings } from "@/data/static/site-settings";
 import { useSettings } from "@/data/settings";
+import { useState } from "react";
 
 export default function Logo({
   className = "w-20",
@@ -13,7 +14,10 @@ export default function Logo({
 }: React.AnchorHTMLAttributes<{}>) {
   const isMounted = useIsMounted();
   const { isDarkMode } = useIsDarkMode();
-  const { lightLogo } = siteSettings;
+  const { lightLogo, darkLogo } = siteSettings;
+
+  const [plataforma] = useState(process.env.NEXT_PUBLIC_PLATAFORMA);
+
   const { settings }: any = useSettings();
   return (
     <AnchorLink
@@ -28,12 +32,12 @@ export default function Logo({
         className="relative overflow-hidden"
         style={{
           width: siteSettings?.width,
-          height: siteSettings?.height,
+          height: plataforma === "COMBO" ? 90 : siteSettings?.height,
         }}
       >
         {isMounted && isDarkMode && (
           <Image
-            src={settings?.dark_logo?.original ?? lightLogo}
+            src={plataforma === "COMBO" ? darkLogo : lightLogo}
             fill
             loading="eager"
             alt={settings?.siteTitle ?? "Dark Logo"}
@@ -42,7 +46,7 @@ export default function Logo({
         )}
         {isMounted && !isDarkMode && (
           <Image
-            src={settings?.logo?.original ?? lightLogo}
+            src={plataforma === "COMBO" ? darkLogo : lightLogo}
             fill
             loading="eager"
             alt={settings?.siteTitle ?? "Light Logo"}

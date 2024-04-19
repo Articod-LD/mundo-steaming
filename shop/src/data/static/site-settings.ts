@@ -1,8 +1,10 @@
 import Logo from "@/assets/images/Logo.svg";
+import Logo2 from "@/assets/images/Logo2.png";
 import routes from "@/config/routes";
 
 export const siteSettings: any = {
   lightLogo: Logo,
+  darkLogo: Logo2,
   width: 128,
   height: 40,
   avatar: {
