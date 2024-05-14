@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CredencialesController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PlataformaController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\SuscripcionesController;
@@ -44,3 +45,14 @@ Route::post('/solicitud/aceptar/{solicitud_id}', [SolicitudController::class, 'a
 
 Route::get('/suscriptions/list', [SuscripcionesController::class, 'index']);
 Route::post('/suscriptions/register', [SuscripcionesController::class, 'create']);
+
+
+Route::post('/payment/byCard', [PaymentController::class, 'SendTransactionByCard']);
+Route::post('/payment/byNequi', [PaymentController::class, 'SendTransactionByNequi']);
+Route::post('/payment/byPSE', [PaymentController::class, 'SendTransactionByPSE']);
+Route::get('/payments/ping', [PaymentController::class, 'ping']);
+Route::get('/payments/methods', [PaymentController::class, 'index']);
+Route::get('/payments/banks', [PaymentController::class, 'bankList']);
+Route::get('/payments/PaymentByOrderId/{orderId}', [PaymentController::class, 'getPaymentByOrderId']);
+Route::get('/payments/PaymentByTransationId/{transactionId}', [PaymentController::class, 'getPaymentByTransationId']);
+Route::get('/payments/PaymentByReferenceId/{referenceCode}', [PaymentController::class, 'getPaymentByReferenceId']);

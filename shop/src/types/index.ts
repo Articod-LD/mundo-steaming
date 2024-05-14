@@ -242,3 +242,16 @@ export interface walletInput {
   amount: number;
   operation: string;
 }
+
+export interface LoginInput {
+  email: string;
+  password: string;
+}
+
+export interface CheckoutInput {
+  card_number: string;
+  expirationDate: string;
+  card_cvv: string;
+  plataforma_id?: string;
+  user_id?: string;
+}

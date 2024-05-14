@@ -9,45 +9,52 @@ import {
 } from "@/data/user";
 import { useModalAction } from "../ui/modal/modal.context";
 import toast from "react-hot-toast";
+import routes from "@/config/routes";
+import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 
 function SolicitarPlataforma({ plataforma }: { plataforma: Plataforma }) {
   const { me } = useMe();
   const { mutate: createSolicitudMutation } = useRegisterSolicitudMutation();
   const { mutate: updateWallet } = useUpdateWalletMutation();
-
+  const router = useRouter();
+  const pathname = usePathname();
   const { closeModal } = useModalAction();
 
   function CreateSolicitud() {
-    createSolicitudMutation(
-      { tipo_id: plataforma.id, usuario_id: me!.id },
-      {
-        onSuccess(data, variables, context) {
-          closeModal();
+    // createSolicitudMutation(
+    //   { tipo_id: plataforma.id, usuario_id: me!.id },
+    //   {
+    //     onSuccess(data, variables, context) {
+    //       closeModal();
 
-          updateWallet(
-            {
-              variables: {
-                operation: "add",
-                userId: me!.id,
-                amount: +getPrecio(),
-              },
-            },
-            {
-              onSuccess(data, variables, context) {
-                toast.success("billetera actualizada correctamente");
-              },
-              onError(error, variables, context) {
-                toast.error("error actualizando billetera");
-              },
-            }
-          );
-        },
-        onError(error: any) {
-          toast.error(error.response.data.error);
-          closeModal();
-        },
-      }
-    );
+    //       updateWallet(
+    //         {
+    //           variables: {
+    //             operation: "add",
+    //             userId: me!.id,
+    //             amount: +getPrecio(),
+    //           },
+    //         },
+    //         {
+    //           onSuccess(data, variables, context) {
+    //             toast.success("billetera actualizada correctamente");
+    //           },
+    //           onError(error, variables, context) {
+    //             toast.error("error actualizando billetera");
+    //           },
+    //         }
+    //       );
+    //     },
+    //     onError(error: any) {
+    //       toast.error(error.response.data.error);
+    //       closeModal();
+    //     },
+    //   }
+    // );
+
+    closeModal();
+    router.push(routes.checkout);
   }
 
   function getPrecio() {
