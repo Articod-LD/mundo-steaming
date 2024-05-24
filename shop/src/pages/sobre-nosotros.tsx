@@ -1,0 +1,114 @@
+import LoginForm from "@/components/auth/login-form";
+import { MovieIcon } from "@/components/icons/movie";
+import BannerBack from "@/components/ui/banner/BannerBack";
+import Image from "@/components/ui/image";
+import VideoPlayer from "@/components/ui/videoPlayer";
+import AuthLayout from "@/layouts/_auth_layout";
+import Layout from "@/layouts/_layout";
+import { NextPageWithLayout } from "@/types";
+
+const Login: NextPageWithLayout = () => {
+  return (
+    <div className="w-full">
+      <BannerBack
+        title="SOBRE NOSOTROS"
+        isBack={true}
+        textBack="SOBRE NOSOTROS"
+        img="/sobreNosotrospng.png"
+      />
+
+      <div className="mt-24 px-20 w-full flex h-[560px]">
+        <div className="w-1/2 h-full relative">
+          <Image
+            src={`/contacto/banner.png`}
+            layout="fill"
+            objectFit="cover"
+            quality={100}
+            alt="img banner"
+          />
+        </div>
+        <div className="w-1/2 pl-12 py-28">
+          <span className="text-base">Lorem ipsum dolor sit</span>
+          <h3 className="text-4xl font-bold">SOBRE NOSOTROS</h3>
+          <p className="text-base mt-3">
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
+            nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
+            volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation
+            ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo
+            consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate
+            velit esse molestie consequat, vel illum dolore eu feugiat nulla
+            facilisis at vero eros et accumsan et iusto odio dignissim qui
+            blandit praesent luptatum zzril delenit augue duis dolore te feugait
+            nulla facilisi.
+          </p>
+          <button className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300  hover:bg-red-900 ">
+            Suscribirme
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-24 px-20 w-full flex h-[160px]">
+        <div className="w-1/3">
+          <span className="text-base">Lorem ipsum dolor sit</span>
+          <h3 className="text-4xl font-bold">NUESTROS BENEFICIOS</h3>
+          <p className="text-base mt-3 mr-32">
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
+            nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
+            volutpat.
+          </p>
+        </div>
+        <div className="w-2/3 grid grid-cols-4 gap-3">
+          <div className="flex justify-center items-center flex-col">
+            <MovieIcon className="text-brand h-20 w-20" />
+            <div>
+              <h5 className="font-bold text-base">
+                LOREM IPSUM DOLOR SIT AMET
+              </h5>
+            </div>
+          </div>
+          <div className="flex justify-center items-center flex-col">
+            <MovieIcon className="text-brand h-20 w-20" />
+            <div>
+              <h5 className="font-bold text-base">
+                LOREM IPSUM DOLOR SIT AMET
+              </h5>
+            </div>
+          </div>
+          <div className="flex justify-center items-center flex-col">
+            <MovieIcon className="text-brand h-20 w-20" />
+            <div>
+              <h5 className="font-bold text-base">
+                LOREM IPSUM DOLOR SIT AMET
+              </h5>
+            </div>
+          </div>
+          <div className="flex justify-center items-center flex-col">
+            <MovieIcon className="text-brand h-20 w-20" />
+            <div>
+              <h5 className="font-bold text-base">
+                LOREM IPSUM DOLOR SIT AMET
+              </h5>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-24 px-20 w-full flex h-[505px] ">
+        <iframe
+          className="w-full h-full"
+          src="https://www.youtube.com/embed/73_1biulkYk?si=gyIurToe91pnELpB"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          title="YouTube video player"
+        ></iframe>
+      </div>
+    </div>
+  );
+};
+
+Login.getLayout = function getLayout(page) {
+  return <Layout subFooter={true}>{page}</Layout>;
+};
+
+export default Login;

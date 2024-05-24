@@ -10,6 +10,7 @@ import routes from "@/config/routes";
 import ActiveLink from "@/components/ui/links/active-link";
 import Button from "@/components/ui/button";
 import AnchorLink from "@/components/ui/links/anchor-link";
+import classNames from "classnames";
 
 interface HeaderProps {
   isCollapse?: boolean;
@@ -22,10 +23,6 @@ const MenuItems = [
   {
     label: "Home",
     path: routes.home,
-  },
-  {
-    label: "tienda",
-    path: routes.tienda,
   },
   {
     label: "Sobre nosotros",
@@ -92,6 +89,9 @@ export default function Header({
 }: HeaderProps) {
   const { me } = useMe();
 
+  const isLogin = typeof me !== "undefined";
+  console.log(isLogin);
+
   return (
     <header className="app-header sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-light-300 bg-light py-1 px-4 left-0 dark:border-dark-300 dark:bg-dark sm:h-[70px] sm:px-20">
       <div className="flex items-center gap-4">
@@ -101,18 +101,24 @@ export default function Header({
         {showMenu && <MenuRender />}
         <AnchorLink
           href={routes.dashboard}
-          className="focus:ring-accent-700 hidden h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-red-900 focus:shadow focus:outline-none focus:ring-1 sm:inline-flex uppercase hover:scale-105"
+          className={classNames(
+            "focus:ring-accent-700 h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-red-900 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105",
+            isLogin ? "inline-flex" : "hidden"
+          )}
         >
-          {me ? "Dashboard" : "Suscribirme"}
+          Dashboard
         </AnchorLink>
       </div>
       {showHamburger && showMenu && (
         <div className="flex gap-3 sm:hidden">
           <AnchorLink
             href={routes.dashboard}
-            className="focus:ring-accent-700 h-9 shrink-0 justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-red-900 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105 flex items-center"
+            className={classNames(
+              "focus:ring-accent-700 h-9 shrink-0 justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-red-900 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105 flex items-center",
+              me ? "block" : "hidden"
+            )}
           >
-            {me ? "Dashboard" : "Suscribirme"}
+            Dashboard
           </AnchorLink>
           <Hamburger
             isToggle={isCollapse}
