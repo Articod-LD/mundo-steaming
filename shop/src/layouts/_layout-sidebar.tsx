@@ -3,6 +3,7 @@ import ActiveLink from "@/components/ui/links/active-link";
 import Logo from "@/components/ui/logo";
 import Scrollbar from "@/components/ui/scrollbar";
 import routes from "@/config/routes";
+import { useMe } from "@/data/user";
 import { useIsMounted } from "@/lib/hooks/use-is-mounted";
 import classNames from "classnames";
 
@@ -16,10 +17,6 @@ const MenuItems = [
   {
     label: "Home",
     path: routes.home,
-  },
-  {
-    label: "tienda",
-    path: routes.tienda,
   },
   {
     label: "Sobre nosotros",
@@ -45,7 +42,8 @@ function GeneralMenu() {
 }
 
 function MenuRender() {
-  let isAuthorized = true;
+  const {isAuthorized} = useMe()
+  
   const isMounted = useIsMounted();
   if (!isMounted) {
     return (
@@ -89,14 +87,7 @@ export function Sidebar({
               <Logo className="w-32 h-14" />
             </div>
             <MenuRender />
-              {/* <a
-                href={`${process.env.NEXT_PUBLIC_ADMIN_URL}/register`}
-                target="_blank"
-                rel="noreferrer"
-                className="focus:ring-accent-700 flex h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-brand-dark focus:shadow focus:outline-none focus:ring-1 sm:inline-flex uppercase"
-              >
-                Suscribirme
-              </a> */}
+
           </nav>
         </div>
       </Scrollbar>
