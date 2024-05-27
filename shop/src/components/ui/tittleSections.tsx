@@ -38,7 +38,7 @@ export const Title: React.FC<CollapseProps> = ({
           + {buttonText}
         </button>
         {isBack && (
-          <div className="flex mt-3 relative text-white z-10">
+          <div className="flex mt-3 relative text-white z-10 flex-col lg:flex-row">
             <Link href={routes.home}>HOME</Link> / {textBack}
           </div>
         )}
