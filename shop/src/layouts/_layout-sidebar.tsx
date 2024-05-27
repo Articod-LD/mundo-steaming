@@ -1,9 +1,11 @@
 import { HomeIcon } from "@/components/icons/home-icon";
+import Button from "@/components/ui/button";
 import ActiveLink from "@/components/ui/links/active-link";
+import AnchorLink from "@/components/ui/links/anchor-link";
 import Logo from "@/components/ui/logo";
 import Scrollbar from "@/components/ui/scrollbar";
 import routes from "@/config/routes";
-import { useMe } from "@/data/user";
+import { useLogoutMutation, useMe } from "@/data/user";
 import { useIsMounted } from "@/lib/hooks/use-is-mounted";
 import classNames from "classnames";
 
@@ -43,7 +45,7 @@ function GeneralMenu() {
 
 function MenuRender() {
   const {isAuthorized} = useMe()
-  
+  const { mutate: logout } = useLogoutMutation();
   const isMounted = useIsMounted();
   if (!isMounted) {
     return (
@@ -53,14 +55,24 @@ function MenuRender() {
   return (
     <div className="flex flex-col gap-3">
       <GeneralMenu />
-      {isAuthorized && (
-        <button
+      {isAuthorized ? (
+        <Button
           type="button"
-          className="flex items-center justify-center gap-5 px-4 hover:bg-light-300 hover:dark:bg-dark-300"
+          variant="text"
+          className="transition-fill-colors uppercase transition ease-in-out hover:scale-105 duration-300"
+          onClick={() => logout()}
         >
           CERRAR SESIÓN
-        </button>
+        </Button>
+      ) : (
+        <AnchorLink
+          href={routes.login}
+          className="transition-fill-colors uppercase transition ease-in-out hover:scale-105 duration-300 border-b-2 border-brand"
+        >
+          Login
+        </AnchorLink>
       )}
+    
     </div>
   );
 }
