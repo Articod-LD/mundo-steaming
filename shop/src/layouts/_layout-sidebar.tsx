@@ -67,7 +67,7 @@ function MenuRender() {
       ) : (
         <AnchorLink
           href={routes.login}
-          className="transition-fill-colors uppercase transition ease-in-out hover:scale-105 duration-300 border-b-2 border-brand"
+          className="text-center transition-fill-colors uppercase transition ease-in-out hover:scale-105 duration-300 border-2 border-brand"
         >
           Login
         </AnchorLink>
