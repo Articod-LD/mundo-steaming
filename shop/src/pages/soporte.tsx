@@ -14,8 +14,8 @@ const Login: NextPageWithLayout = () => {
         textBack="SOPORTE"
         img="/contacto.png"
       />
-      <div className="mt-24 px-5 sm:px-28 w-full flex h-auto sm:flex-row flex-col">
-        <div className="w-full sm:w-1/2 h-full sm:pr-56">
+      <div className="mt-24 px-5 lg:px-28 w-full flex h-auto lg:flex-row flex-col">
+        <div className="w-full lg:w-1/2 h-full lg:pr-56">
           <span className="text-base">CONTÁCTENOS</span>
           <h3 className="text-4xl font-bold">
             ¿TIENES PREGUNTAS? ¡PONTE EN CONTACTO!
@@ -34,7 +34,7 @@ const Login: NextPageWithLayout = () => {
             <p>+57 300 300 9090</p>
           </div>
         </div>
-        <div className="w-full sm:w-1/2 h-full pb-10">
+        <div className="w-full lg:w-1/2 h-full pb-10">
           <div className="w-full">
             <form className="border border-black shadow-md rounded-xl px-8 pt-6 pb-8 mb-4">
               <div className="mb-4">

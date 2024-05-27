@@ -17,7 +17,7 @@ const Login: NextPageWithLayout = () => {
         img="/sobreNosotrospng.png"
       />
 
-      <div className="mt-24 px-5 sm:px-20 w-full flex h-[560px] flex-col sm:flex-row">
+      <div className="mt-24 px-5 lg:px-20 w-full flex h-[560px] flex-col lg:flex-row">
         <div className="w-full sm:w-1/2 h-full relative">
           <Image
             src={`/contacto/banner.png`}
@@ -27,7 +27,7 @@ const Login: NextPageWithLayout = () => {
             alt="img banner"
           />
         </div>
-        <div className="w-full sm:w-1/2 sm:pl-12 sm:py-28">
+        <div className="w-full lg:w-1/2 sm:pl-12 lg:py-28">
           <span className="text-base">Lorem ipsum dolor sit</span>
           <h3 className="text-4xl font-bold">SOBRE NOSOTROS</h3>
           <p className="text-base mt-3">
@@ -47,8 +47,8 @@ const Login: NextPageWithLayout = () => {
         </div>
       </div>
 
-      <div className="mt-24 px-5 sm:px-20 w-full flex h-[160px] flex-col sm:flex-row relative">
-        <div className="w-full sm:w-1/3">
+      <div className="mt-24 px-5 lg:px-20 w-full flex h-[160px] flex-col lg:flex-row relative">
+        <div className="w-full lg:w-1/3">
           <span className="text-base">Lorem ipsum dolor sit</span>
           <h3 className="text-4xl font-bold">NUESTROS BENEFICIOS</h3>
           <p className="text-base mt-3 sm:mr-32">
@@ -57,7 +57,7 @@ const Login: NextPageWithLayout = () => {
             volutpat.
           </p>
         </div>
-        <div className="w-full sm:w-2/3 grid grid-cols-4 gap-3">
+        <div className="w-full lg:w-2/3 grid grid-cols-4 gap-3">
           <div className="flex justify-center items-center flex-col">
             <MovieIcon className="text-brand h-20 w-20" />
             <div>
@@ -93,7 +93,7 @@ const Login: NextPageWithLayout = () => {
         </div>
       </div>
 
-      <div className="mt-48 sm:mt-24 sm:px-20 w-full flex h-[505px] relative">
+      <div className="mt-48 lg:mt-24 lg:px-20 w-full flex h-[505px] relative">
         <iframe
           className="w-full h-full"
           src="https://www.youtube.com/embed/73_1biulkYk?si=gyIurToe91pnELpB"
