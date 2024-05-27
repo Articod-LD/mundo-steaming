@@ -25,10 +25,6 @@ const MenuItems = [
     path: routes.home,
   },
   {
-    label: "tienda",
-    path: routes.tienda,
-  },
-  {
     label: "Sobre nosotros",
     path: routes.sobre_nosotros,
   },
@@ -92,6 +88,8 @@ export default function Header({
   showMenu,
 }: HeaderProps) {
   const { me } = useMe();
+  const isLogin = typeof me !== "undefined";
+
 
   const [plataforma] = useState(process.env.NEXT_PUBLIC_PLATAFORMA);
 
@@ -109,18 +107,25 @@ export default function Header({
         {showMenu && <MenuRender />}
         <AnchorLink
           href={routes.dashboard}
-          className="focus:ring-accent-700 hidden h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-red-900 focus:shadow focus:outline-none focus:ring-1 sm:inline-flex uppercase hover:scale-105"
+          className={classNames(
+            "focus:ring-accent-700 h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-red-900 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105",
+            isLogin ? "inline-flex" : "hidden"
+          )}
         >
-          {me ? "Dashboard" : "Suscribirme"}
+                  {me ? "Dashboard" : "Suscribirme"}
+
         </AnchorLink>
       </div>
       {showHamburger && showMenu && (
         <div className="flex gap-3 sm:hidden">
           <AnchorLink
             href={routes.dashboard}
-            className="focus:ring-accent-700 h-9 shrink-0 justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-red-900 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105 flex items-center"
+            className={classNames(
+              "focus:ring-accent-700 h-9 shrink-0 justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-red-900 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105 flex items-center",
+              me ? "block" : "hidden"
+            )}
           >
-            {me ? "Dashboard" : "Suscribirme"}
+            Dashboard
           </AnchorLink>
           <Hamburger
             isToggle={isCollapse}
