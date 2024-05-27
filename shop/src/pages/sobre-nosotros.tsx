@@ -57,7 +57,7 @@ const Login: NextPageWithLayout = () => {
             volutpat.
           </p>
         </div>
-        <div className="w-full lg:w-2/3 grid grid-cols-4 gap-3">
+        <div className="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="flex justify-center items-center flex-col">
             <MovieIcon className="text-brand h-20 w-20" />
             <div>

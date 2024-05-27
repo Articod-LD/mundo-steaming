@@ -67,7 +67,7 @@ function MenuRender() {
 
 export function Sidebar({
   isCollapse,
-  className = "flex sm:hidden fixed bottom-0 z-20 pt-[82px]",
+  className = "flex sm:hidden fixed bottom-0 z-50 pt-[90px]",
 }: {
   isCollapse?: boolean;
   className?: string;
@@ -84,7 +84,7 @@ export function Sidebar({
         <div className="flex h-full w-full flex-col">
           <nav className="flex flex-col gap-14">
             <div className="w-full flex justify-center">
-              <Logo className="w-32 h-14" />
+              <Logo className="w-32" />
             </div>
             <MenuRender />
 
