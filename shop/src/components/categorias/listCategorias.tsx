@@ -6,7 +6,7 @@ export const ListCategorias: React.FC<{}> = () => {
     <section>
       <Title title="Categorias" />
 
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-5 mt-7">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-7">
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
