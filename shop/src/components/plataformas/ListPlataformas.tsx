@@ -34,7 +34,7 @@ const ListPlataformas: React.FC<{}> = () => {
 
   return (
     <section>
-      <Title title="Populares" />
+      <Title title="Plataformas Disponibles" />
       {loading ? (
         <h1 className="text-2xl text-white">Cargando...</h1>
       ) : plataformas.length > 0 ? (

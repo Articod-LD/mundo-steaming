@@ -61,8 +61,9 @@ export default function Dashboard({
           )}
         </Card>
       )}
-
-      <ListPlataformas />
+      <div className="mt-10">
+        <ListPlataformas />
+      </div>
     </>
   );
 }
