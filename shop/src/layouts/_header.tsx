@@ -88,13 +88,10 @@ export default function Header({
   showMenu,
 }: HeaderProps) {
   const { me } = useMe();
-  const isLogin = typeof me !== "undefined";
 
   const [plataforma] = useState(process.env.NEXT_PUBLIC_PLATAFORMA);
-  console.log(isLogin);
 
   const isLogin = typeof me !== "undefined";
-  console.log(isLogin);
 
   return (
     <header
