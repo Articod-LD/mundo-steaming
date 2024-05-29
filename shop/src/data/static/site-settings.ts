@@ -90,6 +90,19 @@ export const siteSettings: any = {
           },
         ],
       },
+      configuracion: {
+        href: routes.dashboard,
+        label: "Configuracion",
+        icon: "DashboardIcon",
+        childMenu: [
+          {
+            href: routes.logout,
+            label: "Cerrar Sesion",
+            icon: "UsersIcon",
+            permissions: ["customer"],
+          },
+        ],
+      },
     },
     provider: {
       root: {
@@ -102,6 +115,19 @@ export const siteSettings: any = {
             label: "Plataformas",
             icon: "ProductsIcon",
             permissions: ["provider", "super_admin"],
+          },
+        ],
+      },
+      configuracion: {
+        href: routes.dashboard,
+        label: "Configuracion",
+        icon: "DashboardIcon",
+        childMenu: [
+          {
+            href: routes.logout,
+            label: "Cerrar Sesion",
+            icon: "UsersIcon",
+            permissions: ["provider"],
           },
         ],
       },
