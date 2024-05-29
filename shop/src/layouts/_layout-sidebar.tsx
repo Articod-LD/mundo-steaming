@@ -8,6 +8,7 @@ import routes from "@/config/routes";
 import { useLogoutMutation, useMe } from "@/data/user";
 import { useIsMounted } from "@/lib/hooks/use-is-mounted";
 import classNames from "classnames";
+import { useEffect, useRef } from "react";
 
 interface NavLinkProps {
   href: string;
@@ -30,11 +31,12 @@ const MenuItems = [
   },
 ];
 
-function GeneralMenu() {
+function GeneralMenu({setcolapse}:{setcolapse:(sCollapsed:boolean)=>void}) {
   return MenuItems.map((item) => (
     <ActiveLink
       key={item.label}
       href={item.path}
+      onClick={()=>setcolapse(false)}
       className="flex items-center justify-center gap-5 px-4 hover:bg-light-300 hover:dark:bg-dark-300"
       activeClassName="text-brand"
     >
@@ -43,8 +45,8 @@ function GeneralMenu() {
   ));
 }
 
-function MenuRender() {
-  const {isAuthorized} = useMe()
+function MenuRender({setcolapse}:{setcolapse:(sCollapsed: boolean)=>void}) {
+  const { isAuthorized } = useMe();
   const { mutate: logout } = useLogoutMutation();
   const isMounted = useIsMounted();
   if (!isMounted) {
@@ -54,25 +56,28 @@ function MenuRender() {
   }
   return (
     <div className="flex flex-col gap-3">
-      <GeneralMenu />
+      <GeneralMenu setcolapse={setcolapse}/>
       {isAuthorized ? (
         <Button
           type="button"
           variant="text"
           className="transition-fill-colors uppercase transition ease-in-out hover:scale-105 duration-300"
-          onClick={() => logout()}
+          onClick={() => {
+            logout()
+            setcolapse(false)
+          }}
         >
           CERRAR SESIÓN
         </Button>
       ) : (
         <AnchorLink
           href={routes.login}
+          onClick={()=>setcolapse(false)}
           className="text-center transition-fill-colors uppercase transition ease-in-out hover:scale-105 duration-300 border-2 border-brand"
         >
           Login
         </AnchorLink>
       )}
-    
     </div>
   );
 }
@@ -80,13 +85,33 @@ function MenuRender() {
 export function Sidebar({
   isCollapse,
   className = "flex sm:hidden fixed bottom-0 z-50 pt-[90px]",
+  setcolapse
 }: {
   isCollapse?: boolean;
   className?: string;
+  setcolapse: (isCollapsed: boolean) => void;
 }) {
+
+
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+      setcolapse(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <aside
-      className={classNames(
+    ref={sidebarRef}
+    className={classNames(
         "h-full flex-col justify-between overflow-y-auto border-r border-light-400 bg-light-100 text-dark-900 dark:border-0 dark:bg-dark-200",
         isCollapse ? "w-60" : "w-[0px]",
         className
@@ -98,8 +123,7 @@ export function Sidebar({
             <div className="w-full flex justify-center">
               <Logo className="w-32" />
             </div>
-            <MenuRender />
-
+            <MenuRender setcolapse={setcolapse}/>
           </nav>
         </div>
       </Scrollbar>

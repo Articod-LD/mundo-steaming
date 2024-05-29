@@ -29,9 +29,13 @@ export default function Layout({
   }
 
   useEffect(() => {
+
     if (breakpoint == "xs") {
+
+    
       setCollapse(false);
     }
+
   }, [breakpoint]);
 
   return (
@@ -49,7 +53,7 @@ export default function Layout({
           showMenu={showMenu}
         />
         <div className="flex flex-1">
-          <Sidebar isCollapse={collapse} />
+          <Sidebar isCollapse={collapse} setcolapse={setCollapse} />
           <main
             className={classNames(
               "flex w-full flex-col",
