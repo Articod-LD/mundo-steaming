@@ -113,7 +113,7 @@ export default function Header({
               isLogin ? "hidden lg:flex" : "hidden"
             )}
           >
-            Dashboard1231
+            Dashboard
           </AnchorLink>
         )}
       </div>

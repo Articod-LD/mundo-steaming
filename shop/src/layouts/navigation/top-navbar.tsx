@@ -8,7 +8,7 @@ const Navbar = () => {
   const { toggleSidebar } = useUI();
   const [miniSidebar, setMiniSidebar] = useAtom(miniSidebarInitialValue);
   return (
-    <header className="fixed top-0 z-40 w-full bg-black shadow sm:hidden h-[94px]">
+    <header className="fixed top-0 z-40 w-full bg-black shadow lg:hidden h-[94px]">
       <nav className="flex items-center justify-between px-5 md:px-8 h-full">
         <Logo />
         <motion.button
