@@ -47,7 +47,7 @@ const Login: NextPageWithLayout = () => {
         </div>
       </div>
 
-      <div className="mt-24 px-5 lg:px-20 w-full flex h-[160px] flex-col lg:flex-row relative">
+      <div className="mt-24 px-5 lg:px-20 w-full flex flex-col lg:flex-row relative">
         <div className="w-full lg:w-1/3">
           <span className="text-base">Lorem ipsum dolor sit</span>
           <h3 className="text-4xl font-bold">NUESTROS BENEFICIOS</h3>
