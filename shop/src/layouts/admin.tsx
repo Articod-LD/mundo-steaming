@@ -128,8 +128,8 @@ const AdminLayout = ({ children }: React.PropsWithChildren<{}>) => {
       <div className="flex flex-1">
         <aside
           className={classNames(
-            "fixed bottom-0 z-10 hidden h-full w-72 bg-black shadow transition-[width] duration-300 lg:block",
-            width >= RESPONSIVE_WIDTH && "pt-10",
+            "fixed bottom-0 z-10 hidden h-full w-72 bg-black shadow transition-[width] duration-300 lg:block ",
+            width >= RESPONSIVE_WIDTH && "",
             miniSidebar && width >= RESPONSIVE_WIDTH ? "lg:w-24" : "lg:w-76"
           )}
         >
