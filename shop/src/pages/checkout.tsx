@@ -35,7 +35,7 @@ export default function Dashboard(props: any) {
   };
 
   return (
-    <div className="w-1/2 mx-auto bg-gray-100 shadow-md rounded-md overflow-hidden mt-16">
+    <div className="w-full lg:w-1/2 mx-auto bg-gray-100 shadow-md rounded-md overflow-hidden mt-16">
       <div className="bg-brand text-white p-4 flex justify-between">
         <div className="font-bold text-lg">Pago con tarjeta</div>
         <div className="text-lg">
