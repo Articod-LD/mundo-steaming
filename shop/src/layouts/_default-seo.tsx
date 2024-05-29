@@ -34,7 +34,7 @@ const DefaultSeo = () => {
       titleTemplate={`${
         settings?.seo?.metaTitle || settings?.siteTitle || "Mundo Streaming"
       } | %s`}
-      defaultTitle="CombiPremium"
+      defaultTitle="MundoStreaming"
       description={settings?.seo?.metaDescription || settings?.siteSubtitle}
       canonical={settings?.seo?.canonicalUrl}
       openGraph={{
