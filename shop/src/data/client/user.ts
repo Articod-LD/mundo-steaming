@@ -75,6 +75,13 @@ export const userClient = {
       ...params,
     });
   },
+
+  fetchPreguntas: ({ ...params }: Partial<UserQueryOptions>) => {
+    return HttpClient.get<ISolicitudPaginator>(API_ENDPOINTS.SOPORTE_LIST, {
+      ...params,
+    });
+  },
+
   fetchOneClients: (params: Partial<{ ClientId: string }>) => {
     return HttpClient.get<User>(API_ENDPOINTS.ONE_CLIENT + params.ClientId);
   },
@@ -128,5 +135,9 @@ export const userClient = {
 
   updatewalletClient({ variables }: { variables: walletInput }) {
     return HttpClient.post<any>(API_ENDPOINTS.UPDATE_WALLET_CLIENT, variables);
+  },
+
+  soporte: (variables: any) => {
+    return HttpClient.post<AuthResponse>(API_ENDPOINTS.SOPORTE, variables);
   },
 };

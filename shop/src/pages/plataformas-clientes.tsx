@@ -27,7 +27,7 @@ export default function Dashboard({
   }
   return (
     <>
-      <Title title="Plataformas Clientes" />
+      <Title title="Plataformas Suscritas" />
       {loading ? (
         <h1 className="text-2xl text-white">Cargando...</h1>
       ) : (
@@ -61,6 +61,9 @@ export default function Dashboard({
           )}
         </Card>
       )}
+      <div className="mt-10">
+        <ListPlataformas />
+      </div>
     </>
   );
 }

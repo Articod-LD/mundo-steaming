@@ -1,13 +1,24 @@
+import { useState } from "react";
 import Image from "../ui/image";
 import { Title } from "../ui/tittleSections";
 
+const categorias = [1, 2, 3, 4, 5, 6, 7, 8];
+
 export const ListCategorias: React.FC<{}> = () => {
+  const [verTodas, setVerTodas] = useState(false);
+
+  const handleVerTodas = () => {
+    setVerTodas(true);
+  };
+
+  const categoriasParaMostrar = verTodas ? categorias : categorias.slice(0, 4);
+
   return (
     <section>
       <Title title="Categorias" />
 
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-5 mt-7">
-        {[1, 2, 3, 4].map((i) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-7">
+        {categoriasParaMostrar.map((i) => (
           <div
             key={i}
             className="bg-white h-[300px] rounded-xl overflow-hidden relative"
@@ -25,11 +36,16 @@ export const ListCategorias: React.FC<{}> = () => {
           </div>
         ))}
       </div>
-      <div className="w-full flex justify-center items-center mt-3">
-        <button className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300  hover:bg-red-900">
-          Ver todas
-        </button>
-      </div>
+      {!verTodas && (
+        <div className="w-full flex justify-center items-center mt-3">
+          <button
+            onClick={handleVerTodas}
+            className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300 hover:bg-red-900"
+          >
+            Ver todas
+          </button>
+        </div>
+      )}
     </section>
   );
 };

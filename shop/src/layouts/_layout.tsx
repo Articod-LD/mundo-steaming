@@ -19,16 +19,23 @@ export default function Layout({
 }: React.PropsWithChildren<{ subFooter?: boolean; showMenu?: boolean }>) {
   const breakpoint = useBreakpoint();
   const isMounted = useIsMounted();
-  const { lightLogo } = siteSettings;
+  const { lightLogo, darkLogo } = siteSettings;
+
+  const [plataforma] = useState(process.env.NEXT_PUBLIC_PLATAFORMA);
+
   let [collapse, setCollapse] = useState(false);
   function toggleSidebar() {
     setCollapse((prev) => !prev);
   }
 
   useEffect(() => {
+
     if (breakpoint == "xs") {
+
+    
       setCollapse(false);
     }
+
   }, [breakpoint]);
 
   return (
@@ -46,7 +53,7 @@ export default function Layout({
           showMenu={showMenu}
         />
         <div className="flex flex-1">
-          <Sidebar isCollapse={collapse} />
+          <Sidebar isCollapse={collapse} setcolapse={setCollapse} />
           <main
             className={classNames(
               "flex w-full flex-col",
@@ -63,8 +70,12 @@ export default function Layout({
           <section className="bg-black text-white flex flex-col">
             <div className="flex flex-col justify-center items-center py-12">
               <Image
-                className="w-[152px] h-[70px]"
-                src={lightLogo}
+                className={
+                  plataforma === "COMBO"
+                    ? "w-[152px] h-auto"
+                    : "w-[152px] h-[70px]"
+                }
+                src={plataforma === "COMBO" ? darkLogo : lightLogo}
                 alt="Logo Mundo Streaming"
               />
               <div className="flex gap-3 mt-6">

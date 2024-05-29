@@ -1,8 +1,10 @@
 import Logo from "@/assets/images/Logo.svg";
+import Logo2 from "@/assets/images/Logo2.png";
 import routes from "@/config/routes";
 
 export const siteSettings: any = {
   lightLogo: Logo,
+  darkLogo: Logo2,
   width: 128,
   height: 40,
   avatar: {
@@ -52,6 +54,25 @@ export const siteSettings: any = {
             icon: "ProductsIcon",
             permissions: ["super_admin"],
           },
+          {
+            href: routes.preguntas,
+            label: "Preguntas",
+            icon: "ProductsIcon",
+            permissions: ["super_admin"],
+          },
+        ],
+      },
+      configuracion: {
+        href: routes.dashboard,
+        label: "Configuracion",
+        icon: "DashboardIcon",
+        childMenu: [
+          {
+            href: routes.logout,
+            label: "Cerrar Sesion",
+            icon: "UsersIcon",
+            permissions: ["super_admin"],
+          },
         ],
       },
     },
@@ -69,6 +90,19 @@ export const siteSettings: any = {
           },
         ],
       },
+      configuracion: {
+        href: routes.dashboard,
+        label: "Configuracion",
+        icon: "DashboardIcon",
+        childMenu: [
+          {
+            href: routes.logout,
+            label: "Cerrar Sesion",
+            icon: "UsersIcon",
+            permissions: ["customer"],
+          },
+        ],
+      },
     },
     provider: {
       root: {
@@ -81,6 +115,19 @@ export const siteSettings: any = {
             label: "Plataformas",
             icon: "ProductsIcon",
             permissions: ["provider", "super_admin"],
+          },
+        ],
+      },
+      configuracion: {
+        href: routes.dashboard,
+        label: "Configuracion",
+        icon: "DashboardIcon",
+        childMenu: [
+          {
+            href: routes.logout,
+            label: "Cerrar Sesion",
+            icon: "UsersIcon",
+            permissions: ["provider"],
           },
         ],
       },

@@ -42,6 +42,15 @@ export function useLogin() {
   });
 }
 
+export function useSoporte() {
+  return useMutation({
+    mutationFn: userClient.soporte,
+    onSuccess() {
+      toast.success("Pregunta Enviada Correctamente");
+    },
+  });
+}
+
 export const useRegisterMutation = () => {
   const queryClient = useQueryClient();
 
@@ -123,6 +132,23 @@ export const useSolicitudesQuery = (params: Partial<QueryOptionsType>) => {
   const { data, isLoading, error } = useQuery<ISolicitudPaginator, Error>(
     [API_ENDPOINTS.SOLICITUDES_LIST, params],
     () => userClient.fetchSolicitudes(params),
+    {
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    solicitudes: data?.data ?? [],
+    paginatorInfo: mapPaginatorData(data as any),
+    loading: isLoading,
+    error,
+  };
+};
+
+export const usePreguntasQuery = (params: Partial<QueryOptionsType>) => {
+  const { data, isLoading, error } = useQuery<ISolicitudPaginator, Error>(
+    [API_ENDPOINTS.SOPORTE_LIST, params],
+    () => userClient.fetchPreguntas(params),
     {
       keepPreviousData: true,
     }

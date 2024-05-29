@@ -27,8 +27,8 @@ const PlataformasAdmin = ({ plataformas }: { plataformas: Plataforma[] }) => {
   }
 
   return (
-    <div className="w-full flex justify-start ">
-      <div className="overflow-hidden rounded shadow bg-white w-1/2">
+    <div className="w-full flex justify-start">
+      <div className="overflow-hidden rounded shadow bg-white lg:w-1/2 w-full">
         <div className="grid grid-cols-8 grid-rows-1 gap-4 mt-6 text-brand text-center font-bold">
           <div></div>
           <div className="col-span-3">Item</div>

@@ -1,10 +1,14 @@
 import { HomeIcon } from "@/components/icons/home-icon";
+import Button from "@/components/ui/button";
 import ActiveLink from "@/components/ui/links/active-link";
+import AnchorLink from "@/components/ui/links/anchor-link";
 import Logo from "@/components/ui/logo";
 import Scrollbar from "@/components/ui/scrollbar";
 import routes from "@/config/routes";
+import { useLogoutMutation, useMe } from "@/data/user";
 import { useIsMounted } from "@/lib/hooks/use-is-mounted";
 import classNames from "classnames";
+import { useEffect, useRef } from "react";
 
 interface NavLinkProps {
   href: string;
@@ -18,10 +22,6 @@ const MenuItems = [
     path: routes.home,
   },
   {
-    label: "tienda",
-    path: routes.tienda,
-  },
-  {
     label: "Sobre nosotros",
     path: routes.sobre_nosotros,
   },
@@ -31,11 +31,16 @@ const MenuItems = [
   },
 ];
 
-function GeneralMenu() {
+function GeneralMenu({
+  setcolapse,
+}: {
+  setcolapse: (sCollapsed: boolean) => void;
+}) {
   return MenuItems.map((item) => (
     <ActiveLink
       key={item.label}
       href={item.path}
+      onClick={() => setcolapse(false)}
       className="flex items-center justify-center gap-5 px-4 hover:bg-light-300 hover:dark:bg-dark-300"
       activeClassName="text-brand"
     >
@@ -44,8 +49,13 @@ function GeneralMenu() {
   ));
 }
 
-function MenuRender() {
-  let isAuthorized = true;
+function MenuRender({
+  setcolapse,
+}: {
+  setcolapse: (sCollapsed: boolean) => void;
+}) {
+  const { isAuthorized } = useMe();
+  const { mutate: logout } = useLogoutMutation();
   const isMounted = useIsMounted();
   if (!isMounted) {
     return (
@@ -54,14 +64,27 @@ function MenuRender() {
   }
   return (
     <div className="flex flex-col gap-3">
-      <GeneralMenu />
-      {isAuthorized && (
-        <button
+      <GeneralMenu setcolapse={setcolapse} />
+      {isAuthorized ? (
+        <Button
           type="button"
-          className="flex items-center justify-center gap-5 px-4 hover:bg-light-300 hover:dark:bg-dark-300"
+          variant="text"
+          className="transition-fill-colors uppercase transition ease-in-out hover:scale-105 duration-300"
+          onClick={() => {
+            logout();
+            setcolapse(false);
+          }}
         >
           CERRAR SESIÓN
-        </button>
+        </Button>
+      ) : (
+        <AnchorLink
+          href={routes.login}
+          onClick={() => setcolapse(false)}
+          className="text-center transition-fill-colors uppercase transition ease-in-out hover:scale-105 duration-300 border-2 border-brand"
+        >
+          Login
+        </AnchorLink>
       )}
     </div>
   );
@@ -69,13 +92,34 @@ function MenuRender() {
 
 export function Sidebar({
   isCollapse,
-  className = "flex sm:hidden fixed bottom-0 z-20 pt-[82px]",
+  className = "flex sm:hidden fixed bottom-0 z-50 pt-[90px]",
+  setcolapse,
 }: {
   isCollapse?: boolean;
   className?: string;
+  setcolapse: (isCollapsed: boolean) => void;
 }) {
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      sidebarRef.current &&
+      !sidebarRef.current.contains(event.target as Node)
+    ) {
+      setcolapse(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <aside
+      ref={sidebarRef}
       className={classNames(
         "h-full flex-col justify-between overflow-y-auto border-r border-light-400 bg-light-100 text-dark-900 dark:border-0 dark:bg-dark-200",
         isCollapse ? "w-60" : "w-[0px]",
@@ -86,17 +130,9 @@ export function Sidebar({
         <div className="flex h-full w-full flex-col">
           <nav className="flex flex-col gap-14">
             <div className="w-full flex justify-center">
-              <Logo className="w-32 h-14" />
+              <Logo className="w-32" />
             </div>
-            <MenuRender />
-            {/* <a
-              href={`${process.env.NEXT_PUBLIC_ADMIN_URL}/register`}
-              target="_blank"
-              rel="noreferrer"
-              className="focus:ring-accent-700 flex h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-brand-dark focus:shadow focus:outline-none focus:ring-1 sm:inline-flex uppercase"
-            >
-              Suscribirme
-            </a> */}
+            <MenuRender setcolapse={setcolapse} />
           </nav>
         </div>
       </Scrollbar>

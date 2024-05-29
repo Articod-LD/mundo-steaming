@@ -4,7 +4,7 @@ import { useLogoutMutation, useMe } from "@/data/user";
 import { useIsMounted } from "@/lib/hooks/use-is-mounted";
 import { useRouter } from "next/router";
 import { Menu } from "@/components/ui/dropdown";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Transition } from "@headlessui/react";
 import routes from "@/config/routes";
 import ActiveLink from "@/components/ui/links/active-link";
@@ -88,26 +88,37 @@ export default function Header({
   showMenu,
 }: HeaderProps) {
   const { me } = useMe();
+  const isLogin = typeof me !== "undefined";
+
+  const [plataforma] = useState(process.env.NEXT_PUBLIC_PLATAFORMA);
+  console.log(isLogin);
 
   const isLogin = typeof me !== "undefined";
   console.log(isLogin);
 
   return (
-    <header className="app-header sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-light-300 bg-light py-1 px-4 left-0 dark:border-dark-300 dark:bg-dark sm:h-[70px] sm:px-20">
+    <header
+      className={classNames(
+        "app-header sticky top-0 z-30 flex w-full items-center justify-between border-b border-light-300 bg-light py-1 px-4 left-0 dark:border-dark-300 dark:bg-dark sm:px-20 ",
+        plataforma === "COMBO" ? "h-24 sm:h-[100px]" : "h-16 sm:h-[80px]"
+      )}
+    >
       <div className="flex items-center gap-4">
         <Logo />
       </div>
       <div className="relative flex items-center gap-5 xs:gap-6 sm:gap-5">
         {showMenu && <MenuRender />}
-        <AnchorLink
-          href={routes.dashboard}
-          className={classNames(
-            "focus:ring-accent-700 h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-red-900 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105",
-            isLogin ? "inline-flex" : "hidden"
-          )}
-        >
-          Dashboard
-        </AnchorLink>
+        {showHamburger && (
+          <AnchorLink
+            href={routes.dashboard}
+            className={classNames(
+              "focus:ring-accent-700 h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-red-900 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105",
+              isLogin ? "hidden lg:flex" : "hidden"
+            )}
+          >
+            Dashboard
+          </AnchorLink>
+        )}
       </div>
       {showHamburger && showMenu && (
         <div className="flex gap-3 sm:hidden">

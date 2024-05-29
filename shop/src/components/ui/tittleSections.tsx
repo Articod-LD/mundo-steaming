@@ -24,7 +24,7 @@ export const Title: React.FC<CollapseProps> = ({
         buttonText && "flex justify-between mt-12"
       )}
     >
-      <div className="flex">
+      <div className="w-full flex lg:flex-row justify-between">
         <div className="inline-block relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-1/2 after:border-2 after:border-brand pb-2">
           <h4 className="font-bold text-3xl uppercase">{title}</h4>
         </div>

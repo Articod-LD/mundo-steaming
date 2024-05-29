@@ -17,5 +17,6 @@ const routes = {
   plataformasClientes: "/plataformas-clientes",
   solicitudesPlataformas: "/solicitud-plataforma",
   checkout: "/checkout",
+  preguntas: "/preguntas",
 };
 export default routes;

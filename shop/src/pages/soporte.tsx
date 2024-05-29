@@ -1,11 +1,50 @@
 import LoginForm from "@/components/auth/login-form";
 import { FacebookIcon } from "@/components/icons/social";
 import BannerBack from "@/components/ui/banner/BannerBack";
+import { useLogin, useSoporte } from "@/data/user";
 import AuthLayout from "@/layouts/_auth_layout";
 import Layout from "@/layouts/_layout";
 import { NextPageWithLayout } from "@/types";
+import { useForm, SubmitHandler } from "react-hook-form";
+import toast from "react-hot-toast";
+type Inputs = {
+  name: string;
+  email: string;
+  telefono: string;
+  pregunta: string;
+  isAcepted: any;
+};
 
 const Login: NextPageWithLayout = () => {
+  const { mutate, isLoading, error } = useSoporte();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<Inputs>();
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    mutate(data, {
+      onSuccess: (succes) => {
+        console.log("salio bien", succes);
+      },
+      onError: () => {
+        toast.error("ha ocurrido un error");
+      },
+    });
+
+    reset({
+      email: "",
+      isAcepted: false,
+      name: "",
+      pregunta: "",
+      telefono: "",
+    });
+  };
+
   return (
     <div className="w-full">
       <BannerBack
@@ -14,8 +53,8 @@ const Login: NextPageWithLayout = () => {
         textBack="SOPORTE"
         img="/contacto.png"
       />
-      <div className="mt-24 px-28 w-full flex h-[560px]">
-        <div className="w-1/2 h-full pr-56">
+      <div className="mt-24 px-5 lg:px-28 w-full flex h-auto lg:flex-row flex-col">
+        <div className="w-full lg:w-1/2 h-full lg:pr-56">
           <span className="text-base">CONTÁCTENOS</span>
           <h3 className="text-4xl font-bold">
             ¿TIENES PREGUNTAS? ¡PONTE EN CONTACTO!
@@ -34,9 +73,12 @@ const Login: NextPageWithLayout = () => {
             <p>+57 300 300 9090</p>
           </div>
         </div>
-        <div className="w-1/2 h-full">
+        <div className="w-full lg:w-1/2 h-full pb-10">
           <div className="w-full">
-            <form className="border border-black shadow-md rounded-xl px-8 pt-6 pb-8 mb-4">
+            <form
+              className="border border-black shadow-md rounded-xl px-8 pt-6 pb-8 mb-4"
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <div className="mb-4">
                 <label
                   className="block text-white text-sm font-bold mb-2"
@@ -46,10 +88,15 @@ const Login: NextPageWithLayout = () => {
                 </label>
                 <input
                   className="appearance-none border-2 border-white bg-transparent w-full text-white py-2 px-3 leading-tight focus:outline-none focus:border-brand"
-                  id="full-name"
                   type="text"
                   placeholder="Nombre Completo"
+                  {...register("name", { required: true })}
                 />
+                {errors.name && (
+                  <p role="alert" className="text-sm text-red-600">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
               <div className="mb-4 flex flex-wrap">
                 <div className="w-full md:w-1/2 md:pr-2">
@@ -63,7 +110,13 @@ const Login: NextPageWithLayout = () => {
                     className="appearance-none border-2 border-white bg-transparent w-full text-white py-2 px-3 leading-tight focus:outline-none focus:border-brand"
                     type="email"
                     placeholder="Correo Electrónico"
+                    {...register("email", { required: true })}
                   />
+                  {errors.email && (
+                    <p role="alert" className="text-sm text-red-600">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
                 <div className="w-full md:w-1/2 md:pl-2">
                   <label
@@ -75,7 +128,13 @@ const Login: NextPageWithLayout = () => {
                   <input
                     className="appearance-none border-2 border-white bg-transparent w-full text-white py-2 px-3 leading-tight focus:outline-none focus:border-brand"
                     placeholder="Teléfono"
+                    {...register("telefono", { required: true })}
                   />
+                  {errors.telefono && (
+                    <p role="alert" className="text-sm text-red-600">
+                      {errors.telefono.message}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="mb-4">
@@ -89,11 +148,21 @@ const Login: NextPageWithLayout = () => {
                   className="appearance-none border-2 border-white bg-transparent w-full text-white py-2 px-3 leading-tight focus:outline-none focus:border-brand"
                   id="message"
                   placeholder="Cuéntanos cómo podemos ayudarte"
+                  {...register("pregunta", { required: true })}
                 ></textarea>
+                {errors.pregunta && (
+                  <p role="alert" className="text-sm text-red-600">
+                    {errors.pregunta.message}
+                  </p>
+                )}
               </div>
               <div className="mb-4">
                 <label className="flex items-center cursor-pointer">
-                  <input className="mr-2 leading-tight" type="checkbox" />
+                  <input
+                    className="mr-2 leading-tight"
+                    type="checkbox"
+                    {...register("isAcepted", { required: true })}
+                  />
                   <span className="text-white text-sm">
                     Estoy de acuerdo con los términos y condiciones
                   </span>
@@ -102,7 +171,7 @@ const Login: NextPageWithLayout = () => {
               <div className="flex items-center justify-center">
                 <button
                   className="bg-brand  text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  type="button"
+                  type="submit"
                 >
                   Ponerse en Contacto
                 </button>

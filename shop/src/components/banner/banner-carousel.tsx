@@ -9,10 +9,15 @@ import { useRef } from "react";
 import { ChevronLeft } from "../icons/chevron.left";
 import { ChevronRight } from "../icons/chevron.right";
 import Image from "../ui/image";
+import { useMe } from "@/data/user";
+import Router from "next/router";
+import routes from "@/config/routes";
 
 export default function HeroCarousel() {
   const prevRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLDivElement>(null);
+
+  const { me } = useMe();
 
   return (
     <div className="relative">
@@ -34,7 +39,7 @@ export default function HeroCarousel() {
             <div className="w-full h-[740px] flex justify-center items-center md:justify-start">
               <Image
                 className="-z-10 opacity-60"
-                src="/hero.png"
+                src="/hero2.png"
                 layout="fill"
                 objectFit="cover"
                 quality={100}
@@ -51,9 +56,21 @@ export default function HeroCarousel() {
                   aliquam erat volutpat. Ut wisi enim ad minim veniam, quis
                   nostrud exerci tation ul
                 </p>
-                <button className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300  hover:bg-red-900 ">
-                  Suscribirme
-                </button>
+                {me ? (
+                  <button
+                    className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300  hover:bg-red-900"
+                    onClick={() => Router.push(routes.dashboard)}
+                  >
+                    Suscribirme
+                  </button>
+                ) : (
+                  <button
+                    className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300  hover:bg-red-900"
+                    onClick={() => Router.push(routes.login)}
+                  >
+                    Suscribirme
+                  </button>
+                )}
               </div>
             </div>
           </SwiperSlide>
