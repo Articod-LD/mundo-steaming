@@ -3,11 +3,16 @@ import { MovieIcon } from "@/components/icons/movie";
 import BannerBack from "@/components/ui/banner/BannerBack";
 import Image from "@/components/ui/image";
 import VideoPlayer from "@/components/ui/videoPlayer";
+import routes from "@/config/routes";
+import { useMe } from "@/data/user";
 import AuthLayout from "@/layouts/_auth_layout";
 import Layout from "@/layouts/_layout";
 import { NextPageWithLayout } from "@/types";
+import Router from "next/router";
 
 const Login: NextPageWithLayout = () => {
+  const { me } = useMe();
+
   return (
     <div className="w-full">
       <BannerBack
@@ -41,9 +46,21 @@ const Login: NextPageWithLayout = () => {
             blandit praesent luptatum zzril delenit augue duis dolore te feugait
             nulla facilisi.
           </p>
-          <button className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300  hover:bg-red-900 ">
-            Suscribirme
-          </button>
+          {me ? (
+            <button
+              className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300  hover:bg-red-900"
+              onClick={() => Router.push(routes.dashboard)}
+            >
+              Suscribirme
+            </button>
+          ) : (
+            <button
+              className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300  hover:bg-red-900"
+              onClick={() => Router.push(routes.login)}
+            >
+              Suscribirme
+            </button>
+          )}
         </div>
       </div>
 
