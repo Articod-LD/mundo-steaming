@@ -143,7 +143,7 @@ const AdminLayout = ({ children }: React.PropsWithChildren<{}>) => {
         <main
           className={classNames(
             "relative flex w-full flex-col justify-start transition-[padding] duration-300",
-            width >= RESPONSIVE_WIDTH ? "lg:pt-5" : "mt-5",
+            width >= RESPONSIVE_WIDTH ? "lg:pt-5" : "mt-24",
             miniSidebar && width >= RESPONSIVE_WIDTH ? "lg:pr-24" : "lg:pl-72"
           )}
         >

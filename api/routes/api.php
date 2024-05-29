@@ -3,6 +3,7 @@
 use App\Http\Controllers\CredencialesController;
 use App\Http\Controllers\PlataformaController;
 use App\Http\Controllers\SolicitudController;
+use App\Http\Controllers\SoporteController;
 use App\Http\Controllers\SuscripcionesController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -44,3 +45,6 @@ Route::post('/solicitud/aceptar/{solicitud_id}', [SolicitudController::class, 'a
 
 Route::get('/suscriptions/list', [SuscripcionesController::class, 'index']);
 Route::post('/suscriptions/register', [SuscripcionesController::class, 'create']);
+
+Route::post('/soporte/register', [SoporteController::class, 'create']);
+Route::get('/soporte/list', [SoporteController::class, 'soportes']);

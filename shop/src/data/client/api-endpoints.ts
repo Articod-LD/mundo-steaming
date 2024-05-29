@@ -17,4 +17,6 @@ export const API_ENDPOINTS = {
   ACEPTAR_SOLICITUD: "/solicitud/aceptar/",
   CREAR_SUSCRIPCION: "/suscriptions/register",
   UPDATE_WALLET_CLIENT: "/clientes/billtera/update",
+  SOPORTE: "/soporte/register",
+  SOPORTE_LIST: "/soporte/list",
 };

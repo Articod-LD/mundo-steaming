@@ -21,7 +21,7 @@ export default function Dashboard({
 
   return (
     <>
-      <Title title="Ventas" />
+      <Title title="Dashboard - Ventas" />
     </>
   );
 }

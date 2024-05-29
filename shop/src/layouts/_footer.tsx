@@ -11,7 +11,8 @@ const Footer = () => {
       )}
     >
       <div className="w-full flex justify-center font-bold py-3">
-        Mundostreaming © 2023. Todos los derechos reservados
+        {plataforma === "COMBO" ? "CombiPremium" : "Mundo Streaming"} © 2024.
+        Todos los derechos reservados
       </div>
     </footer>
   );

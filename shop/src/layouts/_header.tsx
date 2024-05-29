@@ -90,8 +90,8 @@ export default function Header({
   const { me } = useMe();
   const isLogin = typeof me !== "undefined";
 
-
   const [plataforma] = useState(process.env.NEXT_PUBLIC_PLATAFORMA);
+  console.log(isLogin);
 
   return (
     <header
@@ -105,16 +105,17 @@ export default function Header({
       </div>
       <div className="relative flex items-center gap-5 xs:gap-6 sm:gap-5">
         {showMenu && <MenuRender />}
-        <AnchorLink
-          href={routes.dashboard}
-          className={classNames(
-            "focus:ring-accent-700 h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-red-900 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105",
-            isLogin ? "inline-flex" : "hidden"
-          )}
-        >
-                  {me ? "Dashboard" : "Suscribirme"}
-
-        </AnchorLink>
+        {showHamburger && (
+          <AnchorLink
+            href={routes.dashboard}
+            className={classNames(
+              "focus:ring-accent-700 h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-red-900 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105",
+              isLogin ? "hidden lg:flex" : "hidden"
+            )}
+          >
+            Dashboard1231
+          </AnchorLink>
+        )}
       </div>
       {showHamburger && showMenu && (
         <div className="flex gap-3 sm:hidden">

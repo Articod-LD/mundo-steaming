@@ -54,6 +54,25 @@ export const siteSettings: any = {
             icon: "ProductsIcon",
             permissions: ["super_admin"],
           },
+          {
+            href: routes.preguntas,
+            label: "Preguntas",
+            icon: "ProductsIcon",
+            permissions: ["super_admin"],
+          },
+        ],
+      },
+      configuracion: {
+        href: routes.dashboard,
+        label: "Configuracion",
+        icon: "DashboardIcon",
+        childMenu: [
+          {
+            href: routes.logout,
+            label: "Cerrar Sesion",
+            icon: "UsersIcon",
+            permissions: ["super_admin"],
+          },
         ],
       },
     },
