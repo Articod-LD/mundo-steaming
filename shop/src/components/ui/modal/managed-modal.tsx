@@ -10,6 +10,8 @@ import DeleteSolicitud from "@/components/modals/deleteSolicitud";
 import AceptarSolicitud from "@/components/modals/aceptarSolicitud";
 import VerInfoPlataforma from "@/components/modals/verInfoPlataforma";
 import AgregateProvidersModal from "@/components/modals/agregarProviders";
+import CrearBannerModal from "@/components/modals/crearBanner";
+import CrearCategoriaModal from "@/components/modals/createCategoria";
 
 function renderModal(view: MODAL_VIEWS | undefined, data: any) {
   console.log(data);
@@ -28,6 +30,12 @@ function renderModal(view: MODAL_VIEWS | undefined, data: any) {
 
     case "CREAR_PLATAFORMA":
       return <CrearPlataformaModal plataforma={data} />;
+
+    case "CREAR_BANNER":
+      return <CrearBannerModal banner={data} />;
+
+    case "CREAR_CATEGORIA":
+      return <CrearCategoriaModal categorie={data} />;
 
     case "CLIENTE_SOLICITAR_PLATAFORMA":
       return <SolicitarPlataforma plataforma={data} />;

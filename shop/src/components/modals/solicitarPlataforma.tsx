@@ -67,7 +67,7 @@ function SolicitarPlataforma({ plataforma }: { plataforma: Plataforma }) {
       </h3>
       <div className="w-full flex items-center flex-col">
         <Image
-          src={plataforma.image_url}
+          src={plataforma.imagen}
           width={400}
           height={52}
           quality={100}

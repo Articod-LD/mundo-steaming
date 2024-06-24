@@ -9,7 +9,7 @@ import { useRef } from "react";
 import { ChevronLeft } from "../icons/chevron.left";
 import { ChevronRight } from "../icons/chevron.right";
 import Image from "../ui/image";
-import { useMe } from "@/data/user";
+import { useBannerQuery, useCategoriesQuery, useMe } from "@/data/user";
 import Router from "next/router";
 import routes from "@/config/routes";
 
@@ -18,6 +18,14 @@ export default function HeroCarousel() {
   const nextRef = useRef<HTMLDivElement>(null);
 
   const { me } = useMe();
+
+  const { banner, error, loading } = useBannerQuery({
+    limit: 20,
+  });
+
+  if (loading) {
+    return <h1>Cargando...</h1>;
+  }
 
   return (
     <div className="relative">
@@ -34,12 +42,12 @@ export default function HeroCarousel() {
           prevEl: ".prev",
         }}
       >
-        {[1, 2, 3].map((i) => (
+        {banner.map((item, i) => (
           <SwiperSlide key={i}>
             <div className="w-full h-[740px] flex justify-center items-center md:justify-start">
               <Image
                 className="-z-10 opacity-60"
-                src="/hero2.png"
+                src={item.imagen_url}
                 layout="fill"
                 objectFit="cover"
                 quality={100}
@@ -47,15 +55,8 @@ export default function HeroCarousel() {
               />
 
               <div className="px-20 w-[600px]">
-                <h1 className="font-bold text-5xl mb-3">
-                  LOREM IPSUM DOLOR SIT AMET
-                </h1>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed
-                  diam nonummy nibh euismod tincidunt ut laoreet dolore magna
-                  aliquam erat volutpat. Ut wisi enim ad minim veniam, quis
-                  nostrud exerci tation ul
-                </p>
+                <h1 className="font-bold text-5xl mb-3">{item.titulo}</h1>
+                <p>{item.texto}</p>
                 {me ? (
                   <button
                     className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300  hover:bg-red-900"

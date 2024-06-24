@@ -4,19 +4,31 @@ import Input from "../ui/input";
 import Button from "../ui/button";
 import { useState } from "react";
 import {
+  useRegisterBannerMutation,
+  useRegisterCategorieMutation,
   useRegisterPlataformaMutation,
   useUpdateProfileMutation,
 } from "@/data/user";
 import Alert from "../ui/alert";
-import { Plataforma, PlataformaInput } from "@/types";
+import {
+  Banner,
+  BannerInput,
+  Categorie,
+  CategorieInput,
+  Plataforma,
+  PlataformaInput,
+} from "@/types";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/data/client/api-endpoints";
 import { useModalAction } from "../ui/modal/modal.context";
 
-const createPlataformaFormSchema = yup.object().shape({
-  name: yup.string().required("El nombre es requerido"),
-  image_url: yup
+const createCategoriaFormSchema = yup.object().shape({
+  titulo: yup
+    .string()
+    .required("El título es requerido")
+    .max(255, "El título no puede tener más de 255 caracteres"),
+  imagen: yup
     .mixed()
     .required("La imagen es requerida")
     .test(
@@ -34,53 +46,34 @@ const createPlataformaFormSchema = yup.object().shape({
     .test("fileSize", "La imagen no puede ser mayor a 2MB", (value) => {
       return value && value[0]?.size <= 2 * 1024 * 1024; // 2MB
     }),
-  precio: yup
-    .string()
-    .required("El precio es requerido")
-    .matches(
-      /^\d+(\.\d{1,2})?$/,
-      "El precio debe ser un número válido con hasta 2 decimales"
-    ),
-  precio_provider: yup
-    .string()
-    .required("El precio es requerido")
-    .matches(
-      /^\d+(\.\d{1,2})?$/,
-      "El precio debe ser un número válido con hasta 2 decimales"
-    ),
 });
 
-function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
+function CrearCategoriaModal({ categorie }: { categorie?: Categorie }) {
+  console.log(categorie);
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { mutate: createPlataforma, isLoading } =
-    useRegisterPlataformaMutation();
+  const { mutate: createBanner, isLoading } = useRegisterCategorieMutation();
 
   const queryClient = useQueryClient();
   const { closeModal } = useModalAction();
 
-  function onSubmit({
-    image_url,
-    name,
-    precio,
-    precio_provider,
-  }: PlataformaInput) {
-    if (!plataforma) {
+  function onSubmit({ imagen, titulo }: CategorieInput) {
+    if (!categorie) {
       const formData = new FormData();
-      formData.append("name", name);
-      formData.append("image_url", image_url[0]);
-      formData.append("precio", precio);
-      formData.append("precio_provider", precio_provider);
+      formData.append("titulo", titulo);
+      formData.append("imagen", imagen[0]);
 
-      createPlataforma(formData, {
+      createBanner(formData, {
         onSuccess(data, variables, context) {
-          toast.success("Plataforma creada correctamente");
-          queryClient.invalidateQueries([API_ENDPOINTS.PLATAFORMA_LIST]);
+          toast.success("Banner creado correctamente");
+          queryClient.invalidateQueries([API_ENDPOINTS.CATEGORIE_LIST]);
           closeModal();
         },
         onError(error: any) {
           setErrorMessage(error.response.data.message);
         },
       });
+
       return;
     }
   }
@@ -88,60 +81,41 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
   return (
     <div className="relative w-80 sm:w-[512px] xl:w-[710px] bg-white rounded-lg py-6 px-8">
       <h3 className="text-brand text-2xl font-bold uppercase mb-5">
-        {plataforma ? "Actualizar" : "Crear"} Plataforma
+        {categorie ? "Actualizar" : "Crear"} Categoria
       </h3>
 
       <>
-        <Form<PlataformaInput>
-          validationSchema={createPlataformaFormSchema}
+        <Form<CategorieInput>
+          validationSchema={createCategoriaFormSchema}
           onSubmit={onSubmit}
         >
           {({ register, formState: { errors } }) => (
             <>
               <Input
-                label="Name"
-                {...register("name")}
+                label="Titulo"
+                {...register("titulo")}
                 variant="outline"
                 className="mb-4"
                 isEditar={true}
-                defaultValue={plataforma?.name}
-                error={errors?.name?.message!}
+                defaultValue={categorie?.titulo}
+                error={errors?.titulo?.message!}
               />
               <Input
-                label="Imagen Url"
+                label="Imagen"
                 type="file"
-                {...register("image_url")}
+                {...register("imagen")}
                 variant="outline"
                 className="mb-4"
                 isEditar={true}
-                error={errors?.image_url?.message!}
+                error={errors?.imagen?.message!}
               />
-              <Input
-                label="Precio"
-                type="Number"
-                {...register("precio")}
-                variant="outline"
-                className="mb-4"
-                isEditar={true}
-                defaultValue={plataforma?.precio}
-                error={errors?.precio?.message!}
-              />
-              <Input
-                label="Precio Proveedor"
-                type="Number"
-                {...register("precio_provider")}
-                variant="outline"
-                className="mb-4"
-                isEditar={true}
-                defaultValue={plataforma?.precio_provider}
-                error={errors?.precio?.message!}
-              />
+
               <Button
                 className="w-full uppercase"
                 isLoading={isLoading}
                 disabled={isLoading}
               >
-                {plataforma ? "Update" : "Register"}
+                {categorie ? "Update" : "Register"}
               </Button>
             </>
           )}
@@ -160,4 +134,4 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
   );
 }
 
-export default CrearPlataformaModal;
+export default CrearCategoriaModal;

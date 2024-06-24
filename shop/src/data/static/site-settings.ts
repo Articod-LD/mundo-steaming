@@ -60,6 +60,12 @@ export const siteSettings: any = {
             icon: "ProductsIcon",
             permissions: ["super_admin"],
           },
+          {
+            href: routes.editar_inicio,
+            label: "Editar Inicio",
+            icon: "ProductsIcon",
+            permissions: ["super_admin"],
+          },
         ],
       },
       configuracion: {

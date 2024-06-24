@@ -25,7 +25,10 @@ class PlataformaController extends Controller
     {
         return $this->repository->with(['credenciales' => function ($query) {
             $query->where('is_active', true);
-        }])->get();
+        }])->get()->map(function ($categoria) {
+            $categoria->imagen = url('images/' . $categoria->image_url);
+            return $categoria;
+        });
     }
 
     public function plataformasDisponibles()
@@ -40,13 +43,17 @@ class PlataformaController extends Controller
      */
     public function create(PlataformaCreateRequest $request)
     {
-        try {
-            $validatedData = $request->all();
-            // dd($validatedData);
-            return $this->repository->create($validatedData);
-        } catch (ShopException $e) {
-            throw new ShopException('COULD_NOT_CREATE_THE_RESOURCE');
-        }
+        $imageName = time() . '.' . $request->image_url->extension();
+        $request->image_url->move(public_path('images'), $imageName);
+
+        $response = suscriptionType::create([
+            'name' => $request->name,
+            'image_url' => $imageName,
+            'precio' => $request->precio,
+            'precio_provider' => $request->precio_provider,
+        ]);
+
+        return response()->json(['BannerItem' => $response], 200);
     }
 
     /**
@@ -84,8 +91,11 @@ class PlataformaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, string $plataforma_id)
     {
-        //
+        $banner = suscriptionType::find($plataforma_id);
+        $banner->delete();
+
+        return response()->json(['success' => 'Banner deleted successfully.']);
     }
 }

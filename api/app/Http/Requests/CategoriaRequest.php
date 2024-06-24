@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class PlataformaCreateRequest extends FormRequest
+class CategoriaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +24,11 @@ class PlataformaCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255', 'unique:suscription_types'],
-            'image_url' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'precio' => ['required', 'string'],
-            'precio_provider' => ['required', 'string'],
+            'titulo' => 'required|string|max:255',
+            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
+
 
     public function failedValidation(Validator $validator)
     {

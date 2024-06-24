@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\BannerController;
+use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\CredencialesController;
 use App\Http\Controllers\PlataformaController;
 use App\Http\Controllers\SolicitudController;
@@ -30,12 +32,13 @@ Route::get('/clientes/list', [UserController::class, 'clientes']);
 Route::get('/providers/list', [UserController::class, 'providers']);
 Route::get('/clientes/{client_id}', [UserController::class, 'findOne']);
 Route::post('/clientes/billtera/update', [UserController::class, 'updateWallet']);
-Route::post('/plataforma/register', [PlataformaController::class, 'create']);
-Route::get('/plataforma/list', [PlataformaController::class, 'index']);
 Route::post('/credencial/register', [CredencialesController::class, 'create']);
 Route::get('/credencial/list', [CredencialesController::class, 'index']);
 
 
+Route::get('/plataforma/list', [PlataformaController::class, 'index']);
+Route::delete('/plataforma/{plataforma_id}', [PlataformaController::class, 'destroy']);
+Route::post('/plataforma/register', [PlataformaController::class, 'create']);
 Route::get('/plataforma/disponibles', [PlataformaController::class, 'plataformasDisponibles']);
 
 Route::post('/solicitud/register', [SolicitudController::class, 'create']);
@@ -48,3 +51,11 @@ Route::post('/suscriptions/register', [SuscripcionesController::class, 'create']
 
 Route::post('/soporte/register', [SoporteController::class, 'create']);
 Route::get('/soporte/list', [SoporteController::class, 'soportes']);
+
+Route::post('/banner/register', [BannerController::class, 'create']);
+Route::get('/banner/list', [BannerController::class, 'index']);
+Route::get('/banner/{banner_id}', [BannerController::class, 'destroy']);
+
+Route::post('/categorie/register', [CategoriasController::class, 'store']);
+Route::get('/categorie/list', [CategoriasController::class, 'index']);
+Route::get('/categorie/{categorie_id}', [CategoriasController::class, 'destroy']);
