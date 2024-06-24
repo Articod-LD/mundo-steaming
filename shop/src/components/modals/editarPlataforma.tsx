@@ -50,19 +50,22 @@ function CrearPlataformaModal() {
     precio,
     precio_provider,
   }: PlataformaInput) {
-    createPlataforma(
-      { image_url, name, precio, precio_provider },
-      {
-        onSuccess(data, variables, context) {
-          toast.success("Plataforma creada correctamente");
-          queryClient.invalidateQueries([API_ENDPOINTS.PLATAFORMA_LIST]);
-          closeModal();
-        },
-        onError(error: any) {
-          setErrorMessage(error.response.data.message);
-        },
-      }
-    );
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("image_url", image_url[0]);
+    formData.append("precio", precio);
+    formData.append("precio_provider", precio_provider);
+
+    createPlataforma(formData, {
+      onSuccess(data, variables, context) {
+        toast.success("Plataforma creada correctamente");
+        queryClient.invalidateQueries([API_ENDPOINTS.PLATAFORMA_LIST]);
+        closeModal();
+      },
+      onError(error: any) {
+        setErrorMessage(error.response.data.message);
+      },
+    });
   }
 
   return (
@@ -87,7 +90,8 @@ function CrearPlataformaModal() {
                 error={errors?.name?.message!}
               />
               <Input
-                label="Imagen Url"
+                label="Imagen"
+                type="file"
                 {...register("image_url")}
                 variant="outline"
                 className="mb-4"
