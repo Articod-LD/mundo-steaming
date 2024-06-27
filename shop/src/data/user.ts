@@ -9,6 +9,8 @@ import Cookies from "js-cookie";
 import routes from "@/config/routes";
 import useAuth from "@/components/auth/use-auth";
 import {
+  Banner,
+  Categorie,
   ISolicitudPaginator,
   Plataforma,
   PlataformasPaginator,
@@ -178,6 +180,38 @@ export const usePlataformasQuery = (params: Partial<QueryOptionsType>) => {
   };
 };
 
+export const useCategoriesQuery = (params: Partial<QueryOptionsType>) => {
+  const { data, isLoading, error } = useQuery<Categorie[], Error>(
+    [API_ENDPOINTS.CATEGORIE_LIST, params],
+    () => userClient.fetchCategories(params),
+    {
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    categories: data ?? ([] as Categorie[]),
+    loading: isLoading,
+    error,
+  };
+};
+
+export const useBannerQuery = (params: Partial<QueryOptionsType>) => {
+  const { data, isLoading, error } = useQuery<Banner[], Error>(
+    [API_ENDPOINTS.BANNER_LIST, params],
+    () => userClient.fetchBanner(params),
+    {
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    banner: data ?? ([] as Banner[]),
+    loading: isLoading,
+    error,
+  };
+};
+
 export const usePlataformasDisponiblesQuery = (
   params: Partial<QueryOptionsType>
 ) => {
@@ -249,6 +283,38 @@ export const useRegisterPlataformaMutation = () => {
     onSettled() {
       queryClient.invalidateQueries({
         queryKey: [API_ENDPOINTS.PLATAFORMA_REGISTER],
+      });
+    },
+  });
+};
+
+export const useRegisterBannerMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.registerBanner,
+    onSuccess() {
+      toast.success("Registrado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.BANNER_REGISTER],
+      });
+    },
+  });
+};
+
+export const useRegisterCategorieMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.registerCategorie,
+    onSuccess() {
+      toast.success("Registrado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.CATEGORIE_REGISTER],
       });
     },
   });

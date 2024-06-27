@@ -19,4 +19,8 @@ export const API_ENDPOINTS = {
   UPDATE_WALLET_CLIENT: "/clientes/billtera/update",
   SOPORTE: "/soporte/register",
   SOPORTE_LIST: "/soporte/list",
+  CATEGORIE_LIST: "/categorie/list",
+  BANNER_LIST: "/banner/list",
+  BANNER_REGISTER: "/banner/register",
+  CATEGORIE_REGISTER: "/categorie/register",
 };

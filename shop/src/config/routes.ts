@@ -18,5 +18,6 @@ const routes = {
   solicitudesPlataformas: "/solicitud-plataforma",
   checkout: "/checkout",
   preguntas: "/preguntas",
+  editar_inicio: "/home",
 };
 export default routes;

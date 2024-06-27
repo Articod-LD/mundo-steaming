@@ -17,12 +17,23 @@ import { useModalAction } from "../ui/modal/modal.context";
 const createPlataformaFormSchema = yup.object().shape({
   name: yup.string().required("El nombre es requerido"),
   image_url: yup
-    .string()
-    .required("La URL de la imagen es requerida")
-    .matches(
-      /.(jpeg|jpg|gif|png)$/,
-      "La URL de la imagen debe terminar con una extensión de imagen válida (jpeg, jpg, gif, png)"
-    ),
+    .mixed()
+    .required("La imagen es requerida")
+    .test(
+      "fileFormat",
+      "La imagen debe ser un archivo válido (jpeg, jpg, gif, png)",
+      (value) => {
+        return (
+          value &&
+          ["image/jpeg", "image/jpg", "image/png", "image/gif"].includes(
+            value[0]?.type
+          )
+        );
+      }
+    )
+    .test("fileSize", "La imagen no puede ser mayor a 2MB", (value) => {
+      return value && value[0]?.size <= 2 * 1024 * 1024; // 2MB
+    }),
   precio: yup
     .string()
     .required("El precio es requerido")
@@ -54,19 +65,22 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
     precio_provider,
   }: PlataformaInput) {
     if (!plataforma) {
-      createPlataforma(
-        { image_url, name, precio, precio_provider },
-        {
-          onSuccess(data, variables, context) {
-            toast.success("Plataforma creada correctamente");
-            queryClient.invalidateQueries([API_ENDPOINTS.PLATAFORMA_LIST]);
-            closeModal();
-          },
-          onError(error: any) {
-            setErrorMessage(error.response.data.message);
-          },
-        }
-      );
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("image_url", image_url[0]);
+      formData.append("precio", precio);
+      formData.append("precio_provider", precio_provider);
+
+      createPlataforma(formData, {
+        onSuccess(data, variables, context) {
+          toast.success("Plataforma creada correctamente");
+          queryClient.invalidateQueries([API_ENDPOINTS.PLATAFORMA_LIST]);
+          closeModal();
+        },
+        onError(error: any) {
+          setErrorMessage(error.response.data.message);
+        },
+      });
       return;
     }
   }
@@ -95,11 +109,11 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
               />
               <Input
                 label="Imagen Url"
+                type="file"
                 {...register("image_url")}
                 variant="outline"
                 className="mb-4"
                 isEditar={true}
-                defaultValue={plataforma?.image_url}
                 error={errors?.image_url?.message!}
               />
               <Input

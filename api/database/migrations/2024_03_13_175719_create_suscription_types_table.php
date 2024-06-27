@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('suscription_types', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->string('image_url')->unique();
+            $table->string('image_url');
             $table->integer('precio');
             $table->integer('precio_provider');
             $table->timestamps();

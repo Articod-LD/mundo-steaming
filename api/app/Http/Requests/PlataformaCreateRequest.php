@@ -25,7 +25,7 @@ class PlataformaCreateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255', 'unique:suscription_types'],
-            'image_url' => ['required', 'string'],
+            'image_url' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'precio' => ['required', 'string'],
             'precio_provider' => ['required', 'string'],
         ];

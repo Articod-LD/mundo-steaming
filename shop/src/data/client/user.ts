@@ -1,6 +1,9 @@
 import {
   AceptarSolicitudInput,
   AuthResponse,
+  Banner,
+  BannerInput,
+  Categorie,
   ChangePasswordInput,
   CrearSuscripcionInput,
   ISolicitud,
@@ -90,19 +93,52 @@ export const userClient = {
       ...params,
     });
   },
+  fetchCategories: ({ ...params }: Partial<UserQueryOptions>) => {
+    return HttpClient.get<Categorie[]>(API_ENDPOINTS.CATEGORIE_LIST, {
+      ...params,
+    });
+  },
+  fetchBanner: ({ ...params }: Partial<UserQueryOptions>) => {
+    return HttpClient.get<Banner[]>(API_ENDPOINTS.BANNER_LIST, {
+      ...params,
+    });
+  },
   fetchDisponibles: ({ ...params }: Partial<UserQueryOptions>) => {
     return HttpClient.get<Plataforma[]>(API_ENDPOINTS.PLATAFORMA_DISPONIBLES, {
       ...params,
     });
   },
 
-  registerPlataforma: (variables: PlataformaInput) => {
+  registerPlataforma: (variables: FormData) => {
     return HttpClient.post<Plataforma>(
       API_ENDPOINTS.PLATAFORMA_REGISTER,
-      variables
+      variables,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
   },
 
+  registerBanner: (variables: FormData): Promise<Banner> => {
+    return HttpClient.post<Banner>(API_ENDPOINTS.BANNER_REGISTER, variables, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+  registerCategorie: (variables: FormData): Promise<Categorie> => {
+    return HttpClient.post<Banner>(
+      API_ENDPOINTS.CATEGORIE_REGISTER,
+      variables,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+  },
   registerSolicitud: (variables: SolicitudInput) => {
     return HttpClient.post<ISolicitud>(
       API_ENDPOINTS.CREATE_SOLICITUD,

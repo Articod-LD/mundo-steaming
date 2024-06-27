@@ -1,5 +1,6 @@
 import LoginForm from "@/components/auth/login-form";
-import { FacebookIcon } from "@/components/icons/social";
+import { FacebookIcon, InstagramIcon } from "@/components/icons/social";
+import { WhatsappIcon } from "@/components/icons/social/whatsapp";
 import BannerBack from "@/components/ui/banner/BannerBack";
 import { useLogin, useSoporte } from "@/data/user";
 import AuthLayout from "@/layouts/_auth_layout";
@@ -59,18 +60,18 @@ const Login: NextPageWithLayout = () => {
           <h3 className="text-4xl font-bold">
             ¿TIENES PREGUNTAS? ¡PONTE EN CONTACTO!
           </h3>
-          <p className="text-base mt-3">
+          {/* <p className="text-base mt-3">
             Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
             nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
             volutpat.
-          </p>
+          </p> */}
           <div className="flex items-center gap-3 mt-4">
-            <FacebookIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 text-brand" />
-            <p>info@info.com.co</p>
+            <WhatsappIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 text-brand" />
+            <p>3147937096</p>
           </div>
           <div className="flex items-center gap-3 mt-4">
-            <FacebookIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 text-brand" />
-            <p>+57 300 300 9090</p>
+            <InstagramIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 text-brand" />
+            <p>@MUNDOSTREAMING</p>
           </div>
         </div>
         <div className="w-full lg:w-1/2 h-full pb-10">

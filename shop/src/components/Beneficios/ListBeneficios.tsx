@@ -1,8 +1,18 @@
+import { useState } from "react";
 import { MovieIcon } from "../icons/movie";
 import Image from "../ui/image";
 import { Title } from "../ui/tittleSections";
 
 export const ListBeneficios: React.FC<{}> = () => {
+  const [Beneficios, setBeneficios] = useState([
+    "Ofrecemos variedad de plataformas de streaming.",
+    "Los usuarios pueden acceder al contenido en cualquier momento y en cualquier lugar, siempre que tengan un conexión a Internet.",
+    "Nuestras pantallas son personalizadas.",
+    "Nuestros precios son razonables.",
+    "Ofrecemos contenido original lo que proporciona a los usuarios tengan acceso a programas y películas que no pueden encontrar en ningún otro lugar.",
+    "Atención al cliente los 7 días de la semana.",
+    "Garantía durante todo el tiempo contratado.",
+  ]);
   return (
     <section>
       <Title title="NUESTROS BENEFICIOS" />
@@ -16,23 +26,19 @@ export const ListBeneficios: React.FC<{}> = () => {
           quality={100}
           alt="img banner"
         />
-        <div className="w-[400px] ">
-          <ul className="grid grid-cols-1">
-            {[1, 2, 3, 4, 5].map((i) => (
+        <div className="w-[400px]">
+          <ul className="flex flex-col">
+            {Beneficios.map((i) => (
               <li
                 key={i}
-                className="flex gap-4 justify-center items-center my-4 "
+                className="flex gap-4 justify-start items-center my-2 h-max"
               >
-                <MovieIcon className="text-brand h-12 w-12" />
+                <MovieIcon className="text-brand flex-shrink-0 h-12 w-12" />
                 <div>
-                  <h5 className="font-bold text-base">
+                  {/* <h5 className="font-bold text-base">
                     LOREM IPSUM DOLOR SIT AMET
-                  </h5>
-                  <p className="font-normal text-sm">
-                    Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
-                    sed diam nonummy nibh euismod tincidunt ut laoreet dolore
-                    magna.
-                  </p>
+                  </h5> */}
+                  <p className="font-normal text-sm">{i}</p>
                 </div>
               </li>
             ))}

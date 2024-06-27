@@ -44,7 +44,7 @@ const PlataformasAdmin = ({ plataformas }: { plataformas: Plataforma[] }) => {
             </div>
             <div className="col-span-3 flex justify-center">
               <Image
-                src={plataforma.image_url}
+                src={plataforma.imagen}
                 width={150}
                 height={52}
                 quality={100}

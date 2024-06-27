@@ -193,8 +193,23 @@ export interface Plataforma {
   id: string;
   name: string;
   image_url: string;
+  imagen: string;
   precio: string;
   precio_provider: string;
+}
+
+export interface Categorie {
+  titulo: string;
+  imagen: string;
+  imagen_url: string;
+}
+
+export interface Banner {
+  titulo: string;
+  imagen: string;
+  imagen_url: string;
+  texto: string;
+  logo: string;
 }
 
 export interface PlataformaInput {
@@ -203,6 +218,19 @@ export interface PlataformaInput {
   precio: string;
   precio_provider: string;
 }
+
+export interface BannerInput {
+  titulo: string;
+  texto: string;
+  logo: string;
+  imagen: string;
+}
+
+export interface CategorieInput {
+  titulo: string;
+  imagen: string;
+}
+
 export interface ISolicitud {
   id: string;
   usuario_id: number;

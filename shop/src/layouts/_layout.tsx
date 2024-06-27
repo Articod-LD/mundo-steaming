@@ -11,6 +11,7 @@ import { siteSettings } from "@/data/static/site-settings";
 import { FacebookIcon, InstagramIcon } from "@/components/icons/social";
 import { LinkedlnIcon } from "@/components/icons/social/linkedln";
 import Footer from "./_footer";
+import { WhatsappIcon } from "@/components/icons/social/whatsapp";
 
 export default function Layout({
   children,
@@ -29,13 +30,9 @@ export default function Layout({
   }
 
   useEffect(() => {
-
     if (breakpoint == "xs") {
-
-    
       setCollapse(false);
     }
-
   }, [breakpoint]);
 
   return (
@@ -79,16 +76,16 @@ export default function Layout({
                 alt="Logo Mundo Streaming"
               />
               <div className="flex gap-3 mt-6">
-                <FacebookIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 " />
+                {/* <FacebookIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 " /> */}
                 <InstagramIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 " />
-                <LinkedlnIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 inline-block" />
+                <WhatsappIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 inline-block" />
               </div>
 
               <div className="flex flex-col mt-6">
-                <p>Lorem ipsum dolor sit Lorem ipsum dolor</p>
-                <p>Lorem ipsum dolor sit Lorem ipsum dolor</p>
+                <p>@mundostreaming</p>
+                {/* <p>Lorem ipsum dolor sit Lorem ipsum dolor</p> */}
               </div>
-              <p className="mt-6">Lorem ipsum dolor sit</p>
+              <p className="mt-6">Cel: 3147937096</p>
             </div>
           </section>
         )}

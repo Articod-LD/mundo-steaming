@@ -9,9 +9,20 @@ import AuthLayout from "@/layouts/_auth_layout";
 import Layout from "@/layouts/_layout";
 import { NextPageWithLayout } from "@/types";
 import Router from "next/router";
+import { useState } from "react";
 
 const Login: NextPageWithLayout = () => {
   const { me } = useMe();
+
+  const [Beneficios, setBeneficios] = useState([
+    "Ofrecemos variedad de plataformas de streaming.",
+    "Los usuarios pueden acceder al contenido en cualquier momento y en cualquier lugar, siempre que tengan un conexión a Internet.",
+    "Nuestras pantallas son personalizadas.",
+    "Nuestros precios son razonables.",
+    "Ofrecemos contenido original lo que proporciona a los usuarios tengan acceso a programas y películas que no pueden encontrar en ningún otro lugar.",
+    "Atención al cliente los 7 días de la semana.",
+    "Garantía durante todo el tiempo contratado.",
+  ]);
 
   return (
     <div className="w-full">
@@ -33,18 +44,17 @@ const Login: NextPageWithLayout = () => {
           />
         </div>
         <div className="w-full lg:w-1/2 sm:pl-12 lg:py-28">
-          <span className="text-base">Lorem ipsum dolor sit</span>
+          {/* <span className="text-base">Lorem ipsum dolor sit</span> */}
           <h3 className="text-4xl font-bold">SOBRE NOSOTROS</h3>
-          <p className="text-base mt-3">
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
-            nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
-            volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation
-            ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo
-            consequat. Duis autem vel eum iriure dolor in hendrerit in vulputate
-            velit esse molestie consequat, vel illum dolore eu feugiat nulla
-            facilisis at vero eros et accumsan et iusto odio dignissim qui
-            blandit praesent luptatum zzril delenit augue duis dolore te feugait
-            nulla facilisi.
+          <p className="text-base mt-3 ">
+            MUNDO STREAMING JM es una tienda online de plataformas de streaming.
+            Con una trayectoria de más de 5 años, nos enorgullecemos de ofrecer
+            a nuestros más de 7 mil clientes una experiencia de entretenimiento
+            sin igual. Como pioneros en la industria, hemos establecido
+            asociaciones con más de 200 proveedores líderes en el mercado,
+            garantizando así una selección incomparable de contenido para todos
+            los gustos y preferencias. Tenemos todo lo que necesitas para llevar
+            tu experiencia de entretenimiento al siguiente nivel.
           </p>
           {me ? (
             <button
@@ -66,47 +76,23 @@ const Login: NextPageWithLayout = () => {
 
       <div className="mt-24 px-5 lg:px-20 w-full flex flex-col lg:flex-row relative">
         <div className="w-full lg:w-1/3">
-          <span className="text-base">Lorem ipsum dolor sit</span>
+          {/* <span className="text-base">Lorem ipsum dolor sit</span> */}
           <h3 className="text-4xl font-bold">NUESTROS BENEFICIOS</h3>
-          <p className="text-base mt-3 sm:mr-32">
+          {/* <p className="text-base mt-3 sm:mr-32">
             Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
             nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
             volutpat.
-          </p>
+          </p> */}
         </div>
-        <div className="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="flex justify-center items-center flex-col">
-            <MovieIcon className="text-brand h-20 w-20" />
-            <div>
-              <h5 className="font-bold text-base">
-                LOREM IPSUM DOLOR SIT AMET
-              </h5>
+        <div className="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          {Beneficios.map((item, i) => (
+            <div key={i} className="flex flex-col items-center gap-3 h-full">
+              <MovieIcon className="text-brand h-16 w-16" />
+              <div className="flex-grow flex items-center">
+                <h5 className="text-sm text-center">{item}</h5>
+              </div>
             </div>
-          </div>
-          <div className="flex justify-center items-center flex-col">
-            <MovieIcon className="text-brand h-20 w-20" />
-            <div>
-              <h5 className="font-bold text-base">
-                LOREM IPSUM DOLOR SIT AMET
-              </h5>
-            </div>
-          </div>
-          <div className="flex justify-center items-center flex-col">
-            <MovieIcon className="text-brand h-20 w-20" />
-            <div>
-              <h5 className="font-bold text-base">
-                LOREM IPSUM DOLOR SIT AMET
-              </h5>
-            </div>
-          </div>
-          <div className="flex justify-center items-center flex-col">
-            <MovieIcon className="text-brand h-20 w-20" />
-            <div>
-              <h5 className="font-bold text-base">
-                LOREM IPSUM DOLOR SIT AMET
-              </h5>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
