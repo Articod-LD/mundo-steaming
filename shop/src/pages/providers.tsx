@@ -26,7 +26,6 @@ export default function Dashboard({
     sortedBy,
   });
 
-  console.log(providers);
 
   if (loading) return <Loader text="Cargando" />;
 
@@ -35,18 +34,19 @@ export default function Dashboard({
   }
 
   function handleClick() {
-    openModal("PROVIDER_SOLICITAR_PLATAFORMA");
+    openModal("AGREGAR_PLATAFORMA_CLIENTE",'Distribuidor');
   }
 
   return (
     <>
       <Title
-        title="Proveedores"
-        buttonText="agregar proveedor"
+        title="Distribuidores"
+        buttonText="Agregar Distribuidor"
         onClick={handleClick}
       />
       {loading ? null : (
         <AdminsList
+        modulo="Distribuidor"
           admins={providers}
           paginatorInfo={paginatorInfo}
           onPagination={handlePagination}

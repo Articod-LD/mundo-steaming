@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class udapteUserProfileRequest extends FormRequest
+class createRecharge extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,15 +24,20 @@ class udapteUserProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'     => ['string', 'max:255'],
-            'email'    => ['email', 'unique:users'],
-            'password' => ['string'],
-            'documento' => ['string'],
-            'telefono' => ['string'],
-            'direccion' => ['string'],
+            'user_id' => [
+                'required',
+                'exists:App\Models\User,id'
+            ],
+            'amount' => [
+                'required',
+                'numeric',
+                'min:1000'
+            ],
         ];
     }
 
+
+    
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json($validator->errors(), 422));

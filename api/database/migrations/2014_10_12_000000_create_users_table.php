@@ -11,18 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('usuarios', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->boolean('is_active')->default(1);
-            $table->string('password');
-            $table->string('documento');
-            $table->string('telefono');
-            $table->string('direccion');
-            $table->integer('billetera')->default(0);
-            $table->rememberToken();
+            $table->string('name')->comment('Nombre del usuario');
+            $table->string('email')->unique()->comment('Correo electrónico único');
+            $table->boolean('is_active')->default(1)->comment('Estado de actividad del usuario');
+            $table->string('password')->comment('Contraseña hash');
+            $table->string('phone', 15)->nullable()->comment('Número de teléfono del usuario');
+            $table->decimal('wallet', 10, 2)->default(0)->comment('Saldo en la billetera del usuario');
+            $table->rememberToken()->comment('Token para recordar sesiones');
+            $table->timestamp('last_login_at')->nullable()->comment('Última vez que el usuario inició sesión');
             $table->timestamps();
         });
     }
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('usuarios');
     }
 };

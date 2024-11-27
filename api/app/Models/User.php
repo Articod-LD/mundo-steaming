@@ -13,6 +13,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, Notifiable, HasRoles;
 
+    protected $table = 'usuarios';
     /**
      * The attributes that are mass assignable.
      *
@@ -21,13 +22,12 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
         'is_active',
-        'documento',
-        'telefono',
-        'direccion',
+        'phone',
         'suscription',
-        'billetera'
+        'wallet',
+        'usuario_id',
+        'password'
     ];
 
     /**
@@ -52,19 +52,20 @@ class User extends Authenticatable
 
     protected $appends = ['email_verified'];
 
-
     public function getEmailVerifiedAttribute(): bool
     {
         return $this->hasVerifiedEmail();
     }
 
-    public function suscription()
+
+    public function suscriptions()
     {
         return $this->hasMany(suscription::class, 'usuario_id');
     }
 
-    public function solicitudes()
+    public function recharges()
     {
-        return $this->hasMany(solicitudes::class, 'usuario_id');
+        return $this->hasMany(recharge::class);
     }
+
 }

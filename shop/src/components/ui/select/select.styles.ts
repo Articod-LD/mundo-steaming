@@ -2,13 +2,13 @@ export const selectStyles = {
   option: (provided: any, state: any) => ({
     ...provided,
     fontSize: '0.875rem',
-    color: '#6B7280',
+    color: '#757575',
     paddingLeft: 16,
     paddingRight: 16,
     paddingTop: 12,
     paddingBottom: 12,
     cursor: 'pointer',
-    borderBottom: '1px solid #E5E7EB',
+    borderBottom: '1px solid gray',
     backgroundColor: state.isSelected
       ? '#E5E7EB'
       : state.isFocused
@@ -22,7 +22,7 @@ export const selectStyles = {
     backgroundColor: state?.isDisabled ? '#EEF1F4' : '#ffffff',
     borderRadius: 5,
     border: '1px solid #D1D5DB',
-    borderColor: state?.isDisabled ? '#D4D8DD' : state.isFocused ? 'rgb(var(--color-accent-500))' : '#D1D5DB',
+    borderColor: state?.isDisabled ? '#D4D8DD' : '#757575',
     boxShadow:
       state.menuIsOpen &&
       '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
@@ -32,9 +32,9 @@ export const selectStyles = {
   }),
   dropdownIndicator: (provided: any, state: any) => ({
     ...provided,
-    color: state.isFocused ? '#9CA3AF' : '#cccccc',
+    color: state.isFocused ? '#9CA3AF' : '#757575',
     '&:hover': {
-      color: '#9CA3AF',
+      color: 'gray',
     },
   }),
   clearIndicator: (provided: any, state: any) => ({
@@ -50,7 +50,7 @@ export const selectStyles = {
   menu: (provided: any) => ({
     ...provided,
     borderRadius: 5,
-    border: '1px solid #E5E7EB',
+    border: '1px solid #757575',
     boxShadow:
       '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
   }),
@@ -93,12 +93,12 @@ export const selectStyles = {
   placeholder: (provided: any, _: any) => ({
     ...provided,
     fontSize: '0.875rem',
-    color: 'rgba(107, 114, 128, 0.7)',
+    color: '#757575',
   }),
   noOptionsMessage: (provided: any, _: any) => ({
     ...provided,
     fontSize: '0.875rem',
-    color: 'rgba(107, 114, 128, 0.7)',
+    color: '#757575',
   }),
 };
 

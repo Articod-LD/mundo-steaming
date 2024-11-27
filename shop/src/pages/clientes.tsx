@@ -33,18 +33,19 @@ export default function Dashboard({
   }
 
   function handleClick() {
-    openModal("AGREGAR_PLATAFORMA_CLIENTE");
+    openModal("AGREGAR_PLATAFORMA_CLIENTE", 'Cliente');
   }
 
   return (
     <>
       <Title
         title="Clientes"
-        buttonText="agregar usuario"
+        buttonText="Agregar Cliente"
         onClick={handleClick}
       />
       {loading ? null : (
         <AdminsList
+          modulo="Cliente"
           admins={clients}
           paginatorInfo={paginatorInfo}
           onPagination={handlePagination}

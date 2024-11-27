@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class PlataformaCreateRequest extends FormRequest
 {
@@ -24,10 +25,11 @@ class PlataformaCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255', 'unique:suscription_types'],
+            'name' => ['required', 'string', 'max:255'],
             'image_url' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'precio' => ['required', 'string'],
-            'precio_provider' => ['required', 'string'],
+            'public_price' => ['required', 'string'],
+            'provider_price' => ['required', 'string'],
+            'type' => ['required', 'string', Rule::in(['completa', 'pantalla'])],
         ];
     }
 

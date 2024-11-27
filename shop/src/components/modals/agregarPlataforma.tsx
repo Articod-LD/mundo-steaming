@@ -70,7 +70,7 @@ function AgregatePlataformaModal({ id }: { id: string }) {
           closeModal();
         },
         onError(error, variables, context) {
-          console.log(error);
+
 
           toast.error("ha ocurrido un error");
         },

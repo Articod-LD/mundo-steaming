@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+const colors = require('tailwindcss/colors');
 
 const config: Config = {
   content: [
@@ -22,6 +23,7 @@ const config: Config = {
       colors: {
         brand: {
           DEFAULT: "#F1AB1F",
+          dark: '#8d5f03'
         },
         light: {
           DEFAULT: "#ffffff",

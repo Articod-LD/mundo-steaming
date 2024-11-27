@@ -14,6 +14,7 @@ interface DatePickerInputProps {
   disabled?: boolean;
   placeholder?: string;
   todayButton?: string;
+  defaultValue?: Date;
   name: string;
   label?: string;
   toolTipText?: string;
@@ -33,6 +34,7 @@ const DatePickerInput: React.FC<DatePickerInputProps> = ({
   todayButton = "Today",
   name,
   label,
+  defaultValue,
   toolTipText,
   required,
   error,
@@ -57,6 +59,7 @@ const DatePickerInput: React.FC<DatePickerInputProps> = ({
       <Controller
         control={control}
         name={name}
+        defaultValue={defaultValue}
         render={({ field }) => {
           return (
             <DatePicker

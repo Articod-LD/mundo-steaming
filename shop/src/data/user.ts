@@ -14,7 +14,9 @@ import {
   ISolicitudPaginator,
   Plataforma,
   PlataformasPaginator,
+  ProductPaginator,
   QueryOptionsType,
+  Recharge,
   User,
   UserPaginator,
 } from "@/types";
@@ -53,6 +55,12 @@ export function useSoporte() {
   });
 }
 
+export function useRegisterWallet() {
+  return useMutation({
+    mutationFn: userClient.recharge,
+  });
+}
+
 export const useRegisterMutation = () => {
   const queryClient = useQueryClient();
 
@@ -62,8 +70,49 @@ export const useRegisterMutation = () => {
       toast.success("Registrado Correctamente");
     },
     onSettled() {
-      queryClient.invalidateQueries([API_ENDPOINTS.PROVIDERS_LIST]);
       queryClient.invalidateQueries([API_ENDPOINTS.CLIENT_LIST]);
+    },
+  });
+};
+
+export const productRegisterMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.registerProduct,
+    onSuccess() {
+      toast.success("Registrado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries([API_ENDPOINTS.PRODUCTS_LIST]);
+    },
+  });
+};
+
+export const useRegisterAdminMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.registerAdmin,
+    onSuccess() {
+      toast.success("Registrado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries([API_ENDPOINTS.ADMIN_LIST]);
+    },
+  });
+};
+
+export const useRegisterProviderMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.registerProvider,
+    onSuccess() {
+      toast.success("Registrado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries([API_ENDPOINTS.PROVIDERS_LIST]);
     },
   });
 };
@@ -107,6 +156,41 @@ export const useClientsQuery = (params: Partial<QueryOptionsType>) => {
 
   return {
     clients: data?.data ?? [],
+    paginatorInfo: mapPaginatorData(data as any),
+    loading: isLoading,
+    error,
+  };
+};
+
+
+export const useProductsQuery = (params: Partial<QueryOptionsType>) => {
+  const { data, isLoading, error } = useQuery<ProductPaginator, Error>(
+    [API_ENDPOINTS.PRODUCTS_LIST, params],
+    () => userClient.fetchProductos(params),
+    {
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    products: data?.data ?? [],
+    paginatorInfo: mapPaginatorData(data as any),
+    loading: isLoading,
+    error,
+  };
+};
+
+export const useAdminsQuery = (params: Partial<QueryOptionsType>) => {
+  const { data, isLoading, error } = useQuery<UserPaginator, Error>(
+    [API_ENDPOINTS.ADMIN_LIST, params],
+    () => userClient.fetchAdmins(params),
+    {
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    admins: data?.data ?? [],
     paginatorInfo: mapPaginatorData(data as any),
     loading: isLoading,
     error,
@@ -165,6 +249,7 @@ export const usePreguntasQuery = (params: Partial<QueryOptionsType>) => {
 };
 
 export const usePlataformasQuery = (params: Partial<QueryOptionsType>) => {
+
   const { data, isLoading, error } = useQuery<Plataforma[], Error>(
     [API_ENDPOINTS.PLATAFORMA_LIST, params],
     () => userClient.fetchPlataformas(params),
@@ -172,9 +257,41 @@ export const usePlataformasQuery = (params: Partial<QueryOptionsType>) => {
       keepPreviousData: true,
     }
   );
-
   return {
     plataformas: data ?? ([] as Plataforma[]),
+    loading: isLoading,
+    error,
+  };
+};
+
+
+export const useRecargasAdminQuery = () => {
+
+  const { data, isLoading, error } = useQuery<Recharge[], Error>(
+    [API_ENDPOINTS.RECHARGE_ONE],
+    () => userClient.fetchRechargedAdmin(),
+    {
+      keepPreviousData: true,
+    }
+  );
+  return {
+    rechages: data ?? ([] as Recharge[]),
+    loading: isLoading,
+    error,
+  };
+};
+
+export const useRecargasQuery = (params: Partial<{ user_id: number }>) => {
+
+  const { data, isLoading, error } = useQuery<Recharge[], Error>(
+    [API_ENDPOINTS.RECHARGE_ONE],
+    () => userClient.fetchRecharged(params),
+    {
+      keepPreviousData: true,
+    }
+  );
+  return {
+    rechages: data ?? ([] as Recharge[]),
     loading: isLoading,
     error,
   };
@@ -233,7 +350,7 @@ export const usePlataformasDisponiblesQuery = (
 
 export const useOneClientsQuery = (params: Partial<{ ClientId: string }>) => {
   const { data, isLoading, error } = useQuery<User, Error>(
-    [API_ENDPOINTS.CLIENT_LIST, params],
+    [API_ENDPOINTS.ONE_CLIENT, params],
     () => userClient.fetchOneClients(params),
     {
       keepPreviousData: true,
@@ -282,7 +399,7 @@ export const useRegisterPlataformaMutation = () => {
     },
     onSettled() {
       queryClient.invalidateQueries({
-        queryKey: [API_ENDPOINTS.PLATAFORMA_REGISTER],
+        queryKey: [API_ENDPOINTS.PLATAFORMA_LIST],
       });
     },
   });
@@ -298,7 +415,208 @@ export const useRegisterBannerMutation = () => {
     },
     onSettled() {
       queryClient.invalidateQueries({
-        queryKey: [API_ENDPOINTS.BANNER_REGISTER],
+        queryKey: [API_ENDPOINTS.BANNER_LIST],
+      });
+    },
+  });
+};
+
+export const useUpdateBannerMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.updateBanner,
+    onSuccess() {
+      toast.success("Actualizado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.BANNER_LIST],
+      });
+    },
+  });
+};
+
+export const useUpdateCategoriaMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.updateCategoria,
+    onSuccess() {
+      toast.success("Actualizado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.CATEGORIE_LIST],
+      });
+    },
+  });
+};
+
+export const useUpdatePlataformaMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.updatePlataforma,
+    onSuccess() {
+      toast.success("Actualizado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.PLATAFORMA_LIST],
+      });
+    },
+  });
+};
+
+export const useUpdateProductoMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.updateProducto,
+    onSuccess() {
+      toast.success("Actualizado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.PRODUCTS_LIST],
+      });
+    },
+  });
+};
+
+export const useUpdateClientMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.updateClient,
+    onSuccess() {
+      toast.success("Actualizado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.CLIENT_LIST],
+      });
+    },
+  });
+};
+
+export const useUpdateAdministradortMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.updateAdmin,
+    onSuccess() {
+      toast.success("Actualizado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.ADMIN_LIST],
+      });
+    },
+  });
+};
+
+
+export const useUpdateProvidertMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.updateProvider,
+    onSuccess() {
+      toast.success("Actualizado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.PROVIDERS_LIST],
+      });
+    },
+  });
+};
+
+
+export const useDeleteBannerMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: userClient.deleteBanner,
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.BANNER_LIST],
+      });
+    },
+  });
+};
+
+
+export const useDeleteCategoriaMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: userClient.deleteCategoria,
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.CATEGORIE_LIST],
+      });
+    },
+  });
+};
+
+
+export const useDeleteClientMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: userClient.deleteClient,
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.CLIENT_LIST],
+      });
+    },
+  });
+};
+
+
+export const useDeletePlataformaMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: userClient.deletePlataforma,
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.PLATAFORMA_LIST],
+      });
+    },
+  });
+};
+
+export const useDeleteProductoMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: userClient.deleteProducto,
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.PRODUCTS_LIST],
+      });
+    },
+  });
+};
+
+export const useAdminClientMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: userClient.deleteAdmin,
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.ADMIN_LIST],
+      });
+    },
+  });
+};
+
+export const useAdminProvedorMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: userClient.deleteProveedor,
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.PROVIDERS_LIST],
       });
     },
   });
@@ -315,6 +633,22 @@ export const useRegisterCategorieMutation = () => {
     onSettled() {
       queryClient.invalidateQueries({
         queryKey: [API_ENDPOINTS.CATEGORIE_REGISTER],
+      });
+    },
+  });
+};
+
+export const useRegisterProductsCargaMasivaMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.registerCargaMasivaProductos,
+    onSuccess() {
+      toast.success("Registrado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.PRODUCTS_LIST],
       });
     },
   });
@@ -363,16 +697,15 @@ export const useCreateSuscripcionMutation = () => {
 
   return useMutation({
     mutationFn: userClient.crearSuscripcion,
-    onSuccess() {
-      toast.success("La suscripcion ha sido aceptada correctamente", {
-        duration: 5000,
-      });
-    },
-    onSettled() {
+    onSuccess(data, variables, context) {
       queryClient.invalidateQueries({
-        queryKey: [API_ENDPOINTS.CLIENT_LIST],
+        queryKey: [API_ENDPOINTS.ME],
       });
-    },
+
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.PLATAFORMA_DISPONIBLES],
+      });
+    }
   });
 };
 

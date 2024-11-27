@@ -18,5 +18,10 @@ const routes = {
   solicitudesPlataformas: "/solicitud-plataforma",
   preguntas: "/preguntas",
   editar_inicio: "/home",
+  recargarBilletera:"/wallet",
+  recargasAdmin:"/recargas",
+  recargasUsers:"/recargas-users",
+  productos:"/productos",
+  administradores:"/administradores"
 };
 export default routes;

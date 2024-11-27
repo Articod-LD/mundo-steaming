@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BannerRequest;
 use App\Models\banner;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BannerController extends Controller
 {
@@ -38,7 +39,6 @@ class BannerController extends Controller
         $response = Banner::create([
             'titulo' => $request->titulo,
             'texto' => $request->texto,
-            'logo' => $request->logo,
             'imagen' => $imageName,
         ]);
 
@@ -74,7 +74,36 @@ class BannerController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+
+        $banner = Banner::find($id);
+
+        if (!$banner) {
+            return response()->json(['message' => 'Banner no encontrado'], 404);
+        }
+
+            // Si se envió una nueva imagen, procesarla
+    if ($request->hasFile('imagen')) {
+        // Eliminar la imagen anterior si existe
+        if ($banner->imagen && file_exists(public_path('images/' . $banner->imagen))) {
+            unlink(public_path('images/' . $banner->imagen));
+        }
+
+        // Guardar la nueva imagen
+        $imageName = time() . '.' . $request->imagen->extension();
+        $request->imagen->move(public_path('images'), $imageName);
+
+        $banner->imagen = $imageName;
+        
+    }
+
+    // Actualizar los demás campos
+    $banner->titulo = $request->titulo ?? $banner->titulo;
+    $banner->texto = $request->texto ?? $banner->texto;
+
+    // Guardar los cambios
+    $banner->save();
+
+    return response()->json(['message' => 'Banner actualizado exitosamente', 'BannerItem' => $banner], 200);
     }
 
     /**

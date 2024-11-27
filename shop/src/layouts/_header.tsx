@@ -91,7 +91,7 @@ export default function Header({
   const isLogin = typeof me !== "undefined";
 
   const [plataforma] = useState(process.env.NEXT_PUBLIC_PLATAFORMA);
-  console.log(isLogin);
+  const isSuperAdmin = me?.permissions?.some(permission => permission.name === "super_admin");
 
   return (
     <header
@@ -100,6 +100,13 @@ export default function Header({
         plataforma === "COMBO" ? "h-24 sm:h-[100px]" : "h-16 sm:h-[80px]"
       )}
     >
+      {
+        (me && !isSuperAdmin)  &&
+        <div className="absolute top-full right-10 md:right-20 w-48 h-12 border-dashed border-2 border-brand flex justify-center items-center bg-black">
+        Saldo: {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(Number(me.wallet))}
+        </div>
+      }
+
       <div className="flex items-center gap-4">
         <Logo />
       </div>

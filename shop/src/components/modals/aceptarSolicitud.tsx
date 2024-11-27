@@ -35,7 +35,6 @@ const AceptarSolicitudSchema = yup.object().shape({
 });
 
 function AceptarSolicitud({ data }: { data?: any }) {
-  console.log(data);
 
   const { mutate: createPlataforma, isLoading } = useAceptarSolicitudMutation();
 

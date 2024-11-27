@@ -20,7 +20,7 @@ const TooltipLabel = ({
 }: Props) => {
   return (
     <Label className={twMerge(className)} htmlFor={htmlFor}>
-      <p className="text-gray-700">{label}</p>
+      <p className="text-sm font-normal leading-none text-gray-600">{label}</p>
       {required ? <span className="ml-0.5 text-red-500">*</span> : ""}
       {toolTipText ? (
         <Tooltip content={toolTipText}>

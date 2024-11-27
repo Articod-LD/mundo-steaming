@@ -44,7 +44,7 @@ const PreguntasList = ({
   });
 
   const { openModal } = useModalAction();
-  console.log(solicitudes);
+
 
   const columns: any = [
     {

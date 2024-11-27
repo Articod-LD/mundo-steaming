@@ -25,11 +25,11 @@ class UserCreateRequest extends FormRequest
     {
         return [
             'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'unique:users'],
+            'email'    => ['required', 'email', 'unique:usuarios'],
             'password' => ['required', 'string'],
-            'documento' => ['required', 'string'],
-            'telefono' => ['required', 'string'],
-            'direccion' => ['required', 'string'],
+            'phone' => ['string'],
+            'permission' => ['required', 'string'],
+            'wallet' => ['nullable', 'numeric'],
         ];
     }
 
@@ -45,12 +45,9 @@ class UserCreateRequest extends FormRequest
             'email.unique:users' => 'email must be unique',
             'password.required'  => 'password is required',
             'password.string'    => 'password is not a valid string',
-            'documento.required'      => 'documento is required',
-            'documento.string'        => 'documento is not a valid string',
-            'telefono.required'      => 'telefono is required',
             'telefono.string'        => 'telefono is not a valid string',
-            'direccion.required'      => 'direccion is required',
-            'direccion.string'        => 'direccion is not a valid string',
+            'permission.required'     => 'el campo permission es requerido',
+
         ];
     }
 

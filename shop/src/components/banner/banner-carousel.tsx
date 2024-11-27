@@ -19,77 +19,95 @@ export default function HeroCarousel() {
 
   const { me } = useMe();
 
+  const isSuperAdmin = me?.permissions?.some(permission => permission.name === "super_admin");
+
+
   const { banner, error, loading } = useBannerQuery({
     limit: 20,
   });
 
   if (loading) {
-    return <h1>Cargando...</h1>;
+    return <div className="w-full h-[740px] flex justify-center items-center bg-gray-950">
+      <div className="flex flex-col items-center justify-center space-y-4">
+        <div className="animate-spin rounded-full border-4 border-t-4 border-brand-dark w-16 h-16 border-t-brand"></div>
+        <p className="text-xl font-semibold text-gray-200">Cargando...</p>
+      </div>
+    </div>;
   }
 
   return (
     <div className="relative">
       {banner.length > 0 ? (
-        <Swiper
-          id="heroCarousel"
-          slidesPerView={1}
-          loop={true}
-          autoplay
-          allowTouchMove={false}
-          pagination={{ clickable: true, bulletActiveClass: "!bg-brand" }}
-          modules={[Navigation, Autoplay, Pagination]}
-          navigation={{
-            nextEl: ".next",
-            prevEl: ".prev",
-          }}
-        >
-          {banner.map((item, i) => (
-            <SwiperSlide key={i}>
-              <div className="w-full h-[740px] flex justify-center items-center md:justify-start">
-                <Image
-                  className="-z-10 opacity-60"
-                  src={item.imagen_url}
-                  layout="fill"
-                  objectFit="cover"
-                  quality={100}
-                  alt="img banner"
-                />
+        <>
+          <Swiper
+            id="heroCarousel"
+            slidesPerView={1}
+            loop={true}
+            autoplay
+            allowTouchMove={false}
+            pagination={{ clickable: true, bulletActiveClass: "!bg-brand" }}
+            modules={[Navigation, Autoplay, Pagination]}
+            navigation={{
+              nextEl: ".next",
+              prevEl: ".prev",
+            }}
+          >
+            {banner.map((item, i) => (
+              <SwiperSlide key={i}>
+                <div className="w-full h-[740px] flex justify-center items-center md:justify-start">
+                  <Image
+                    className="-z-10 opacity-60"
+                    src={item.imagen_url}
+                    layout="fill"
+                    objectFit="cover"
+                    quality={100}
+                    alt="img banner"
+                  />
 
-                <div className="px-20 w-[600px]">
-                  <h1 className="font-bold text-5xl mb-3">{item.titulo}</h1>
-                  <p>{item.texto}</p>
-                  {me ? (
-                    <button
-                      className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300  hover:bg-red-900"
-                      onClick={() => Router.push(routes.dashboard)}
-                    >
-                      Suscribirme
-                    </button>
-                  ) : (
-                    <button
-                      className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300  hover:bg-red-900"
-                      onClick={() => Router.push(routes.login)}
-                    >
-                      Suscribirme
-                    </button>
-                  )}
+                  <div className="px-20 w-[600px]">
+                    <h1 className="font-bold text-5xl mb-3">{item.titulo}</h1>
+                    <p>{item.texto}</p>
+                    {me ? (
+                      <button
+                        className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300  hover:bg-red-900"
+                        onClick={() => Router.push(isSuperAdmin ? routes.plataformas : routes.plataformasClientes)}
+                      >
+                        Suscribirme
+                      </button>
+                    ) : (
+                      <button
+                        className="p-2 bg-brand rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300  hover:bg-red-900"
+                        onClick={() => Router.push(routes.login)}
+                      >
+                        Suscribirme
+                      </button>
+                    )}
+                  </div>
                 </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+          {
+            banner.length > 1 && (
+              <div className="absolute top-2/4 left-0 z-10 flex w-full items-center justify-between pl-1 pr-4 sm:pr-6 md:pl-2.5">
+                <button className="prev flex h-8 w-8 -translate-y-1/2 transform cursor-pointer items-center justify-center rounded-full border border-light-400 bg-light text-dark-100 shadow-xl hover:bg-light-200 focus:outline-none rtl:rotate-180 dark:border-dark-400 dark:bg-dark-400 dark:text-white hover:dark:bg-dark-300 xl:h-9 xl:w-9">
+                  <ChevronLeft className="h-4 w-4 xl:h-[18px] xl:w-[18px]" />
+                </button>
+                <button className="next flex h-8 w-8 -translate-y-1/2 transform cursor-pointer items-center justify-center rounded-full border border-light-400 bg-light text-dark-100 shadow-xl hover:bg-light-200 focus:outline-none rtl:rotate-180 dark:border-dark-400 dark:bg-dark-400 dark:text-white hover:dark:bg-dark-300 xl:h-9 xl:w-9">
+                  <ChevronRight className="h-4 w-4 xl:h-[18px] xl:w-[18px]" />
+                </button>
               </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+            )
+          }
+        </>
       ) : (
-        <h1>No hay Banners para mostrar</h1>
+        <div className="w-full h-[740px] flex justify-center items-center bg-gray-950">
+          <div className="text-center text-xl font-semibold text-gray-200">
+            <p>No tenemos banners disponibles en este momento</p>
+            <p className="text-sm text-gray-500">Vuelve más tarde o explora otras secciones.</p>
+          </div>
+        </div>
       )}
-
-      <div className="absolute top-2/4 left-0 z-10 flex w-full items-center justify-between pl-1 pr-4 sm:pr-6 md:pl-2.5">
-        <button className="prev flex h-8 w-8 -translate-y-1/2 transform cursor-pointer items-center justify-center rounded-full border border-light-400 bg-light text-dark-100 shadow-xl hover:bg-light-200 focus:outline-none rtl:rotate-180 dark:border-dark-400 dark:bg-dark-400 dark:text-white hover:dark:bg-dark-300 xl:h-9 xl:w-9">
-          <ChevronLeft className="h-4 w-4 xl:h-[18px] xl:w-[18px]" />
-        </button>
-        <button className="next flex h-8 w-8 -translate-y-1/2 transform cursor-pointer items-center justify-center rounded-full border border-light-400 bg-light text-dark-100 shadow-xl hover:bg-light-200 focus:outline-none rtl:rotate-180 dark:border-dark-400 dark:bg-dark-400 dark:text-white hover:dark:bg-dark-300 xl:h-9 xl:w-9">
-          <ChevronRight className="h-4 w-4 xl:h-[18px] xl:w-[18px]" />
-        </button>
-      </div>
     </div>
   );
 }

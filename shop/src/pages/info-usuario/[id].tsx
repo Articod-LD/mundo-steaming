@@ -12,6 +12,27 @@ import { useAtom } from "jotai";
 import { useParams } from "next/navigation";
 import { format } from "date-fns";
 
+const NoSubscriptionsMessage = () => {
+  const { openModal } = useModalAction();
+  const handleClick = () => openModal("AGREGAR_PLATAFORMA_USUARIO");
+
+  return (
+    <div className="flex flex-col items-center justify-center py-12 px-6 bg-gray-50 rounded-xl text-center">
+      <h2 className="text-xl text-brand font-semibold">¡Ups!</h2>
+      <p className="mt-4 text-lg text-gray-600">Este cliente no tiene suscripciones activas.</p>
+      <p className="mt-2 text-sm text-gray-400">Puedes agregar una nueva suscripción haciendo clic en el botón de abajo.</p>
+      <button
+        className="mt-6 px-6 py-2 bg-brand text-white rounded-xl hover:bg-brand-dark focus:outline-none"
+        onClick={handleClick}
+      >
+        + Agregar Plataforma
+      </button>
+    </div>
+  );
+}
+
+
+
 export default function Dashboard({
   userPermissions,
 }: {
@@ -20,157 +41,114 @@ export default function Dashboard({
   const { id } = useParams();
   const idPredeterminado = Array.isArray(id) ? id[0] : id || "1";
   const [searchModal, setSearchModal] = useAtom(searchModalInitialValues);
+
   const { openModal } = useModalAction();
+  const handleClick = () => openModal("AGREGAR_PLATAFORMA_USUARIO");
 
   const { client, error, loading } = useOneClientsQuery({
     ClientId: idPredeterminado,
   });
 
-  function handleClick() {
-    openModal("AGREGAR_PLATAFORMA_USUARIO", id);
-  }
+
+  console.log(client);
+
 
   if (loading) return <Loader text="Cargando" />;
 
+
   return (
     <>
-      <Title title={`Cliente ${client?.name}`} />
-      <div className="w-full  flex flex-col gap-6 sm:flex-row">
-        <div className="w-full h-full sm:w-1/2 bg-white flex text-black rounded-xl">
-          <div className="flex flex-col py-6 px-10 items-center justify-around border-r-2">
+      <Title title={`Informacion Cliente`} />
+      <div className="flex flex-col sm:flex-row gap-6 w-full">
+        {/* Datos del Usuario */}
+        <div className="w-full sm:w-1/2 bg-white rounded-xl shadow-lg flex flex-col text-black">
+          <div className="py-6 px-10 flex flex-col items-center justify-between border-b-2">
             <Avatar
               src={siteSettings?.avatar?.placeholder}
               rounded="full"
               name={client?.name}
               size="2xl"
-              className="shrink-0 grow-0 basis-auto drop-shadow"
+              className="drop-shadow-lg bg-slate-800 text-white"
             />
-            <span className="text-brand text-2xl text-center font-bold">
+            <span className="text-brand text-2xl font-semibold text-center">
               {client?.name}
             </span>
-            <div className="w-full  flex justify-center flex-col items-center">
-              <p>suscripcion</p>
-              <span className="font-bold">Premium</span>
-            </div>
           </div>
-          <div className="flex px-4 py-6 flex-col w-full gap-4">
-            <div className="w-full">
-              <span className="font-light">Correo Electronico</span>
-              <p className="w-full border-b-2 border-light-800 font-bold">
-                {client?.email}
-              </p>
+          <div className="px-6 py-4 flex flex-col gap-4">
+            <div>
+              <span className="text-sm font-medium">Correo Electrónico</span>
+              <p className="font-bold border-b-2 border-light-800">{client?.email}</p>
             </div>
-            <div className="flex justify-between gap-3">
+            <div className="flex gap-4">
               <div className="w-1/2">
-                <span>Telefono</span>
-                <p className="w-full border-b-2 border-light-800 font-bold">
-                  {client?.telefono}
-                </p>
+                <span className="text-sm font-medium">Teléfono</span>
+                <p className="font-bold border-b-2 border-light-800">{client?.phone || 'No disponible'}</p>
               </div>
-              {/* <div className="w-1/2">
-                <span>&nbsp;</span>
-                <p className="w-full border-b-2 border-light-800 font-bold">
-                  {client?.telefono}
-                </p>
-              </div> */}
             </div>
-            <div className="w-full">
-              <p className="font-bold">En billetera</p>
-              <div className="flex justify-between">
-                <span className="text-red-500 text-4xl font-bold">
-                  ${client.billetera}
-                </span>
-                {/* {client.suscription && (
-                  <div className="py-1 px-2 bg-[#84BB2E] rounded-2xl text-white flex items-center justify-center w-20">
-                    Cancelado
-                  </div>
-                )} */}
+            <div>
+              <span className="text-sm font-medium">En Billetera</span>
+              <div className="flex justify-between items-center">
+                <span className="text-4xl text-red-500 font-bold">${client?.wallet}</span>
               </div>
             </div>
           </div>
         </div>
-        <div className="w-full h-auto flex flex-col justify-between sm:w-1/2 bg-white rounded-xl py-4 px-7">
-          <p className="font-bold text-black">Plataformas Usuario</p>
-          {client.suscription.length > 0 ? (
-            <>
-              <div className="grid grid-cols-12 grid-rows-0 gap-4 mt-6 text-brand text-center font-bold">
-                <div></div>
-                <div className="col-span-3">Item</div>
-                <div className="col-span-2 col-start-5 row-start-1">
-                  Fecha Compra
-                </div>
-                <div className="col-span-2 col-start-7 row-start-1">
-                  Fecha Inicio
-                </div>
-                <div className="col-span-2 col-start-9 row-start-1">
-                  Fecha Fin
-                </div>
-                <div className="col-span-2 col-start-11">Estado</div>
-              </div>
-              {client.suscription.map(
-                ({ credential, Fecha_Fin, created_at, Fecha_Inicio }, i) => {
-                  let fecha_Fin_formateada = format(
-                    new Date(Fecha_Fin),
-                    "dd/MM/yyyy"
-                  );
-                  let fecha_Compra_formateada = format(
-                    new Date(created_at),
-                    "dd/MM/yyyy"
-                  );
 
-                  let fecha_Inicio_formateada = format(
-                    new Date(Fecha_Inicio),
-                    "dd/MM/yyyy"
-                  );
-                  return (
-                    <div
-                      key={i}
-                      className="grid grid-cols-12 gap-4 text-black my-6"
-                    >
-                      <div className="flex justify-center items-center text-brand">
-                        <div className="border-2 rounded-full border-brand flex justify-center items-center">
-                          <CloseIcon className="w-5 h-5" />
+        {/* Suscripciones del Usuario */}
+        <div className="w-full h-auto flex flex-col justify-between sm:w-1/2 bg-white rounded-xl py-4 px-7 shadow-lg">
+          <p className="font-semibold text-black mb-4">Plataformas Usuario</p>
+
+          {client.suscriptions.length > 0 ? (
+            <>
+              <div>
+                <div className="grid grid-cols-5 gap-4 mt-6 text-brand text-center font-bold">
+                  <div className="col-span-2">Item</div>
+                  <div className="col-span-1">Fecha Compra</div>
+                  <div className="col-span-1">Fecha Inicio</div>
+                  <div className="col-span-1">Fecha Fin</div>
+                </div>
+                {client.suscriptions.map(
+                  ({ productos, end_date, start_date, price }, i) => {
+                    const producto = productos && productos[0];
+                    if (!producto) {
+                      return null
+                    }
+
+                    let fecha_Fin_formateada = format(new Date(end_date), "dd/MM/yyyy");
+                    let fecha_Inicio_formateada = format(new Date(start_date), "dd/MM/yyyy");
+                    let fecha_compra = format(new Date(producto.purchase_date), "dd/MM/yyyy");
+
+                    return (
+                      <div key={i} className="grid grid-cols-5 gap-4 text-black my-6">
+                        <div className="col-span-2 flex justify-center">
+                          <Image
+                            src={producto.plataforma.image_url}
+                            width={150}
+                            height={52}
+                            quality={100}
+                            alt={producto.plataforma.name}
+                          />
                         </div>
+                        <div className="col-span-1 flex justify-center items-center">{fecha_Inicio_formateada}</div>
+                        <div className="col-span-1  flex justify-center items-center">{fecha_Inicio_formateada}</div>
+                        <div className="col-span-1  flex justify-center items-center">{fecha_Fin_formateada}</div>
                       </div>
-                      <div className="col-span-3 flex justify-center">
-                        <Image
-                          src={credential.tipo.image_url}
-                          width={150}
-                          height={52}
-                          quality={100}
-                          alt="image netflix"
-                        />
-                      </div>
-                      <div className="col-span-2 col-start-5 row-start-1 flex justify-center items-center">
-                        {fecha_Compra_formateada}
-                      </div>
-                      <div className="col-span-2 col-start-7 row-start-1 flex justify-center items-center">
-                        {fecha_Inicio_formateada}
-                      </div>
-                      <div className="col-span-2 col-start-9 row-start-1 flex justify-center items-center">
-                        {fecha_Fin_formateada}
-                      </div>
-                      <div className="col-span-2 col-start-11 flex justify-center items-center">
-                        <div className="py-1 px-2 border-2 border-[#FFB422] rounded-2xl text-[#FFB422] flex items-center justify-center w-20">
-                          Editar
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }
-              )}
+                    );
+                  }
+                )}
+              </div>
+              <div className="w-full flex justify-end mt-6">
+                <button
+                  className="p-3 bg-brand text-white rounded-xl transition-all hover:bg-red-800 hover:scale-105"
+                  onClick={handleClick}
+                >
+                  + Agregar Plataforma
+                </button>
+              </div>
             </>
           ) : (
-            <h1 className="text-brand text-2xl font-bold">No Suscripciones</h1>
+            <NoSubscriptionsMessage />
           )}
-          <div className="w-full  flex justify-end">
-            <button
-              className="p-2 bg-brand rounded-xl mt-4 transition ease-in-out hover:scale-105 hover:bg-red-800 duration-30 uppercase text-white flex"
-              onClick={handleClick}
-            >
-              + Agregar Plataforma
-            </button>
-          </div>
         </div>
       </div>
     </>

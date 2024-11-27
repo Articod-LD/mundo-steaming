@@ -12,7 +12,10 @@ import {
   Plataforma,
   PlataformaInput,
   PlataformasPaginator,
+  ProductPaginator,
+  Recharge,
   RegisterInput,
+  RegisterProductInput,
   SolicitudInput,
   UpdateProfileInputType,
   User,
@@ -29,6 +32,15 @@ export const userClient = {
   },
   register: (variables: RegisterInput) => {
     return HttpClient.post<AuthResponse>(API_ENDPOINTS.REGISTER, variables);
+  },
+  registerProduct: (variables: RegisterProductInput) => {
+    return HttpClient.post<any>(API_ENDPOINTS.ONE_PRODUCTOS + 'register', variables);
+  },
+  registerAdmin: (variables: RegisterInput) => {
+    return HttpClient.post<AuthResponse>(API_ENDPOINTS.ONE_ADMIN + 'register', variables);
+  },
+  registerProvider: (variables: RegisterInput) => {
+    return HttpClient.post<AuthResponse>(API_ENDPOINTS.ONE_PROVIDER + 'register', variables);
   },
   logout: () => {
     return HttpClient.post<any>(API_ENDPOINTS.LOGOUT, {});
@@ -66,7 +78,16 @@ export const userClient = {
       ...params,
     });
   },
-
+  fetchProductos: ({ ...params }: Partial<UserQueryOptions>) => {
+    return HttpClient.get<ProductPaginator>(API_ENDPOINTS.PRODUCTS_LIST, {
+      ...params,
+    });
+  },
+  fetchAdmins: ({ ...params }: Partial<UserQueryOptions>) => {
+    return HttpClient.get<UserPaginator>(API_ENDPOINTS.ADMIN_LIST, {
+      ...params,
+    });
+  },
   fetchProviders: ({ ...params }: Partial<UserQueryOptions>) => {
     return HttpClient.get<UserPaginator>(API_ENDPOINTS.PROVIDERS_LIST, {
       ...params,
@@ -93,6 +114,14 @@ export const userClient = {
       ...params,
     });
   },
+
+  fetchRechargedAdmin: () => {
+    return HttpClient.get<Recharge[]>(API_ENDPOINTS.RECHARGE_ONE + 'list');
+  },
+
+  fetchRecharged: ({user_id }: Partial<{user_id:number}>) => {
+    return HttpClient.get<Recharge[]>(API_ENDPOINTS.RECHARGE_ONE + user_id);
+  },
   fetchCategories: ({ ...params }: Partial<UserQueryOptions>) => {
     return HttpClient.get<Categorie[]>(API_ENDPOINTS.CATEGORIE_LIST, {
       ...params,
@@ -101,6 +130,74 @@ export const userClient = {
   fetchBanner: ({ ...params }: Partial<UserQueryOptions>) => {
     return HttpClient.get<Banner[]>(API_ENDPOINTS.BANNER_LIST, {
       ...params,
+    });
+  },
+
+  deleteBanner: (params: Partial<{ bannerId: number }>) => {
+    return HttpClient.delete(API_ENDPOINTS.BANNER_DELETE + params.bannerId);
+  },
+
+  deleteCategoria: (params: Partial<{ categorieId: number }>) => {
+    return HttpClient.delete(API_ENDPOINTS.DELETE_CATEGORIA + params.categorieId);
+  },
+  deleteClient: (params: Partial<{ clientId: number }>) => {
+    return HttpClient.delete(API_ENDPOINTS.ONE_CLIENT + params.clientId);
+  },
+  deletePlataforma: (params: Partial<{ plataformaId: number }>) => {
+    return HttpClient.delete(API_ENDPOINTS.ONE_PLATAFORMA + params.plataformaId);
+  },
+
+  deleteProducto: (params: Partial<{ productoId: number }>) => {
+    return HttpClient.delete(API_ENDPOINTS.ONE_PRODUCTOS + params.productoId);
+  },
+
+  deleteAdmin: (params: Partial<{ adminId: number }>) => {
+    return HttpClient.delete(API_ENDPOINTS.ONE_ADMIN + params.adminId);
+  },
+  deleteProveedor: (params: Partial<{ providerId: number }>) => {
+    return HttpClient.delete(API_ENDPOINTS.ONE_PROVIDER + params.providerId);
+  },
+
+  updateCategoria: (params: Partial<{ categoriaId: number, params: any }>) => {
+
+    return HttpClient.post(API_ENDPOINTS.DELETE_CATEGORIA + params.categoriaId, params.params, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+
+  updatePlataforma: (params: Partial<{ plataformaId: number, params: any }>) => {
+
+    return HttpClient.post(API_ENDPOINTS.ONE_PLATAFORMA + params.plataformaId, params.params, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+
+  updateProducto: (params: Partial<{ productoId: number, params: RegisterProductInput }>) => {
+    return HttpClient.post(API_ENDPOINTS.ONE_PRODUCTOS + params.productoId, params.params);
+  },
+
+  updateClient: (params: Partial<{ clientId: number, params: any }>) => {
+    return HttpClient.post(API_ENDPOINTS.ONE_CLIENT + params.clientId, params.params);
+  },
+
+  updateAdmin: (params: Partial<{ adminId: number, params: any }>) => {
+    return HttpClient.post(API_ENDPOINTS.ONE_ADMIN + params.adminId, params.params);
+  },
+
+
+  updateProvider: (params: Partial<{ providerId: number, params: any }>) => {
+    return HttpClient.post(API_ENDPOINTS.ONE_PROVIDER + params.providerId, params.params);
+  },
+
+  updateBanner: (params: Partial<{ bannerId: number, params: any }>) => {
+    return HttpClient.post(API_ENDPOINTS.BANNER_DELETE + params.bannerId, params.params, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
   },
   fetchDisponibles: ({ ...params }: Partial<UserQueryOptions>) => {
@@ -131,6 +228,18 @@ export const userClient = {
   registerCategorie: (variables: FormData): Promise<Categorie> => {
     return HttpClient.post<Banner>(
       API_ENDPOINTS.CATEGORIE_REGISTER,
+      variables,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+  },
+
+  registerCargaMasivaProductos: (variables: FormData): Promise<any> => {
+    return HttpClient.post<any>(
+      API_ENDPOINTS.ONE_PRODUCTOS + 'carga-masiva/register',
       variables,
       {
         headers: {
@@ -175,5 +284,9 @@ export const userClient = {
 
   soporte: (variables: any) => {
     return HttpClient.post<AuthResponse>(API_ENDPOINTS.SOPORTE, variables);
+  },
+
+  recharge: (variables: any) => {
+    return HttpClient.post<AuthResponse>(API_ENDPOINTS.RECHARGE, variables);
   },
 };

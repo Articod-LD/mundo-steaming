@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('suscriptions', function (Blueprint $table) {
+        Schema::create('suscripciones', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('Fecha_Inicio');
-            $table->timestamp('Fecha_Fin');
-            $table->integer('precio');
-            $table->boolean('pagado')->default(false);
-            $table->unsignedBigInteger('usuario_id');
-            $table->foreign('usuario_id')->references('id')->on('users')->onDelete('cascade');
+            $table->timestamp('start_date')->comment('Fecha de inicio de la suscripción');
+            $table->timestamp('end_date')->nullable()->comment('Fecha de fin de la suscripción');
+            $table->decimal('price', 10, 2)->comment('Precio de la suscripción');
+
+            $table->unsignedBigInteger('usuario_id')->comment('Referencia al usuario');
+            $table->foreign('usuario_id')->references('id')->on('usuarios')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('suscriptions');
+        Schema::dropIfExists('suscripciones');
     }
 };

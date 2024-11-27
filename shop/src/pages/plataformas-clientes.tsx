@@ -7,6 +7,7 @@ import { useModalAction } from "@/components/ui/modal/modal.context";
 import { Title } from "@/components/ui/tittleSections";
 import { useMe, usePlataformasDisponiblesQuery } from "@/data/user";
 import AdminLayout from "@/layouts/admin";
+import { Credencial, Product } from "@/types";
 import { SwiperSlide } from "swiper/react";
 
 export default function Dashboard({
@@ -14,53 +15,58 @@ export default function Dashboard({
 }: {
   userPermissions: string[];
 }) {
-  const { plataformas, error, loading, paginatorInfo } =
-    usePlataformasDisponiblesQuery({
-      limit: 20,
-    });
 
   const { me } = useMe();
   const { openModal } = useModalAction();
 
-  function verInfoCuenta(credenciales: any) {
-    openModal("VER_INFO_PLATAFORMA", credenciales);
+  function verInfoCuenta(producto: Product) {
+    openModal("VER_INFO_PLATAFORMA", producto);
   }
   return (
     <>
       <Title title="Plataformas Suscritas" />
-      {loading ? (
-        <h1 className="text-2xl text-white">Cargando...</h1>
-      ) : (
-        <Card>
-          {me!.suscription.length > 0 ? (
-            me?.suscription.map(({ credential }, i) => (
+
+      <Card>
+        {me!.suscriptions.length > 0 ? (
+          me?.suscriptions.map(({ productos }, i) => {
+            const producto = productos && productos[0];
+            return (
               <SwiperSlide key={i}>
                 <div
-                  className={`bg-white w-full h-36 rounded-xl flex justify-center items-center ${Items.hoverContainer}`}
+                  className={`w-full h-48 rounded-xl flex justify-center items-center relative ${producto.plataforma.type === 'completa' ? 'bg-brand' : 'bg-blue-500'
+                    } border-2 ${producto.plataforma.type === 'completa' ? 'border-brand-dark' : 'border-blue-400'
+                    } `}
                 >
                   <Image
-                    src={credential.tipo.image_url}
-                    width={150}
-                    height={52}
+                    src={producto.plataforma.image_url}
+                    objectFit="cover"
+                    layout="fill"
                     quality={100}
                     alt="img banner"
+                    className="object-cover rounded-lg opacity-80"
                   />
-                  <div className={`${Items.overlay} hover:opacity-100`}>
-                    <button
-                      onClick={() => verInfoCuenta(credential)}
-                      className="p-3 bg-[#1A1A1A] rounded mt-4 uppercase transition ease-in-out hover:scale-105 duration-300 "
-                    >
-                      Ver Informacion
+                  <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-50 rounded-xl">
+                    <span className="absolute top-1 right-3 uppercase">{producto.plataforma.type}</span>
+                    <span className="font-bold text-white md:text-2xl mb-2 uppercase text-xl">
+                      {producto.plataforma.name}
+                    </span>
+                    <button onClick={()=>verInfoCuenta(producto)} className="cursor-pointer p-3 mt-4 uppercase text-sm font-semibold text-white bg-[#1A1A1A] rounded hover:bg-[#333333] transition ease-in-out hover:scale-105 duration-300">
+                     Ver Suscripcion
                     </button>
                   </div>
                 </div>
               </SwiperSlide>
-            ))
-          ) : (
-            <h1>No Tienes Suscripciones</h1>
-          )}
-        </Card>
-      )}
+            )
+          })
+        ) : (
+          <div className="w-full h-[400px] flex justify-center items-center bg-gray-950">
+            <div className="text-center text-xl font-semibold text-gray-200">
+              <p>No tienes suscripciones disponibles en este momento</p>
+              <p className="text-sm text-gray-500">Vuelve más tarde o explora otras secciones.</p>
+            </div>
+          </div>
+        )}
+      </Card>
       <div className="mt-10">
         <ListPlataformas />
       </div>

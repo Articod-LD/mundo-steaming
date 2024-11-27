@@ -1,4 +1,4 @@
-import { RegisterInputType } from "@/types";
+import { Permission, RegisterInputType } from "@/types";
 import RegistrationForm from "../auth/registration-form";
 import Form from "../ui/forms/form";
 import * as yup from "yup";
@@ -7,7 +7,7 @@ import PasswordInput from "../ui/password-input";
 import Button from "../ui/button";
 import Alert from "../ui/alert";
 import { useState } from "react";
-import { useRegisterMutation } from "@/data/user";
+import { useRegisterAdminMutation, useRegisterMutation, useRegisterProviderMutation } from "@/data/user";
 import toast from "react-hot-toast";
 import { useModalAction } from "../ui/modal/modal.context";
 import { useQueryClient } from "@tanstack/react-query";
@@ -20,15 +20,20 @@ const registrationFormSchema = yup.object().shape({
     .required("Correo es requerido"),
   password: yup.string().required("Contraseña es requerida"),
   name: yup.string().required("form:error-name-required"),
-  documento: yup.string().required("form:error-name-required"),
-  telefono: yup.string().required("form:error-name-required"),
-  direccion: yup.string().required("form:error-name-required"),
+  phone: yup
+  .string()
+  .nullable() // Permitir que sea null
+  .transform((value) => (value === "" ? undefined : value)) // Transformar "" a undefined
+  .optional(), // Permitir undefined (y null) como valor válido
   permission: yup.string().default("customer").oneOf(["customer"]),
 });
 
-function AgregateClienteModal() {
+
+function AgregateClienteModal({type}:{type:string}) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { mutate: registerUser, isLoading } = useRegisterMutation();
+  const { mutate: registerAdmin, isLoading:isLoadingAdmin } = useRegisterAdminMutation();
+  const { mutate: registerProvider, isLoading:isLoadingProvider} = useRegisterProviderMutation();
   const { closeModal } = useModalAction();
   const queryClient = useQueryClient();
 
@@ -37,31 +42,66 @@ function AgregateClienteModal() {
     email,
     password,
     permission,
-    direccion,
-    documento,
-    telefono,
+    phone,
   }: RegisterInputType) {
-    registerUser(
-      {
-        name,
-        email,
-        password,
-        permission,
-        direccion,
-        documento,
-        telefono,
-      },
-      {
-        onSuccess: (data) => {
-          toast.success("Registrado Correctamente");
-          queryClient.invalidateQueries([API_ENDPOINTS.CLIENT_LIST]);
-          closeModal();
+    if (type === 'Cliente') {
+      registerUser(
+        {
+          name,
+          email,
+          password,
+          permission:Permission.Customer,
+          phone: phone === null ? undefined : phone,
         },
-        onError: (error: any) => {
-          setErrorMessage(constructErrorMessage(error.response.data));
+        {
+          onSuccess: (data) => {
+            closeModal();
+          },
+          onError: (error: any) => {
+            setErrorMessage(constructErrorMessage(error.response.data));
+          },
+        }
+      );
+    }
+    if (type === 'Administrador') {
+      registerAdmin(
+        {
+          name,
+          email,
+          password,
+          permission:Permission.super_admin,
+          phone: phone === null ? undefined : phone,
         },
-      }
-    );
+        {
+          onSuccess: (data) => {
+            closeModal();
+          },
+          onError: (error: any) => {
+            setErrorMessage(constructErrorMessage(error.response.data));
+          },
+        }
+      );
+    }
+
+    if (type === 'Distribuidor') {
+      registerProvider(
+        {
+          name,
+          email,
+          password,
+          permission:Permission.provider,
+          phone: phone === null ? undefined : phone,
+        },
+        {
+          onSuccess: (data) => {
+            closeModal();
+          },
+          onError: (error: any) => {
+            setErrorMessage(constructErrorMessage(error.response.data));
+          },
+        }
+      );
+    }
   }
 
   const constructErrorMessage = (errorObject: any) => {
@@ -77,7 +117,7 @@ function AgregateClienteModal() {
   return (
     <div className="relative w-80 sm:w-[512px] xl:w-[710px] bg-white rounded-lg py-6 px-8 text-black">
       <h3 className="text-brand text-2xl font-bold uppercase mb-5">
-        Agregar Cliente
+        Agregar {type}
       </h3>
 
       <>
@@ -88,62 +128,49 @@ function AgregateClienteModal() {
           {({ register, formState: { errors } }) => (
             <>
               <Input
-                label="Name"
-                {...register("name")}
-                variant="outline"
-                className="mb-4"
-                isEditar={true}
-                error={errors?.name?.message!}
-              />
-              <Input
-                label="Documento"
-                type="Number"
-                {...register("documento")}
-                variant="outline"
-                className="mb-4"
-                isEditar={true}
-                error={errors?.documento?.message!}
-              />
-              <Input
-                label="Telefono"
-                type="Number"
-                {...register("telefono")}
-                variant="outline"
-                className="mb-4"
-                isEditar={true}
-                error={errors?.telefono?.message!}
-              />
-              <Input
-                label="Direccion"
-                {...register("direccion")}
-                variant="outline"
-                className="mb-4"
-                isEditar={true}
-                error={errors?.direccion?.message!}
-              />
-              <Input
-                label="Email"
+                label="Correo Electronico"
                 {...register("email")}
                 type="email"
                 variant="outline"
                 className="mb-4"
                 isEditar={true}
                 error={errors?.email?.message}
+                isRequired
               />
               <PasswordInput
-                label="Password"
+                label="Contraseña"
                 {...register("password")}
                 error={errors?.password?.message!}
                 variant="outline"
                 isEditar={true}
                 className="mb-4"
+                isRequired
               />
+              <Input
+                label="Nombre Completo"
+                {...register("name")}
+                variant="outline"
+                className="mb-4"
+                isEditar={true}
+                error={errors?.name?.message!}
+                isRequired
+              />
+              <Input
+                label="Telefono"
+                type="Number"
+                {...register("phone")}
+                variant="outline"
+                className="mb-4"
+                isEditar={true}
+                error={errors?.phone?.message!}
+              />
+
               <Button
                 className="w-full uppercase"
                 isLoading={isLoading}
                 disabled={isLoading}
               >
-                Register
+                Registrar
               </Button>
             </>
           )}

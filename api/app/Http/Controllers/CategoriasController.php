@@ -66,7 +66,32 @@ class CategoriasController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $banner = categorias::find($id);
+
+        if (!$banner) {
+            return response()->json(['error' => 'Categoria no encontrada'], 404);
+        }
+
+        // Si se envió una nueva imagen, procesarla
+        if ($request->hasFile('imagen')) {
+            // Eliminar la imagen anterior si existe
+            if ($banner->imagen && file_exists(public_path('images/' . $banner->imagen))) {
+                unlink(public_path('images/' . $banner->imagen));
+            }
+
+            // Guardar la nueva imagen
+            $imageName = time() . '.' . $request->imagen->extension();
+            $request->imagen->move(public_path('images'), $imageName);
+
+            $banner->imagen = $imageName;
+        }
+
+        // Actualizar los demás campos
+        $banner->titulo = $request->titulo ?? $banner->titulo;
+        // Guardar los cambios
+        $banner->save();
+
+        return response()->json(['error' => 'Categoria actualizada exitosamente', 'CategoriaItem' => $banner], 200);
     }
 
     /**

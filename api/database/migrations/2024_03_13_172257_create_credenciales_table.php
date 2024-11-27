@@ -13,16 +13,10 @@ return new class extends Migration
     {
         Schema::create('credenciales', function (Blueprint $table) {
             $table->id();
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->boolean('is_active')->default(1);
-
-            $table->unsignedBigInteger('suscripcion_id')->nullable(true);
-            $table->foreign('suscripcion_id')->references('id')->on('suscriptions')->onDelete('cascade');
-
-
-            $table->unsignedBigInteger('tipo_id');
-            $table->foreign('tipo_id')->references('id')->on('suscription_types')->onDelete('cascade');
+            $table->string('email')->unique()->comment('Correo electrónico asociado a la credencial');
+            $table->string('password')->comment('Contraseña cifrada');
+            $table->boolean('is_active')->default(1)->comment('Estado de actividad de la credencial');
+            $table->timestamp('last_used_at')->nullable()->comment('Última vez que se utilizó la credencial');
             $table->timestamps();
         });
     }

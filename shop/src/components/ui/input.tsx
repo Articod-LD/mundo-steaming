@@ -14,6 +14,7 @@ export interface Props extends InputHTMLAttributes<HTMLInputElement> {
   variant?: "normal" | "solid" | "outline";
   dimension?: "small" | "medium" | "big";
   showLabel?: boolean;
+  isRequired?:boolean;
   isEditar?: boolean;
 }
 
@@ -48,6 +49,7 @@ const Input = React.forwardRef<HTMLInputElement, Props>(
       isEditar = false,
       disabled,
       showLabel = true,
+      isRequired = false,
       ...rest
     },
     ref
@@ -72,11 +74,15 @@ const Input = React.forwardRef<HTMLInputElement, Props>(
           <label
             htmlFor={name}
             className={classNames(
-              "text-sm font-semibold leading-none",
+              "text-sm font-normal leading-none",
               isEditar ? "text-gray-600" : "text-white"
             )}
           >
             {label}
+             {
+               isRequired && 
+               <span className="text-red-500 px-1">*</span>
+             }
           </label>
         ) : (
           ""

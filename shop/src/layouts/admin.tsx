@@ -112,6 +112,9 @@ const AdminLayout = ({ children }: React.PropsWithChildren<{}>) => {
   const [miniSidebar, _] = useAtom(miniSidebarInitialValue);
   const { openModal } = useModalAction();
   const [searchModal, setSearchModal] = useAtom(searchModalInitialValues);
+  const { me } = useMe();
+  const isSuperAdmin = me?.permissions?.some(permission => permission.name === "super_admin");
+
 
   function handleClick() {
     openModal("SEARCH_VIEW");
@@ -158,7 +161,15 @@ const AdminLayout = ({ children }: React.PropsWithChildren<{}>) => {
               <div className="relative hidden w-full max-w-[710px] py-4 me-6 lg:block 2xl:me-auto">
                 <SearchBar />
               </div>
-              <AuthorizedMenu />
+
+              <div className="flex gap-2 items-center ">
+                {
+                  !isSuperAdmin &&
+                  <span>Saldo:  {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(Number(me.wallet))}</span>
+                }
+                <AuthorizedMenu />
+              </div>
+
             </div>
             {children}
           </div>

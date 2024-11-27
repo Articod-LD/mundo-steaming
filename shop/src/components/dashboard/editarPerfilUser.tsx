@@ -51,11 +51,9 @@ export default function EditarPerfilComponent() {
       },
       {
         onSuccess(data, variables, context) {
-          console.log(data);
+
         },
         onError(error: any) {
-          console.log(error);
-
           setErrorMessage(error.response.data.message);
         },
       }

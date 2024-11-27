@@ -25,11 +25,17 @@ export const siteSettings: any = {
           },
         ],
       },
-      management: {
+      usuarios: {
         href: routes.dashboard,
-        label: "Monitoreo",
+        label: "Usuarios",
         icon: "DashboardIcon",
         childMenu: [
+          {
+            href: routes.administradores,
+            label: "Administradores",
+            icon: "UsersIcon",
+            permissions: ["super_admin"],
+          },
           {
             href: routes.clientes,
             label: "Clientes",
@@ -38,10 +44,18 @@ export const siteSettings: any = {
           },
           {
             href: routes.providers,
-            label: "Proveedores",
+            label: "Distribuidores",
             icon: "UsersIcon",
             permissions: ["super_admin"],
           },
+        ],
+      },
+
+      plataformas:{
+        href: routes.dashboard,
+        label: "Plataformas",
+        icon: "UsersIcon",
+        childMenu: [
           {
             href: routes.plataformas,
             label: "Plataformas",
@@ -49,22 +63,23 @@ export const siteSettings: any = {
             permissions: ["super_admin"],
           },
           {
-            href: routes.solicitudesPlataformas,
-            label: "Solicitud Plataformas",
+            href: routes.productos,
+            label: "Productos",
             icon: "ProductsIcon",
             permissions: ["super_admin"],
           },
+        ]
+      },
+      wallet:{
+        href: routes.dashboard,
+        label: "Billetera",
+        icon: "UsersIcon",
+        childMenu: [
           {
-            href: routes.preguntas,
-            label: "Preguntas",
-            icon: "ProductsIcon",
-            permissions: ["super_admin"],
-          },
-          {
-            href: routes.editar_inicio,
-            label: "Editar Inicio",
-            icon: "ProductsIcon",
-            permissions: ["super_admin"],
+            href: routes.recargasAdmin,
+            label: "Recargas",
+            icon: "UsersIcon",
+            permissions: ["super_admin","customer"],
           },
         ],
       },
@@ -73,6 +88,19 @@ export const siteSettings: any = {
         label: "Configuracion",
         icon: "DashboardIcon",
         childMenu: [
+          {
+            href: routes.editar_inicio,
+            label: "Editar Inicio",
+            icon: "ProductsIcon",
+            permissions: ["super_admin"],
+          },
+          {
+            href: routes.preguntas,
+            label: "Preguntas Usuarios",
+            icon: "ProductsIcon",
+            permissions: ["super_admin"],
+          },
+    
           {
             href: routes.logout,
             label: "Cerrar Sesion",
@@ -93,6 +121,18 @@ export const siteSettings: any = {
             label: "Plataformas",
             icon: "ProductsIcon",
             permissions: ["customer", "super_admin"],
+          },
+          {
+            href: routes.recargarBilletera,
+            label: "Recargar Billetera",
+            icon: "UsersIcon",
+            permissions: ["super_admin","customer"],
+          },
+          {
+            href: routes.recargasUsers,
+            label: "Recargas",
+            icon: "UsersIcon",
+            permissions: ["super_admin","customer"],
           },
         ],
       },
@@ -121,6 +161,31 @@ export const siteSettings: any = {
             label: "Plataformas",
             icon: "ProductsIcon",
             permissions: ["provider", "super_admin"],
+          },
+        ],
+      },
+      wallet:{
+        href: routes.dashboard,
+        label: "Billetera",
+        icon: "UsersIcon",
+        childMenu: [
+          {
+            href: routes.plataformasClientes,
+            label: "Plataformas",
+            icon: "ProductsIcon",
+            permissions: ["customer", "super_admin"],
+          },
+          {
+            href: routes.recargarBilletera,
+            label: "Recargar Billetera",
+            icon: "UsersIcon",
+            permissions: ["super_admin","customer"],
+          },
+          {
+            href: routes.recargasUsers,
+            label: "Recargas",
+            icon: "UsersIcon",
+            permissions: ["super_admin","customer"],
           },
         ],
       },

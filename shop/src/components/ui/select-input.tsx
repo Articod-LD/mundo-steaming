@@ -20,6 +20,7 @@ interface SelectInputProps {
   required?: boolean;
   label?: string;
   toolTipText?: string;
+  defaultValue?: object[]
 }
 
 const SelectInput = ({
@@ -37,8 +38,11 @@ const SelectInput = ({
   label,
   required,
   toolTipText,
+  defaultValue,
   ...rest
 }: SelectInputProps) => {
+  const defaultvalueformated = defaultValue as [{name:string,id:string}];
+
   return (
     <>
       {label ? (
@@ -54,6 +58,7 @@ const SelectInput = ({
       <Controller
         control={control}
         name={name}
+        defaultValue={defaultvalueformated ? defaultvalueformated[0] : undefined}
         rules={rules}
         {...rest}
         render={({ field }) => (
@@ -62,6 +67,7 @@ const SelectInput = ({
             getOptionLabel={getOptionLabel}
             getOptionValue={getOptionValue}
             placeholder={placeholder}
+            defaultValue={defaultValue}
             isMulti={isMulti}
             isClearable={isClearable}
             isLoading={isLoading}

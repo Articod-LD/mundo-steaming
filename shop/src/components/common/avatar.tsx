@@ -42,8 +42,6 @@ type AvatarProps = {
 const CHECK_VALID_CUSTOM_SIZE = /(\d*px)?/g;
 
 function getInitials(name: string) {
-  console.log(name);
-
   if (!name) return "GU";
   const words = name.split(" ");
   const initials = words.map((word) => word[0]);

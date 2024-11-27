@@ -11,7 +11,7 @@ const ActiveLink: React.FC<
   ActiveLinkProps & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href">
 > = ({ href, className, activeClassName = "active", ...props }) => {
   const { pathname } = useRouter();
-  console.log(href);
+
 
   return (
     <AnchorLink

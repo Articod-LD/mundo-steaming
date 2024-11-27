@@ -44,11 +44,11 @@ function EditarPerfilModal() {
       },
       {
         onSuccess(data, variables, context) {
-          console.log(data);
+
           queryClient.invalidateQueries([API_ENDPOINTS.ME]);
         },
         onError(error: any) {
-          console.log(error);
+
 
           setErrorMessage(error.response.data.message);
         },

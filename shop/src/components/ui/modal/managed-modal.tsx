@@ -12,9 +12,11 @@ import VerInfoPlataforma from "@/components/modals/verInfoPlataforma";
 import AgregateProvidersModal from "@/components/modals/agregarProviders";
 import CrearBannerModal from "@/components/modals/crearBanner";
 import CrearCategoriaModal from "@/components/modals/createCategoria";
+import EditarUsuarioModal from "@/components/modals/editarUsuario";
+import CrearProductoModal from "@/components/modals/createproducto";
+import BulkProductUploadModal from "@/components/modals/cargarProductos";
 
 function renderModal(view: MODAL_VIEWS | undefined, data: any) {
-  console.log(data);
 
   switch (view) {
     case "SEARCH_VIEW":
@@ -23,13 +25,17 @@ function renderModal(view: MODAL_VIEWS | undefined, data: any) {
       return <AgregatePlataformaModal id={data} />;
 
     case "AGREGAR_PLATAFORMA_CLIENTE":
-      return <AgregateClienteModal />;
+      return <AgregateClienteModal type={data} />;
 
     case "EDITAR_USER_PROFILE":
       return <EditarPerfilModal />;
 
     case "CREAR_PLATAFORMA":
       return <CrearPlataformaModal plataforma={data} />;
+    case "CREAR_PRODUCTO":
+      return <CrearProductoModal producto={data} />;
+    case "CARGA_PRODUCTO":
+      return <BulkProductUploadModal />;
 
     case "CREAR_BANNER":
       return <CrearBannerModal banner={data} />;
@@ -47,10 +53,14 @@ function renderModal(view: MODAL_VIEWS | undefined, data: any) {
       return <AceptarSolicitud data={data} />;
 
     case "VER_INFO_PLATAFORMA":
-      return <VerInfoPlataforma data={data} />;
+      return <VerInfoPlataforma producto={data} />;
 
     case "PROVIDER_SOLICITAR_PLATAFORMA":
       return <AgregateProvidersModal />;
+
+    case "EDITAR_USUARIO":
+      return <EditarUsuarioModal data={data} />;
+
     default:
       return null;
   }
