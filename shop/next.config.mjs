@@ -1,4 +1,3 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
   images: {
@@ -6,14 +5,22 @@ const nextConfig = {
       {
         protocol: "http",
         hostname: "localhost",
-        port: "8000", // Añadir el puerto 8000
+        port: "8000", // Permitir imágenes desde localhost:8000
       },
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "**", // Permitir imágenes desde cualquier dominio HTTPS
+      },
+      {
+        protocol: "http",
+        hostname: "backend.combipremium.com", // Permitir imágenes desde backend.combipremium.com (HTTP)
+      },
+      {
+        protocol: "https",
+        hostname: "backend.combipremium.com", // Permitir imágenes desde backend.combipremium.com (HTTPS)
       },
     ],
   },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
