@@ -52,30 +52,7 @@ function AgregatePlataformaModal({ id }: { id: string }) {
     pagado,
     plataforma,
   }: AceptarSolicitudInput) {
-    crearSuscripcion(
-      {
-        variables: {
-          email,
-          fecha_fin,
-          fecha_inicio,
-          password,
-          precio,
-          tipo_id: plataforma.id,
-          usuario_id: +id,
-          pagado,
-        },
-      },
-      {
-        onSuccess(data, variables, context) {
-          closeModal();
-        },
-        onError(error, variables, context) {
 
-
-          toast.error("ha ocurrido un error");
-        },
-      }
-    );
   }
 
   return (

@@ -19,7 +19,7 @@ function SolicitarPlataforma({ plataforma }: { plataforma: Plataforma }) {
 
   function CreateSolicitud() {
     createSolicitudMutation(
-      { tipo_id: plataforma.id, usuario_id: me!.id },
+      { tipo_id: String(plataforma.id), usuario_id: String(me!.id) },
       {
         onSuccess(data, variables, context) {
           closeModal();
@@ -28,7 +28,7 @@ function SolicitarPlataforma({ plataforma }: { plataforma: Plataforma }) {
             {
               variables: {
                 operation: "add",
-                userId: me!.id,
+                userId: String(me!.id),
                 amount: +getPrecio(),
               },
             },
@@ -57,7 +57,7 @@ function SolicitarPlataforma({ plataforma }: { plataforma: Plataforma }) {
       (permission) => permission.name === "provider"
     );
 
-    return isProvider ? plataforma.precio_provider : plataforma.precio;
+    return isProvider ? plataforma.provider_price : plataforma.public_price;
   }
 
   return (
@@ -67,7 +67,7 @@ function SolicitarPlataforma({ plataforma }: { plataforma: Plataforma }) {
       </h3>
       <div className="w-full flex items-center flex-col">
         <Image
-          src={plataforma.imagen}
+          src={plataforma.image_url}
           width={400}
           height={52}
           quality={100}

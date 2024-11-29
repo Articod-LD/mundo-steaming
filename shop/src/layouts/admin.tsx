@@ -165,7 +165,7 @@ const AdminLayout = ({ children }: React.PropsWithChildren<{}>) => {
               <div className="flex gap-2 items-center ">
                 {
                   !isSuperAdmin &&
-                  <span>Saldo:  {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(Number(me.wallet))}</span>
+                  <span>Saldo:  {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(Number(me!.wallet))}</span>
                 }
                 <AuthorizedMenu />
               </div>

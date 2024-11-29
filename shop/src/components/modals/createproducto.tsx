@@ -9,13 +9,23 @@ import { useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/data/client/api-endpoints";
 import { useModalAction } from "../ui/modal/modal.context";
 import Image from "next/image";
-import { CategorieInput, CreateProductoForm, Plataforma, Product } from "@/types";
+import {
+  CategorieInput,
+  CreateProductoForm,
+  Plataforma,
+  Product,
+} from "@/types";
 import PasswordInput from "../ui/password-input";
 import SelectInput from "../ui/select-input";
-import { productRegisterMutation, usePlataformasQuery, useRegisterMutation, useUpdatePlataformaMutation, useUpdateProductoMutation } from "@/data/user";
+import {
+  usePlataformasQuery,
+  useProductRegisterMutation,
+  useRegisterMutation,
+  useUpdatePlataformaMutation,
+  useUpdateProductoMutation,
+} from "@/data/user";
 import DatePickerInput from "../ui/date-picker";
 import { format, parseISO } from "date-fns";
-
 
 const createProductoFormSchema = yup.object().shape({
   plataforma: yup
@@ -26,21 +36,20 @@ const createProductoFormSchema = yup.object().shape({
       type: yup.string().required(),
     })
     .typeError("Debe seleccionar una plataforma")
-    .required("La plataforma es requerida")
-  ,
+    .required("La plataforma es requerida"),
   correo: yup
     .string()
     .email("Debe ser un correo válido")
     .required("El correo es requerido"),
-  contrasena: yup
-    .string()
-    .required("La contraseña es requerida"),
+  contrasena: yup.string().required("La contraseña es requerida"),
   perfil: yup
     .string()
     .nullable()
     .when("plataforma.type", {
       is: "pantalla",
-      then: yup.string().required("El perfil es obligatorio para plataformas tipo pantalla"),
+      then: yup
+        .string()
+        .required("El perfil es obligatorio para plataformas tipo pantalla"),
       otherwise: yup.string().nullable(),
     }),
   pin_perfil: yup
@@ -49,7 +58,11 @@ const createProductoFormSchema = yup.object().shape({
     .nullable()
     .when("plataforma.type", {
       is: "pantalla",
-      then: yup.string().required("El PIN del perfil es obligatorio para plataformas tipo pantalla"),
+      then: yup
+        .string()
+        .required(
+          "El PIN del perfil es obligatorio para plataformas tipo pantalla"
+        ),
       otherwise: yup.string().nullable(),
     }),
   fecha_compra: yup
@@ -69,15 +82,16 @@ type PlataformaTransformed = {
 };
 
 function CrearProductoModal({ producto }: { producto?: Product }) {
-
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [plataformasTransformed, setPlataformasTransformed] = useState<PlataformaTransformed[] | null>(null);
-  const [placeholderDate, setPlaceholderDate] = useState<string>('');
+  const [plataformasTransformed, setPlataformasTransformed] = useState<
+    PlataformaTransformed[] | null
+  >(null);
+  const [placeholderDate, setPlaceholderDate] = useState<string>("");
 
-  const { mutate: registerProduct, isLoading } = productRegisterMutation();
+  const { mutate: registerProduct, isLoading } = useProductRegisterMutation();
   const [plataformaDefault, setPlataformaDefault] = useState<string | null>();
-  const { mutate: updatePlataforma, isLoading: isLoadingUpdate } = useUpdateProductoMutation();
-
+  const { mutate: updatePlataforma, isLoading: isLoadingUpdate } =
+    useUpdateProductoMutation();
 
   const { plataformas, error, loading } = usePlataformasQuery({
     limit: 20,
@@ -87,7 +101,7 @@ function CrearProductoModal({ producto }: { producto?: Product }) {
     if (plataformas && Array.isArray(plataformas)) {
       const transformedData = plataformas.map((plataforma) => ({
         id: plataforma.id,
-        name: `${plataforma.name || ''} - ${plataforma.type || ''}`,
+        name: `${plataforma.name || ""} - ${plataforma.type || ""}`,
         type: plataforma.type,
       }));
 
@@ -102,20 +116,25 @@ function CrearProductoModal({ producto }: { producto?: Product }) {
     if (producto) {
       const placeholderDate = format(
         parseISO(producto.purchase_date),
-        'dd/MM/yyyy'
+        "dd/MM/yyyy"
       );
 
       setPlaceholderDate(placeholderDate);
-
     }
   }, [producto]); // Solo depende de producto
-
-
 
   const queryClient = useQueryClient();
   const { closeModal } = useModalAction();
 
-  function onSubmit({ contrasena, correo, fecha_compra, meses, plataforma, perfil, pin_perfil }: CreateProductoForm) {
+  function onSubmit({
+    contrasena,
+    correo,
+    fecha_compra,
+    meses,
+    plataforma,
+    perfil,
+    pin_perfil,
+  }: CreateProductoForm) {
     if (!producto) {
       registerProduct(
         {
@@ -125,41 +144,42 @@ function CrearProductoModal({ producto }: { producto?: Product }) {
           perfil,
           pin_perfil,
           meses,
-          fecha_compra
+          fecha_compra,
         },
         {
           onSuccess: (data) => {
             closeModal();
           },
           onError: (error: any) => {
-            toast.error('ha ocurrido un error')
+            toast.error("ha ocurrido un error");
           },
         }
       );
     } else {
-
-      updatePlataforma({
-        productoId: producto.id, params: {
-          plataforma_id: plataforma.id,
-          email: correo,
-          password: contrasena,
-          perfil,
-          pin_perfil,
-          meses,
-          fecha_compra
+      updatePlataforma(
+        {
+          productoId: producto.id,
+          params: {
+            plataforma_id: plataforma.id,
+            email: correo,
+            password: contrasena,
+            perfil,
+            pin_perfil,
+            meses,
+            fecha_compra,
+          },
+        },
+        {
+          onSuccess(data, variables, context) {
+            closeModal();
+          },
+          onError(error: any) {
+            setErrorMessage(error.response.data.message);
+          },
         }
-      }, {
-        onSuccess(data, variables, context) {
-          closeModal();
-        },
-        onError(error: any) {
-          setErrorMessage(error.response.data.message);
-        },
-      });
+      );
     }
   }
-
-
 
   return (
     <div className="relative w-80 sm:w-[512px] xl:w-[710px] bg-white rounded-lg py-6 px-8">
@@ -173,22 +193,24 @@ function CrearProductoModal({ producto }: { producto?: Product }) {
           onSubmit={onSubmit}
         >
           {({ register, formState: { errors }, control, reset }) => {
-
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             useEffect(() => {
               if (producto) {
-                const plataformaDefaultCampo = `${producto.plataforma.name || ''} - ${producto.plataforma.type || ''}`;
+                const plataformaDefaultCampo = `${
+                  producto.plataforma.name || ""
+                } - ${producto.plataforma.type || ""}`;
                 const transformedData = plataformas.map((plataforma) => ({
                   id: plataforma.id,
-                  name: `${plataforma.name || ''} - ${plataforma.type || ''}`,
+                  name: `${plataforma.name || ""} - ${plataforma.type || ""}`,
                   type: plataforma.type,
                 }));
 
                 reset({
-                  plataforma: transformedData.find((pla) => pla.name === plataformaDefaultCampo)
-                })
-
+                  plataforma: transformedData.find(
+                    (pla) => pla.name === plataformaDefaultCampo
+                  ),
+                });
               }
-
             }, [producto]);
             return (
               <>
@@ -198,17 +220,25 @@ function CrearProductoModal({ producto }: { producto?: Product }) {
                     name="plataforma"
                     control={control}
                     getOptionLabel={(option: any) => {
-                      return option.name
+                      return option.name;
                     }}
                     getOptionValue={(option: any) => {
-                      return option.name
+                      return option.name;
                     }}
-                    defaultValue={plataformasTransformed ? plataformasTransformed.filter((pla) => pla.name === plataformaDefault) as unknown as object[] : undefined}
+                    defaultValue={
+                      plataformasTransformed
+                        ? (plataformasTransformed.filter(
+                            (pla) => pla.name === plataformaDefault
+                          ) as unknown as object[])
+                        : undefined
+                    }
                     options={plataformasTransformed as any}
                     placeholder="seleccionar"
                     isClearable={true}
                   />
-                  <p className="my-2 text-xs text-red-500 text-start">{errors?.plataforma?.message!}</p>
+                  <p className="my-2 text-xs text-red-500 text-start">
+                    {errors?.plataforma?.message!}
+                  </p>
                 </div>
 
                 <Input
@@ -253,13 +283,17 @@ function CrearProductoModal({ producto }: { producto?: Product }) {
                 />
 
                 <DatePickerInput
-                  defaultValue={producto ? parseISO(producto.purchase_date) : new Date()}
+                  defaultValue={
+                    producto ? parseISO(producto.purchase_date) : new Date()
+                  }
                   control={control}
                   name="fecha_compra"
                   className="w-full mb-4 text-gray-600"
                   error={errors?.fecha_compra?.message}
                   label="Fecha De Compra"
-                  startDate={producto ? parseISO(producto.purchase_date) : new Date()}
+                  startDate={
+                    producto ? parseISO(producto.purchase_date) : new Date()
+                  }
                   dateFormat="dd/MM/yyyy"
                   placeholder={placeholderDate}
                 />
@@ -275,14 +309,11 @@ function CrearProductoModal({ producto }: { producto?: Product }) {
                   defaultValue={producto?.months}
                 />
 
-
-                <Button
-                  className="w-full uppercase"
-                >
+                <Button className="w-full uppercase">
                   {producto ? "Update" : "Register"}
                 </Button>
               </>
-            )
+            );
           }}
         </Form>
         {errorMessage ? (

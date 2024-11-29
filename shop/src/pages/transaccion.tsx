@@ -7,12 +7,10 @@ import Layout from "@/layouts/_layout";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 
-const renderContent = (query: any) => {
-
-    const {me} = useMe()
+const renderContent = (query: any, me:any) => {
 
 
-    const isSuperAdmin = me?.permissions?.some(permission => permission.name === "super_admin");
+    const isSuperAdmin = me?.permissions?.some((permission:any) => permission.name === "super_admin");
 
     const { status, amount, wallet, message, reference } = query;
 
@@ -94,11 +92,12 @@ const renderContent = (query: any) => {
 };
 
 export default function Transacction() {
+    const {me} = useMe()
     const router = useRouter();
     return (
         <>
             <div className="flex flex-col gap-12 min-h-40 my-auto">
-                {renderContent(router.query)}
+                {renderContent(router.query,me)}
             </div>
         </>
     );

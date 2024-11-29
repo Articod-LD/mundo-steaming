@@ -61,7 +61,7 @@ const RegistrationForm = () => {
       {
         name,
         email,
-        password,
+        password: password as string,
         permission,
         phone: phone ? phone : undefined
       },

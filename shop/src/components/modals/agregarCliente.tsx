@@ -49,7 +49,7 @@ function AgregateClienteModal({type}:{type:string}) {
         {
           name,
           email,
-          password,
+          password: password as string,
           permission:Permission.Customer,
           phone: phone === null ? undefined : phone,
         },
@@ -68,7 +68,7 @@ function AgregateClienteModal({type}:{type:string}) {
         {
           name,
           email,
-          password,
+          password: password as string,
           permission:Permission.super_admin,
           phone: phone === null ? undefined : phone,
         },
@@ -88,7 +88,7 @@ function AgregateClienteModal({type}:{type:string}) {
         {
           name,
           email,
-          password,
+          password: password as string,
           permission:Permission.provider,
           phone: phone === null ? undefined : phone,
         },

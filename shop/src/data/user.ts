@@ -75,7 +75,7 @@ export const useRegisterMutation = () => {
   });
 };
 
-export const productRegisterMutation = () => {
+export const useProductRegisterMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -161,7 +161,6 @@ export const useClientsQuery = (params: Partial<QueryOptionsType>) => {
     error,
   };
 };
-
 
 export const useProductsQuery = (params: Partial<QueryOptionsType>) => {
   const { data, isLoading, error } = useQuery<ProductPaginator, Error>(
@@ -249,7 +248,6 @@ export const usePreguntasQuery = (params: Partial<QueryOptionsType>) => {
 };
 
 export const usePlataformasQuery = (params: Partial<QueryOptionsType>) => {
-
   const { data, isLoading, error } = useQuery<Plataforma[], Error>(
     [API_ENDPOINTS.PLATAFORMA_LIST, params],
     () => userClient.fetchPlataformas(params),
@@ -264,9 +262,7 @@ export const usePlataformasQuery = (params: Partial<QueryOptionsType>) => {
   };
 };
 
-
 export const useRecargasAdminQuery = () => {
-
   const { data, isLoading, error } = useQuery<Recharge[], Error>(
     [API_ENDPOINTS.RECHARGE_ONE],
     () => userClient.fetchRechargedAdmin(),
@@ -282,7 +278,6 @@ export const useRecargasAdminQuery = () => {
 };
 
 export const useRecargasQuery = (params: Partial<{ user_id: number }>) => {
-
   const { data, isLoading, error } = useQuery<Recharge[], Error>(
     [API_ENDPOINTS.RECHARGE_ONE],
     () => userClient.fetchRecharged(params),
@@ -517,7 +512,6 @@ export const useUpdateAdministradortMutation = () => {
   });
 };
 
-
 export const useUpdateProvidertMutation = () => {
   const queryClient = useQueryClient();
 
@@ -534,7 +528,6 @@ export const useUpdateProvidertMutation = () => {
   });
 };
 
-
 export const useDeleteBannerMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -546,7 +539,6 @@ export const useDeleteBannerMutation = () => {
     },
   });
 };
-
 
 export const useDeleteCategoriaMutation = () => {
   const queryClient = useQueryClient();
@@ -560,7 +552,6 @@ export const useDeleteCategoriaMutation = () => {
   });
 };
 
-
 export const useDeleteClientMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -572,7 +563,6 @@ export const useDeleteClientMutation = () => {
     },
   });
 };
-
 
 export const useDeletePlataformaMutation = () => {
   const queryClient = useQueryClient();
@@ -705,7 +695,7 @@ export const useCreateSuscripcionMutation = () => {
       queryClient.invalidateQueries({
         queryKey: [API_ENDPOINTS.PLATAFORMA_DISPONIBLES],
       });
-    }
+    },
   });
 };
 

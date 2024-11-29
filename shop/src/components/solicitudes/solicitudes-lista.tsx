@@ -50,10 +50,6 @@ const SolicitudesList = ({
       title: (
         <TitleWithSort
           title="Cliente"
-          ascending={
-            sortingObj.sort === SortOrder.Asc && sortingObj.column === "id"
-          }
-          isActive={sortingObj.column === "id"}
           className="text-brand text-xl font-bold"
         />
       ),
@@ -79,10 +75,6 @@ const SolicitudesList = ({
       title: (
         <TitleWithSort
           title="Plataforma"
-          ascending={
-            sortingObj.sort === SortOrder.Asc && sortingObj.column === "id"
-          }
-          isActive={sortingObj.column === "id"}
           className="text-brand text-xl font-bold"
         />
       ),
@@ -108,10 +100,6 @@ const SolicitudesList = ({
       title: (
         <TitleWithSort
           title="Fecha solicitud"
-          ascending={
-            sortingObj.sort === SortOrder.Asc && sortingObj.column === "id"
-          }
-          isActive={sortingObj.column === "id"}
           className="text-brand text-xl font-bold"
         />
       ),
@@ -141,10 +129,6 @@ const SolicitudesList = ({
       title: (
         <TitleWithSort
           title="Acciones"
-          ascending={
-            sortingObj.sort === SortOrder.Asc && sortingObj.column === "id"
-          }
-          isActive={sortingObj.column === "id"}
           className="text-brand text-xl font-bold"
         />
       ),

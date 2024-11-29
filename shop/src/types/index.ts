@@ -168,7 +168,7 @@ export interface RegisterProductInput {
 export type RegisterInputType = {
   name: string;
   email: string;
-  password: string;
+  password: string | null | undefined;
   permission: any;
   phone?: string | null | undefined;
 };

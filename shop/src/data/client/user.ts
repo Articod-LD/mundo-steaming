@@ -63,7 +63,7 @@ export const userClient = {
     userId,
   }: {
     variables: ChangePasswordInput;
-    userId: string;
+    userId: number;
   }) => {
     return HttpClient.post<AuthResponse>(
       API_ENDPOINTS.CHANGE_PASS + userId,
