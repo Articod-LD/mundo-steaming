@@ -1,3 +1,4 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
   images: {
@@ -5,11 +6,11 @@ const nextConfig = {
       {
         protocol: "http",
         hostname: "localhost",
-        port: "8000", // Permitir imágenes desde localhost:8000
+        port: "8000", // Añadir el puerto 8000
       },
       {
         protocol: "https",
-        hostname: "**", // Permitir imágenes desde cualquier dominio HTTPS
+        hostname: "**",
       },
       {
         protocol: "http",
@@ -23,4 +24,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
