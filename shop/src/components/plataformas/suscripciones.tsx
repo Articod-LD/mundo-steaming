@@ -9,7 +9,7 @@ import classNames from "classnames";
 import { Product } from "@/types";
 import { useModalAction } from "../ui/modal/modal.context";
 export const UserSuscripcion: React.FC<{}> = () => {
-  const { me } = useMe();
+  const { me,error } = useMe();
   const { openModal } = useModalAction();
 
   function verInfoCuenta(producto: Product) {
@@ -18,8 +18,19 @@ export const UserSuscripcion: React.FC<{}> = () => {
   
   const isSuperAdmin = me?.permissions?.some(permission => permission.name === "super_admin");
 
-  if (isSuperAdmin) {
+  if (!me || isSuperAdmin) {
     return null;
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-[300px] flex justify-center items-center bg-red-100 rounded-xl">
+        <div className="text-center space-y-4">
+          <p className="text-xl text-red-600 font-semibold">¡Algo salió mal!</p>
+          <p className="text-lg text-gray-600">No se pudieron cargar las plataformas. Por favor, inténtalo nuevamente más tarde.</p>
+        </div>
+      </div>
+    );
   }
 
   return (
