@@ -128,7 +128,7 @@ const ListPlataformas: React.FC<{}> = () => {
                     {plataforma.type}
                   </span>
                   <span className="font-bold text-white md:text-2xl text-center mb-2 uppercase text-lg flex flex-col truncate w-2/3 line-clamp-1">
-                    NETFLIX PANTALLA COMPELTA DESDE EL INICIO DE LOS TIEMPSO
+                    {plataforma.name}
                     <span className="text-xs">
                       ({plataforma.count_avaliable} disponibles)
                     </span>
