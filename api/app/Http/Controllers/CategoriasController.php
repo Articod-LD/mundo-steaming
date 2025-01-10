@@ -6,6 +6,7 @@ use App\Http\Requests\CategoriaRequest;
 use App\Models\categorias;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use PhpOffice\PhpSpreadsheet\Calculation\Category;
 
 class CategoriasController extends Controller
 {
@@ -106,5 +107,25 @@ class CategoriasController extends Controller
             ->values(); // Reiniciar los índices del array
 
         return response()->json($plataformas);
+    }
+
+    public function destroy(Request $request, $categoria_id)
+    {
+        $banner = categorias::find($categoria_id);
+
+        if (!$banner) {
+            return response()->json(['error' => 'Categoria not found'], 404);
+        }
+
+        // Delete the image file from the public/images directory
+        $imagePath = public_path('images/' . $banner->imagen);
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+
+        // Delete the banner from the database
+        $banner->delete();
+
+        return response()->json(['success' => 'Banner deleted successfully.']);
     }
 }
