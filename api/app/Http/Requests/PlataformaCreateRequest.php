@@ -30,6 +30,8 @@ class PlataformaCreateRequest extends FormRequest
             'public_price' => ['required', 'string'],
             'provider_price' => ['required', 'string'],
             'type' => ['required', 'string', Rule::in(['completa', 'pantalla'])],
+            'categoria_id' => ['required','exists:App\Models\categorias,id'],
+            'description' => ['required', 'string']
         ];
     }
 

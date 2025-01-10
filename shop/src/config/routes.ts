@@ -1,7 +1,7 @@
 const routes = {
   home: "/",
   providers: "/providers",
-  tienda: "/tienda",
+  tienda: "/tienda/",
   sobre_nosotros: "/sobre-nosotros",
   soporte: "/soporte",
   login: "/login",
@@ -18,10 +18,13 @@ const routes = {
   solicitudesPlataformas: "/solicitud-plataforma",
   preguntas: "/preguntas",
   editar_inicio: "/home",
-  recargarBilletera:"/wallet",
-  recargasAdmin:"/recargas",
-  recargasUsers:"/recargas-users",
-  productos:"/productos",
-  administradores:"/administradores"
+  recargarBilletera: "/wallet",
+  recargasAdmin: "/recargas",
+  recargasUsers: "/recargas-users",
+  productos: "/productos",
+  administradores: "/administradores",
+  detalle: "/detalle/",
+  checkout: "/checkout",
+  suscription:"/suscription"
 };
 export default routes;

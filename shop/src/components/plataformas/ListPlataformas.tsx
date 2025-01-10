@@ -20,14 +20,16 @@ import AnchorLink from "../ui/links/anchor-link";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import Cart from "../icons/cart";
+import { formatPrecioColombiano } from "@/utils/price";
 const MySwal = withReactContent(Swal);
 
 const ListPlataformas: React.FC<{}> = () => {
+  const router = useRouter();
+
   const { plataformas, error, loading } = usePlataformasDisponiblesQuery({
     limit: 20,
   });
-
-  const { mutate: createBanner, isLoading } = useCreateSuscripcionMutation();
 
   const { me } = useMe();
   const isSuperAdmin = me?.permissions?.some(
@@ -37,42 +39,53 @@ const ListPlataformas: React.FC<{}> = () => {
     (permission) => permission.name === "provider"
   );
 
-  const handleSuscription = (plataforma: Plataforma) => {
-    const prce =
-      me && isProvider ? plataforma.provider_price : plataforma.public_price;
+  function AddCartOne(plataforma: Plataforma) {
+    console.log("entro");
 
-    if (parseFloat(me!.wallet) < parseFloat(prce)) {
-      toast.error("No tienes saldo suficiente");
-      return;
-    }
+    const currentCart = localStorage.getItem("cart")
+      ? JSON.parse(localStorage.getItem("cart")!)
+      : [];
 
-    MySwal.fire({
-      title: `Comprar Plataforma`,
-      text: `Vas a a comprar una cuenta ${plataforma.name} tipo ${plataforma.type} de ${prce}?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Suscribirme",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        createBanner(
-          { variables: { plataforma_id: plataforma.id, user_id: me!.id } },
-          {
-            onSuccess(data, variables, context) {
-              MySwal.fire({
-                title: "Sucripcion creada!",
-                icon: "success",
-              });
-            },
-            onError(error: any) {
-              toast.error(error.response.data.error);
-            },
-          }
-        );
+    const existingItemIndex = currentCart.findIndex(
+      (item: Plataforma) => item.id === plataforma?.id
+    );
+
+    if (existingItemIndex !== -1) {
+      let isUpdate = false;
+      if (
+        currentCart[existingItemIndex].cantidad < plataforma!.count_avaliable
+      ) {
+        currentCart[existingItemIndex].cantidad += 1;
+        isUpdate = true;
+        MySwal.fire({
+          title: "Plataforma Añadida al carrito cantidad 1",
+          icon: "success",
+        });
       }
-    });
-  };
+
+      if (!isUpdate) {
+        MySwal.fire({
+          title: "Maxima Cantidad de unidades disponibles",
+          icon: "warning",
+        });
+        return;
+      }
+      localStorage.setItem("cart", JSON.stringify(currentCart));
+      window.dispatchEvent(new Event("cartUpdated"));
+    } else {
+      const itemCart = {
+        cantidad: 1,
+        ...plataforma,
+      };
+      currentCart.push(itemCart);
+      MySwal.fire({
+        title: "Plataforma Agregada Al carrito cantidad 1",
+        icon: "success",
+      });
+    }
+    localStorage.setItem("cart", JSON.stringify(currentCart));
+    window.dispatchEvent(new Event("cartUpdated"));
+  }
 
   if (loading) {
     return (
@@ -107,55 +120,68 @@ const ListPlataformas: React.FC<{}> = () => {
           {plataformas.map((plataforma, i) => (
             <SwiperSlide key={i}>
               <div
-                className={`w-full h-48 rounded-xl flex justify-center items-center relative ${
-                  plataforma.type === "completa" ? "bg-brand" : "bg-blue-500"
-                } border-2 ${
-                  plataforma.type === "completa"
-                    ? "border-brand-dark"
-                    : "border-blue-400"
-                } `}
+                className="max-w-sm cursor-pointer"
+                onClick={() => router.push(routes.detalle + plataforma.id)}
               >
-                <Image
-                  src={plataforma.image_url}
-                  objectFit="cover"
-                  layout="fill"
-                  quality={100}
-                  alt="img banner"
-                  className="object-cover rounded-lg opacity-80"
-                />
-                <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-50 rounded-xl">
-                  <span className="absolute top-1 right-3 uppercase text-xs md:text-sm text-white truncate">
-                    {plataforma.type}
-                  </span>
-                  <span className="font-bold text-white md:text-2xl text-center mb-2 uppercase text-lg flex flex-col truncate w-2/3 line-clamp-1">
-                    {plataforma.name}
-                    <span className="text-xs">
-                      ({plataforma.count_avaliable} disponibles)
+                <div className="relative w-full h-48">
+                  <Image
+                    src={plataforma.image_url}
+                    objectFit="cover"
+                    layout="fill"
+                    quality={100}
+                    alt="img banner"
+                    className="object-cover rounded-2xl"
+                  />
+                </div>
+
+                <div className="p-4 bg-opacity-50 flex">
+                  <div className="w-full ">
+                    <span className="font-light text-sm">
+                      {plataforma.categoria.titulo}
                     </span>
-                  </span>
-                  <p className="text-lg md:text-xl text-white truncate">
-                    COP $
-                    {me && isProvider
-                      ? plataforma.provider_price
-                      : plataforma.public_price}
-                  </p>
-                  {me ? (
-                    !isSuperAdmin && (
-                      <button
-                        onClick={() => handleSuscription(plataforma)}
-                        className="cursor-pointer p-3 mt-4 uppercase text-sm font-semibold text-white bg-[#1A1A1A] rounded hover:bg-[#333333] transition ease-in-out hover:scale-105 duration-300"
-                      >
-                        Suscribirme
-                      </button>
-                    )
-                  ) : (
-                    <AnchorLink
-                      href={routes.login}
-                      className="cursor-pointer p-3 mt-4 uppercase text-sm font-semibold text-white bg-[#1A1A1A] rounded hover:bg-[#333333] transition ease-in-out hover:scale-105 duration-300"
-                    >
-                      Suscribirme
-                    </AnchorLink>
-                  )}
+                    <div className="mb-4">
+                      <h3 className="font-bold text-white md:text-2xl uppercase text-lg truncate">
+                        {plataforma.name}
+                      </h3>
+                      <span className="text-sm text-gray-300 block w-full">
+                        Disponibilidad:{" "}
+                        <span className="text-gray-400">
+                          ({`${plataforma.count_avaliable} ${plataforma.type}`})
+                        </span>
+                      </span>
+                    </div>
+                    <p className="text-lg md:text-xl text-brand font-semibold">
+                      {formatPrecioColombiano(
+                        me && isProvider
+                          ? plataforma.provider_price
+                          : plataforma.public_price
+                      )}
+                    </p>
+                  </div>
+
+                  <div
+                    className="flex items-center justify-end"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      AddCartOne(plataforma);
+                    }}
+                  >
+                    <div className="flex-shrink-0">
+                      {me ? (
+                        !isSuperAdmin && (
+                          <button className="bg-brand p-2 rounded-md text-white hover:bg-brand-light hover:shadow-lg hover:scale-105 transition duration-300">
+                            <Cart className="w-5 h-5 text-black" />
+                          </button>
+                        )
+                      ) : (
+                        <AnchorLink href={routes.login}>
+                          <div className="bg-brand p-2 rounded-md text-white hover:bg-brand-light hover:shadow-lg hover:scale-105 transition duration-300">
+                            <Cart className="w-5 h-5" />
+                          </div>
+                        </AnchorLink>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </SwiperSlide>

@@ -106,6 +106,9 @@ function uiReducer(state: State, action: Action) {
         modalData: action.data,
       };
     }
+    default: {
+      return state;
+    }
   }
 }
 

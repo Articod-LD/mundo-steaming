@@ -24,8 +24,10 @@ class createSuscriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required','exists:App\Models\User,id'],
-            'plataforma_id' => ['required','exists:App\Models\plataforma,id'],
+            'user_id' => ['required', 'exists:App\Models\User,id'],
+            'plataformas' => ['required', 'array'],
+            'plataforma_id.*.id' => ['required', 'exists:App\Models\Plataforma,id'],
+            'plataforma_id.*.cantidad' => ['required', 'integer', 'min:1'],
         ];
     }
 

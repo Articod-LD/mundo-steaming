@@ -17,49 +17,49 @@ import CrearProductoModal from "@/components/modals/createproducto";
 import BulkProductUploadModal from "@/components/modals/cargarProductos";
 
 function renderModal(view: MODAL_VIEWS | undefined, data: any) {
-
+  const modalKey = `${view}-${data?.id || ''}`;  
   switch (view) {
     case "SEARCH_VIEW":
-      return <SearchModal />;
+      return <SearchModal key={modalKey} />;
     case "AGREGAR_PLATAFORMA_USUARIO":
-      return <AgregatePlataformaModal id={data} />;
+      return <AgregatePlataformaModal id={data}  key={modalKey}/>;
 
     case "AGREGAR_PLATAFORMA_CLIENTE":
-      return <AgregateClienteModal type={data} />;
+      return <AgregateClienteModal type={data}  key={modalKey} />;
 
     case "EDITAR_USER_PROFILE":
-      return <EditarPerfilModal />;
+      return <EditarPerfilModal  key={modalKey} />;
 
     case "CREAR_PLATAFORMA":
-      return <CrearPlataformaModal plataforma={data} />;
+      return <CrearPlataformaModal plataforma={data}  key={modalKey}/>;
     case "CREAR_PRODUCTO":
-      return <CrearProductoModal producto={data} />;
+      return <CrearProductoModal producto={data} key={modalKey} />;
     case "CARGA_PRODUCTO":
-      return <BulkProductUploadModal />;
+      return <BulkProductUploadModal  key={modalKey}/>;
 
     case "CREAR_BANNER":
-      return <CrearBannerModal banner={data} />;
+      return <CrearBannerModal banner={data}  key={modalKey}/>;
 
     case "CREAR_CATEGORIA":
-      return <CrearCategoriaModal categorie={data} />;
+      return <CrearCategoriaModal categorie={data}  key={modalKey}/>;
 
     case "CLIENTE_SOLICITAR_PLATAFORMA":
-      return <SolicitarPlataforma plataforma={data} />;
+      return <SolicitarPlataforma plataforma={data} key={modalKey} />;
 
     case "ELIMINAR_SOLICITUD":
-      return <DeleteSolicitud id={data} />;
+      return <DeleteSolicitud id={data}  key={modalKey}/>;
 
     case "ACEPTAR_SOLICITUD":
-      return <AceptarSolicitud data={data} />;
+      return <AceptarSolicitud data={data}  key={modalKey}/>;
 
     case "VER_INFO_PLATAFORMA":
-      return <VerInfoPlataforma producto={data} />;
+      return <VerInfoPlataforma producto={data}  key={modalKey}/>;
 
     case "PROVIDER_SOLICITAR_PLATAFORMA":
-      return <AgregateProvidersModal />;
+      return <AgregateProvidersModal key={modalKey} />;
 
     case "EDITAR_USUARIO":
-      return <EditarUsuarioModal data={data} />;
+      return <EditarUsuarioModal data={data}  key={modalKey} />;
 
     default:
       return null;

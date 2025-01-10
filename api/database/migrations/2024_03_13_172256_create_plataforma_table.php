@@ -19,7 +19,10 @@ return new class extends Migration
             $table->decimal('provider_price', 10, 2)->comment('Precio para el proveedor');
             $table->boolean('is_active')->default(1)->comment('Indica si la plataforma está activa');
             $table->integer('count_avaliable')->default(0)->comment('Indica cuantas estan disponibles');
-            $table->enum('type', ['completa', 'pantalla'])->default('completa')->comment('Indica cuantas estan disponibles');            
+            $table->enum('type', ['completa', 'pantalla'])->default('completa')->comment('Indica cuantas estan disponibles');
+            $table->text('description')->comment('Campo para observaciones'); 
+            $table->unsignedBigInteger('categoria_id')->comment('Categoria de la plataforma');
+            $table->foreign('categoria_id')->references('id')->on('categorias')->onDelete('cascade');
             
             $table->timestamps();
         });

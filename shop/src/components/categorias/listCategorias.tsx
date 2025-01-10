@@ -2,9 +2,14 @@ import { useState } from "react";
 import Image from "../ui/image";
 import { Title } from "../ui/tittleSections";
 import { useCategoriesQuery } from "@/data/user";
+import { Router, useRouter } from "next/router";
+import routes from "@/config/routes";
 
 export const ListCategorias: React.FC<{}> = () => {
   const [verTodas, setVerTodas] = useState(false);
+
+
+  const router = useRouter();
 
   const { categories, error, loading } = useCategoriesQuery({
     limit: 20,
@@ -13,6 +18,11 @@ export const ListCategorias: React.FC<{}> = () => {
   const handleVerTodas = () => {
     setVerTodas(true);
   };
+
+  const verCategoria = (name:string) =>{
+    router.push(routes.tienda + name);
+  }
+
 
   const categoriasParaMostrar = verTodas ? categories : categories.slice(0, 6);
 
@@ -38,10 +48,11 @@ export const ListCategorias: React.FC<{}> = () => {
       {categories.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-7">
           {categoriasParaMostrar.map((data, i) => (
-            // transition duration-300 ease-in-out transform hover:scale-105
+            // 
             <div
               key={i}
-              className="bg-black h-[300px] rounded-xl overflow-hidden relative shadow-lg"
+              className="bg-black h-[300px] rounded-xl overflow-hidden relative shadow-lg transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+              onClick={()=>verCategoria(data.titulo)}
             >
               <Image
                 src={data.imagen_url}

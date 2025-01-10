@@ -55,10 +55,11 @@ Route::post('/provider/{provider_id}', [ProviderController::class, 'update']);
 Route::delete('/provider/{provider_id}', [ProviderController::class, 'destroy']);
 
 Route::get('/suscription/list', [SuscripcionesController::class, 'index']);
-Route::post('/suscription/register', [SuscripcionesController::class, 'create']);
-Route::get('/suscription/{suscription_id}', [ProviderController::class, 'find']);
+Route::post('/suscription/register/provider', [SuscripcionesController::class, 'create']);
+Route::get('/suscription/{orden_code}', [SuscripcionesController::class, 'find']);
 // Route::post('/suscriptions/{suscription_id}', [ProviderController::class, 'update']);
 Route::delete('/suscriptions/{suscription_id}', [ProviderController::class, 'destroy']);
+Route::post('/suscription/register/client', [PaymentController::class, 'createPaymentCompraCliente']);
 
 Route::get('/credencial/list', [CredencialesController::class, 'index']);
 Route::post('/credencial/register', [CredencialesController::class, 'create']);
@@ -86,6 +87,7 @@ Route::get('/categorie/list', [CategoriasController::class, 'index']);
 Route::post('/categorie/register', [CategoriasController::class, 'store']);
 Route::post('/categorie/{id}', [CategoriasController::class, 'update']);
 Route::delete('/categorie/{categorie_id}', [CategoriasController::class, 'destroy']);
+Route::get('/categorie/{nombre_categoria}/plataformas', [CategoriasController::class, 'getPlataformaByCategoria']);
 
 Route::get('/productos/list', [ProductoController::class, 'index']);
 Route::post('/productos/register', [ProductoController::class, 'create']);
@@ -98,4 +100,5 @@ Route::delete('/productos/{product_id}', [ProductoController::class, 'destroy'])
 Route::post('/recharge', [PaymentController::class, 'createPayment']);
 Route::get('/recharge/list', [rechargeController::class, 'index']);
 Route::get('/recharge/{recharge_id}', [rechargeController::class, 'find']);
+
 

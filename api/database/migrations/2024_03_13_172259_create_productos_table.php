@@ -25,11 +25,14 @@ return new class extends Migration
             $table->unsignedBigInteger('plataforma_id')->nullable()->comment('Referencia de la plataforma');
             $table->foreign('plataforma_id')->references('id')->on('plataformas')->onDelete('cascade');
 
+            $table->unsignedBigInteger('purchase_id')->nullable()->comment('Referencia de la plataforma');
+            $table->foreign('purchase_id')->references('id')->on('purchases')->onDelete('cascade');
+
 
             $table->unsignedBigInteger('credencial_id')->nullable()->comment('Referencia a la productos');
             $table->foreign('credencial_id')->references('id')->on('credenciales')->onDelete('cascade');
 
-            $table->enum('status', ['COMPRADO', 'VENCIDO', 'DISPONIBLE'])
+            $table->enum('status', ['COMPRADO', 'VENCIDO', 'DISPONIBLE', 'PENDIENTE'])
                 ->default('DISPONIBLE')
                 ->comment('Estado del producto');
 

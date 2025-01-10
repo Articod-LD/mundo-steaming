@@ -68,4 +68,9 @@ class User extends Authenticatable
         return $this->hasMany(recharge::class);
     }
 
+    public function purchases()
+    {
+        return $this->hasMany(purchase::class,'user_id');
+    }
+
 }

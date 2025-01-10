@@ -61,10 +61,12 @@ class UserController extends Controller
                 $user = $this->repository->with([
                     'suscriptions',
                     'permissions',
+                    'purchases',
                     'suscriptions.productos',
                     'suscriptions.productos.plataforma',
                     'suscriptions.productos.credencial'
                 ])->find($user->id);
+                
 
                 // Asegúrate de que el usuario existe
                 if ($user) {

@@ -17,6 +17,8 @@ import {
   ProductPaginator,
   QueryOptionsType,
   Recharge,
+  Suscriptions,
+  SuscriptionSuccess,
   User,
   UserPaginator,
 } from "@/types";
@@ -58,6 +60,12 @@ export function useSoporte() {
 export function useRegisterWallet() {
   return useMutation({
     mutationFn: userClient.recharge,
+  });
+}
+
+export function useRegisterSuscriptionClient() {
+  return useMutation({
+    mutationFn: userClient.suscriptionClient,
   });
 }
 
@@ -139,6 +147,7 @@ export const useLogoutMutation = () => {
   return useMutation({
     mutationFn: userClient.logout,
     onSuccess: () => {
+      localStorage.removeItem("cart");
       Cookies.remove(AUTH_TOKEN_KEY);
       router.replace(routes.login);
     },
@@ -277,6 +286,23 @@ export const useRecargasAdminQuery = () => {
   };
 };
 
+export const useSuscriptionAdminQuery = (params: { orden_code: string }) => {
+  const { data, isLoading, error } = useQuery<any, Error>(
+    [API_ENDPOINTS.SUSCRIPCION_ONE],
+    () => userClient.fetchSuscriptionAdmin(params),
+    {
+      keepPreviousData: true,
+    }
+  );
+  console.log(data);
+  
+  return {
+    suscription: data ?? ({} as SuscriptionSuccess),
+    loading: isLoading,
+    error,
+  };
+};
+
 export const useRecargasQuery = (params: Partial<{ user_id: number }>) => {
   const { data, isLoading, error } = useQuery<Recharge[], Error>(
     [API_ENDPOINTS.RECHARGE_ONE],
@@ -303,6 +329,24 @@ export const useCategoriesQuery = (params: Partial<QueryOptionsType>) => {
 
   return {
     categories: data ?? ([] as Categorie[]),
+    loading: isLoading,
+    error,
+  };
+};
+
+export const usePlataformasCategoriasQuery = (
+  params: Partial<{ name: string }>
+) => {
+  const { data, isLoading, error } = useQuery<Plataforma[], Error>(
+    [API_ENDPOINTS.CATEGORIE_LIST, params],
+    () => userClient.fetchCategoriesPlataformas(params),
+    {
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    plataformas: data ?? ([] as Plataforma[]),
     loading: isLoading,
     error,
   };

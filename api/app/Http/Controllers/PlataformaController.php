@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\ShopException;
 use App\Http\Requests\PlataformaCreateRequest;
+use App\Models\categorias;
 use App\Models\plataforma;
 use Illuminate\Http\Request;
 
@@ -23,7 +24,7 @@ class PlataformaController extends Controller
      */
     public function index()
     {
-        return $this->repository->with(['productos'])->get()
+        return $this->repository->with(['productos','categoria'])->get()
             ->filter(function ($categoria) {
                 return $categoria->is_active === 1; // Filtrar las categorías que están activas
             })
@@ -39,30 +40,38 @@ class PlataformaController extends Controller
         $plataformas = Plataforma::whereHas('productos', function ($query) {
             $query->where('status', 'DISPONIBLE');
         })
-        ->with(['productos' => function ($query) {
-            $query->where('status', 'DISPONIBLE');
-        }])
-        ->get()
-        ->filter(function ($plataforma) {
-            return $plataforma->productos->count() > 0;
+            ->with(['productos' => function ($query) {
+                $query->where('status', 'DISPONIBLE');
+            }])
+            ->with('categoria')
+            ->get()
+            ->filter(function ($plataforma) {
+                return $plataforma->productos->count() > 0;
                 // && $plataforma->productos->count() === $plataforma->count_avaliable;
-        })
-        ->map(function ($categoria) {
-            // Transformamos la URL de la imagen
-            $categoria->image_url = url('images/' . $categoria->image_url);
-            return $categoria;
-        })
-        ->values(); // Usamos values() para convertirlo en un array de objetos
-    
+            })
+            ->map(function ($categoria) {
+                // Transformamos la URL de la imagen
+                $categoria->image_url = url('images/' . $categoria->image_url);
+                return $categoria;
+            })
+            ->values(); // Usamos values() para convertirlo en un array de objetos
+
         return response()->json($plataformas);
     }
-    
+
 
     /**
      * Show the form for creating a new resource.
      */
     public function create(PlataformaCreateRequest $request)
     {
+
+        $categoria = categorias::where('id', $request->categoria_id)->first();
+        if (!$categoria) {
+            return response()->json([
+                'error' => 'No Existe una categoria con este ID.'
+            ], 400);
+        }
 
         $existingPlatform = plataforma::where('name', $request->name)
             ->where('type', $request->type)
@@ -83,7 +92,9 @@ class PlataformaController extends Controller
             'image_url' => $imageName,
             'public_price' => $request->public_price,
             'provider_price' => $request->provider_price,
-            'type' => $request->type
+            'type' => $request->type,
+            'categoria_id' => $categoria->id,
+            'description' => $request->description,
         ]);
 
         return response()->json(['Plataforma' => $response], 200);
@@ -170,4 +181,5 @@ class PlataformaController extends Controller
         // Si tiene productos, devuelve un mensaje
         return response()->json(['error' => 'No se puede inhabilitar porque tiene productos asociados.'], 400);
     }
+
 }

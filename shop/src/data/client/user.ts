@@ -17,6 +17,8 @@ import {
   RegisterInput,
   RegisterProductInput,
   SolicitudInput,
+  Suscriptions,
+  SuscriptionSuccess,
   UpdateProfileInputType,
   User,
   UserPaginator,
@@ -119,6 +121,10 @@ export const userClient = {
     return HttpClient.get<Recharge[]>(API_ENDPOINTS.RECHARGE_ONE + 'list');
   },
 
+  fetchSuscriptionAdmin: ({orden_code }: Partial<{orden_code:string}>) => {
+    return HttpClient.get<any>(API_ENDPOINTS.SUSCRIPCION_ONE + orden_code);
+  },
+
   fetchRecharged: ({user_id }: Partial<{user_id:number}>) => {
     return HttpClient.get<Recharge[]>(API_ENDPOINTS.RECHARGE_ONE + user_id);
   },
@@ -126,6 +132,9 @@ export const userClient = {
     return HttpClient.get<Categorie[]>(API_ENDPOINTS.CATEGORIE_LIST, {
       ...params,
     });
+  },
+  fetchCategoriesPlataformas: ({ ...params }: Partial<{name:string}>) => {
+    return HttpClient.get<Plataforma[]>(`${API_ENDPOINTS.DELETE_CATEGORIA}${params.name}/plataformas`);
   },
   fetchBanner: ({ ...params }: Partial<UserQueryOptions>) => {
     return HttpClient.get<Banner[]>(API_ENDPOINTS.BANNER_LIST, {
@@ -288,5 +297,9 @@ export const userClient = {
 
   recharge: (variables: any) => {
     return HttpClient.post<AuthResponse>(API_ENDPOINTS.RECHARGE, variables);
+  },
+
+  suscriptionClient: (variables: any) => {
+    return HttpClient.post<AuthResponse>(API_ENDPOINTS.CREAR_SUSCRIPCION_CLIENT, variables);
   },
 };

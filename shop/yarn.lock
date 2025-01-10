@@ -841,6 +841,11 @@ available-typed-arrays@^1.0.6, available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
+awesome-react-stepper@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/awesome-react-stepper/-/awesome-react-stepper-1.1.1.tgz#8fcf9a92ff3fab8789866a76e4a6d9a5b36b069b"
+  integrity sha512-F2H5dR2tl2xW5a+V6lozc2ReTElPzHGhBO5HF+V/HcM+uWz9RRoVBWis0dNfY+veUc9F3MhHlep3bknLax+6GQ==
+
 axe-core@=4.7.0:
   version "4.7.0"
   resolved "https://registry.npmjs.org/axe-core/-/axe-core-4.7.0.tgz"

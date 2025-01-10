@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use PhpOffice\PhpSpreadsheet\Calculation\Category;
 
 class plataforma extends Model
 {
@@ -19,12 +20,21 @@ class plataforma extends Model
         'provider_price',
         'is_active',
         'count_avaliable',
-        'type'
+        'type',
+        'categoria_id',
+        'description'
     ];
 
     public function productos()
     {
         return $this->hasMany(Producto::class,'plataforma_id');
     }
+
+
+    public function categoria()
+    {
+        return $this->belongsTo(categorias::class);
+    }
+
 
 }

@@ -4,6 +4,7 @@ import Input from "../ui/input";
 import Button from "../ui/button";
 import { useState } from "react";
 import {
+  useCategoriesQuery,
   useRegisterCategorieMutation,
   useRegisterPlataformaMutation,
   useUpdateCategoriaMutation,
@@ -54,10 +55,17 @@ const createPlataformaFormSchema = yup.object().shape({
       /^\d+(\.\d{1,2})?$/,
       "El precio debe ser un número válido con hasta 2 decimales"
     ),
-  type: yup
-    .object().required('el tipo es requerido')
+  type: yup.object().required("el tipo es requerido"),
+  categoria_id: yup
+    .object()
+    .shape({
+      id: yup.number().required(),
+      titulo: yup.string().required(),
+    })
+    .typeError("Debe seleccionar una plataforma")
+    .required("La plataforma es requerida"),
+  description: yup.string().required("La descipcion es requerida"),
 });
-
 
 function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -69,17 +77,29 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
   const queryClient = useQueryClient();
   const { closeModal } = useModalAction();
 
-  const { mutate: createPlataforma, isLoading } = useRegisterPlataformaMutation();
-  const { mutate: updatePlataforma, isLoading: isLoadingUpdate } = useUpdatePlataformaMutation();
+  const { mutate: createPlataforma, isLoading } =
+    useRegisterPlataformaMutation();
+  const { mutate: updatePlataforma, isLoading: isLoadingUpdate } =
+    useUpdatePlataformaMutation();
+
+  const { categories, error, loading } = useCategoriesQuery({
+    limit: 20,
+  });
+
+  console.log(categories);
 
   function onSubmit({
     image_url,
     name,
     provider_price,
     public_price,
-    type
+    type,
+    categoria_id,
+    description
   }: PlataformaInput) {
     const typeConverted = type as unknown as { name: string };
+    const categorie = categoria_id as unknown as { id: string };
+
     const typeName = typeConverted.name;
     const formData = new FormData();
     formData.append("name", name);
@@ -88,12 +108,12 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
       formData.append("image_url", image_url[0]); // Solo si se seleccionó una imagen nueva
     }
 
+
     formData.append("provider_price", provider_price);
     formData.append("public_price", public_price);
     formData.append("type", typeName);
-
-
-    
+    formData.append("categoria_id", categorie.id);
+    formData.append("description", description);
 
     if (!plataforma) {
       createPlataforma(formData, {
@@ -105,23 +125,23 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
         },
       });
     } else {
+      updatePlataforma(
+        { plataformaId: plataforma.id, params: formData },
+        {
+          onSuccess(data, variables, context) {
+            closeModal();
+          },
+          onError(error: any) {
+            console.log(error);
 
-      updatePlataforma({ plataformaId: plataforma.id, params: formData }, {
-        onSuccess(data, variables, context) {
-          closeModal();
-        },
-        onError(error: any) {
-          console.log(error);
-          
-          setErrorMessage(error.response.data.error);
-        },
-      });
-
+            setErrorMessage(error.response.data.error);
+          },
+        }
+      );
     }
   }
 
   function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
-
     const file = event.target.files?.[0];
     if (file) {
       const fileReader = new FileReader();
@@ -153,19 +173,44 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
                 isEditar={true}
                 defaultValue={plataforma?.name}
                 error={errors?.name?.message!}
+                isRequired={!plataforma}
               />
+
+              <div className="mb-4">
+                <SelectInput
+                  label="Categoria"
+                  name="categoria_id"
+                  required={!plataforma}
+                  control={control}
+                  getOptionLabel={(option: any) => {
+                    return option.titulo;
+                  }}
+                  getOptionValue={(option: any) => {
+                    return option.titulo;
+                  }}
+                  defaultValue={
+                    categories
+                      ? (categories.filter(
+                          (pla) => pla.titulo === plataforma?.categoria.titulo
+                        ) as unknown as object[])
+                      : undefined
+                  }
+                  options={categories}
+                  placeholder="Selecionar"
+                  isClearable={true}
+                />
+                <p className="my-2 text-xs text-red-500 text-start">
+                  {errors?.categoria_id?.message!}
+                </p>
+              </div>
 
               <div className="flex flex-col mb-3">
                 <label className="block text-sm text-gray-600 mb-1">
                   Imagen
-                  {
-                    !plataforma &&
-                    <span className="text-red-500 px-1">*</span>
-                  }
+                  {!plataforma && <span className="text-red-500 px-1">*</span>}
                 </label>
 
-                {
-                  previewImage &&
+                {previewImage && (
                   <Image
                     src={previewImage}
                     width={150}
@@ -174,7 +219,7 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
                     alt="img banner"
                     className="mb-4"
                   />
-                }
+                )}
 
                 <Input
                   type="file"
@@ -186,7 +231,6 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
                 />
               </div>
 
-
               <Input
                 label="Precio Publico"
                 type="Number"
@@ -196,6 +240,7 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
                 isEditar={true}
                 defaultValue={plataforma?.public_price}
                 error={errors?.public_price?.message!}
+                isRequired={!plataforma}
               />
               <Input
                 label="Precio Distribuidor"
@@ -206,6 +251,7 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
                 isEditar={true}
                 defaultValue={plataforma?.provider_price}
                 error={errors?.provider_price?.message!}
+                isRequired={!plataforma}
               />
 
               <div className="mb-4">
@@ -214,19 +260,39 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
                   name="type"
                   control={control}
                   getOptionLabel={(option: any) => {
-                    return option.name
+                    return option.name;
                   }}
                   getOptionValue={(option: any) => {
-
-                    return option.name
+                    return option.name;
                   }}
-                  defaultValue={[{ id: 1, name: 'completa' }, { id: 2, name: 'pantalla' }].filter(value => value.name === plataforma?.type)}
-                  options={[{ id: 1, name: 'completa' }, { id: 2, name: 'pantalla' }]}
+                  defaultValue={[
+                    { id: 1, name: "completa" },
+                    { id: 2, name: "pantalla" },
+                  ].filter((value) => value.name === plataforma?.type)}
+                  options={[
+                    { id: 1, name: "completa" },
+                    { id: 2, name: "pantalla" },
+                  ]}
                   placeholder="Selecionar"
                   isClearable={true}
+                  required={!plataforma}
                 />
-                <p className="my-2 text-xs text-red-500 text-start">{errors?.type?.message!}</p>
+                <p className="my-2 text-xs text-red-500 text-start">
+                  {errors?.type?.message!}
+                </p>
               </div>
+
+              <Input
+                label="Descripcion"
+                type="textarea"
+                {...register("description")}
+                variant="outline"
+                className="mb-4"
+                isEditar={true}
+                defaultValue={plataforma?.description}
+                error={errors?.description?.message!}
+                isRequired={!plataforma}
+              />
 
               <Button
                 className="w-full uppercase"

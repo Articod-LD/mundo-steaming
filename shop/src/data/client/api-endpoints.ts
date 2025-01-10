@@ -19,7 +19,8 @@ export const API_ENDPOINTS = {
   DELETE_SOLICITUD: "/solicitud/delete/",
   CREATE_SOLICITUD: "/solicitud/register",
   ACEPTAR_SOLICITUD: "/solicitud/aceptar/",
-  CREAR_SUSCRIPCION: "/suscription/register",
+  CREAR_SUSCRIPCION: "/suscription/register/provider",
+  CREAR_SUSCRIPCION_CLIENT:"/suscription/register/client",
   UPDATE_WALLET_CLIENT: "/clientes/billtera/update",
   SOPORTE: "/soporte/register",
   RECHARGE:'/recharge',
@@ -32,5 +33,6 @@ export const API_ENDPOINTS = {
   ONE_PROVIDER:"/provider/",
   CATEGORIE_REGISTER: "/categorie/register",
   DELETE_CATEGORIA: "/categorie/",
-  PRODUCTS_LIST:"/productos/list"
+  PRODUCTS_LIST:"/productos/list",
+  SUSCRIPCION_ONE: "/suscription/",
 };

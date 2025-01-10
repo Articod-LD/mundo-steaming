@@ -65,13 +65,14 @@ const PlataformasAdmin = ({ plataformas }: { plataformas: Plataforma[] }) => {
           {plataformas.length > 0 ? (
             <>
               {/* Encabezados de la Tabla */}
-              <div className="min-w-[800px] grid grid-cols-9 gap-4 px-6 py-4 bg-gray-100 text-brand font-semibold text-center">
+              <div className="min-w-[800px] grid grid-cols-10 gap-4 px-6 py-4 bg-gray-100 text-brand font-semibold text-center">
                 <div className="col-span-1 text-lg"></div>
                 <div className="col-span-1 text-lg">Item</div>
                 <div className="col-span-1 text-lg">Nombre</div>
                 <div className="col-span-1 text-lg">Precio publico</div>
                 <div className="col-span-1 text-lg">Precio distribuidor</div>
                 <div className="col-span-1 text-lg">Tipo</div>
+                <div className="col-span-1 text-lg">Categoria</div>
                 <div className="col-span-1 text-lg">N° Credenciales</div>
                 <div className="col-span-1 text-lg">N° Productos</div>
                 <div className="col-span-1 text-lg">Acciones</div>
@@ -81,7 +82,7 @@ const PlataformasAdmin = ({ plataformas }: { plataformas: Plataforma[] }) => {
               {plataformas.map((plataforma, i) => (
                 <div
                   key={i}
-                  className="min-w-[800px] grid grid-cols-9 gap-4 px-6 items-center py-4 border-b border-gray-200 hover:bg-gray-50 transition duration-200"
+                  className="min-w-[800px] grid grid-cols-10 gap-4 px-6 items-center py-4 border-b border-gray-200 hover:bg-gray-50 transition duration-200"
                 >
                   <div className="col-span-1 flex justify-center items-center">
                     <button
@@ -123,6 +124,10 @@ const PlataformasAdmin = ({ plataformas }: { plataformas: Plataforma[] }) => {
                   {/* Type */}
                   <div className="col-span-1 text-center text-sm font-normal text-gray-800">
                     {plataforma.type}
+                  </div>
+
+                  <div className="col-span-1 text-center text-sm font-normal text-gray-800">
+                  {plataforma.categoria.titulo}
                   </div>
 
                   {/* Credenciales */}

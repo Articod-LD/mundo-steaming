@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CategoriaRequest;
 use App\Models\categorias;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class CategoriasController extends Controller
 {
@@ -46,22 +47,6 @@ class CategoriasController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
@@ -97,23 +82,29 @@ class CategoriasController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, $categorie_id)
+    public function getPlataformaByCategoria(Request $request, string $nombre_categoria)
     {
-        $banner = categorias::find($categorie_id);
+        // Buscar la categoría ignorando mayúsculas/minúsculas
+        $categoria = categorias::whereRaw('LOWER(titulo) = ?', [Str::lower($nombre_categoria)])
+            ->with('plataformas.productos','plataformas.categoria') // Cargar las relaciones necesarias
+            ->first();
 
-        if (!$banner) {
-            return response()->json(['error' => 'Banner not found'], 404);
+        if (!$categoria) {
+            return response()->json(['error' => 'Categoría no encontrada'], 404);
         }
 
-        // Delete the image file from the public/images directory
-        $imagePath = public_path('images/' . $banner->imagen);
-        if (file_exists($imagePath)) {
-            unlink($imagePath);
-        }
+        // Filtrar las plataformas que tienen productos asociados
+        $plataformas = $categoria->plataformas
+            ->filter(function ($plataforma) {
+                return $plataforma->productos->where('status', 'DISPONIBLE')->count() > 0 ;
+            })
+            ->map(function ($plataforma) {
+                // Agregar la URL absoluta de la imagen
+                $plataforma->image_url = url('images/' . $plataforma->image_url);
+                return $plataforma;
+            })
+            ->values(); // Reiniciar los índices del array
 
-        // Delete the banner from the database
-        $banner->delete();
-
-        return response()->json(['success' => 'Banner deleted successfully.']);
+        return response()->json($plataformas);
     }
 }
