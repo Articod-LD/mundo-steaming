@@ -27,7 +27,7 @@ export default function HeroCarousel() {
   });
 
   if (loading) {
-    return <div className="w-full h-[350px] md:h-[600px]  flex justify-center items-center bg-gray-950">
+    return <div className="w-full h-[277px] md:h-[600px]  flex justify-center items-center bg-gray-950">
       <div className="flex flex-col items-center justify-center space-y-4">
         <div className="animate-spin rounded-full border-4 border-t-4 border-brand-dark w-16 h-16 border-t-brand"></div>
         <p className="text-xl font-semibold text-gray-200">Cargando...</p>
@@ -54,7 +54,7 @@ export default function HeroCarousel() {
       >
         {banner.map((item, i) => (
           <SwiperSlide key={i}>
-            <div className="w-full  h-[350px] md:h-[600px]  flex justify-center items-center md:justify-start relative">
+            <div className="w-full  h-[277px] md:h-[300px] lg:h-[600px]   flex justify-center items-center md:justify-start relative">
               <Image
                 className="absolute inset-0 -z-10 opacity-60"
                 src={item.imagen_url}
@@ -98,7 +98,7 @@ export default function HeroCarousel() {
       )}
     </>
   ) : (
-    <div className="w-full  h-[350px] md:h-[600px]  flex justify-center items-center bg-gray-950">
+    <div className="w-full h-[277px]  md:h-[400px]  flex justify-center items-center bg-gray-950">
       <div className="text-center text-xl font-semibold text-gray-200">
         <p>No tenemos banners disponibles en este momento</p>
         <p className="text-sm text-gray-500">Vuelve más tarde o explora otras secciones.</p>

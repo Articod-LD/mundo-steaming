@@ -259,13 +259,13 @@ const Checkout: any = () => {
                 cart.map((plataforma, i) => (
                   <div className="w-full flex mb-4" key={i}>
                     {/* Imagen */}
-                    <div className="relative w-1/4 h-auto">
+                    <div className="relative w-1/4 h-auto flex items-center">
                       <Image
                         src={plataforma.image_url}
                         layout="fill"
                         quality={100}
                         alt="img banner"
-                        className="rounded-2xl"
+                        className="rounded-2xl  !h-auto !relative"
                       />
                     </div>
 

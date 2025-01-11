@@ -102,3 +102,5 @@ Route::get('/recharge/list', [rechargeController::class, 'index']);
 Route::get('/recharge/{recharge_id}', [rechargeController::class, 'find']);
 
 
+Route::post('/recharge/manual', [ProviderController::class, 'recargBilleteraManual']);
+

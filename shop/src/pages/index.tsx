@@ -14,7 +14,7 @@ import { GetServerSideProps } from "next";
 
 const Home: any = ({ userPermissions }: { userPermissions: string[] }) => {
   return (
-    <>
+    < >
       <HeroCarousel />
       <div className="flex flex-col gap-12 mt-14 mb-32">
         <ListPlataformas />
@@ -27,7 +27,7 @@ const Home: any = ({ userPermissions }: { userPermissions: string[] }) => {
 };
 
 Home.getLayout = function getLayout(page: any) {
-  return <Layout subFooter={true}>{page}</Layout>;
+  return <Layout subFooter={true}>{page}</Layout>
 };
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {

@@ -4,7 +4,13 @@ import { Table } from "@/components/ui/table";
 // import ActionButtons from '@/components/common/action-buttons';
 import TitleWithSort from "@/components/ui/title-with-sort";
 import { MappedPaginatorInfo, SortOrder, User } from "@/types";
-import { useAdminClientMutation, useAdminProvedorMutation, useDeleteCategoriaMutation, useDeleteClientMutation, useMe } from "@/data/user";
+import {
+  useAdminClientMutation,
+  useAdminProvedorMutation,
+  useDeleteCategoriaMutation,
+  useDeleteClientMutation,
+  useMe,
+} from "@/data/user";
 import { useState } from "react";
 import { NoDataFound } from "@/components/icons/no-data-found";
 import Avatar from "../common/avatar";
@@ -13,12 +19,12 @@ import routes from "@/config/routes";
 import { useModalAction } from "../ui/modal/modal.context";
 import classNames from "classnames";
 
-import Swal from 'sweetalert2'
-import withReactContent from 'sweetalert2-react-content'
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import toast from "react-hot-toast";
 import Button from "../ui/button";
 
-const MySwal = withReactContent(Swal)
+const MySwal = withReactContent(Swal);
 
 type IProps = {
   admins: User[] | undefined;
@@ -35,7 +41,7 @@ const AdminsList = ({
   onPagination,
   onSort,
   onOrder,
-  modulo
+  modulo,
 }: IProps) => {
   const { openModal } = useModalAction();
 
@@ -47,13 +53,11 @@ const AdminsList = ({
     column: null,
   });
 
+  const { mutate: deleteClientMutation } = useDeleteClientMutation();
+  const { mutate: deleteaAdminMutation } = useAdminClientMutation();
+  const { mutate: deleteProveedorMutation } = useAdminProvedorMutation();
 
-
-  const { mutate: deleteClientMutation } = useDeleteClientMutation()
-  const { mutate: deleteaAdminMutation } = useAdminClientMutation()
-  const { mutate: deleteProveedorMutation } = useAdminProvedorMutation()
-
-  const { me } = useMe()
+  const { me } = useMe();
 
   const handleDelete = (id: number) => {
     MySwal.fire({
@@ -63,62 +67,77 @@ const AdminsList = ({
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Eliminar"
+      confirmButtonText: "Eliminar",
     }).then((result) => {
       if (result.isConfirmed) {
-        if (modulo === 'Cliente') {
-          deleteClientMutation({ clientId: id }, {
-            onSuccess(data, variables, context) {
-              MySwal.fire({
-                title: "Deleted!",
-                icon: "success"
-              });
-            }, onError(error, variables, context) {
-              toast.error('ha ocurrido un error')
-              console.error(error);
-            },
-          })
+        if (modulo === "Cliente") {
+          deleteClientMutation(
+            { clientId: id },
+            {
+              onSuccess(data, variables, context) {
+                MySwal.fire({
+                  title: "Deleted!",
+                  icon: "success",
+                });
+              },
+              onError(error, variables, context) {
+                toast.error("ha ocurrido un error");
+                console.error(error);
+              },
+            }
+          );
         }
-        if (modulo === 'Administrador') {
+        if (modulo === "Administrador") {
           if (me?.id === id) {
-            toast.error('No puedes eliminar tu propia cuenta.');
-            return
+            toast.error("No puedes eliminar tu propia cuenta.");
+            return;
           }
 
-          deleteaAdminMutation({ adminId: id }, {
-            onSuccess(data, variables, context) {
-              MySwal.fire({
-                title: "Deleted!",
-                icon: "success"
-              });
-            }, onError(error, variables, context) {
-              toast.error('ha ocurrido un error')
-              console.error(error);
-            },
-          })
+          deleteaAdminMutation(
+            { adminId: id },
+            {
+              onSuccess(data, variables, context) {
+                MySwal.fire({
+                  title: "Deleted!",
+                  icon: "success",
+                });
+              },
+              onError(error, variables, context) {
+                toast.error("ha ocurrido un error");
+                console.error(error);
+              },
+            }
+          );
         }
 
-        if (modulo === 'Distribuidor') {
-          deleteProveedorMutation({ providerId: id }, {
-            onSuccess(data, variables, context) {
-              MySwal.fire({
-                title: "Deleted!",
-                icon: "success"
-              });
-            }, onError(error, variables, context) {
-              toast.error('ha ocurrido un error')
-              console.error(error);
-            },
-          })
+        if (modulo === "Distribuidor") {
+          deleteProveedorMutation(
+            { providerId: id },
+            {
+              onSuccess(data, variables, context) {
+                MySwal.fire({
+                  title: "Deleted!",
+                  icon: "success",
+                });
+              },
+              onError(error, variables, context) {
+                toast.error("ha ocurrido un error");
+                console.error(error);
+              },
+            }
+          );
         }
-
       }
     });
-  }
+  };
 
   const handleEdit = (item: User) => {
     openModal("EDITAR_USUARIO", { type: modulo, user: item });
-  }
+  };
+
+  const handleBilletera = (item: User) => {
+    openModal("BILLETERA_MANUAL", {  user: item });
+  };
 
   const columns = [
     {
@@ -131,25 +150,21 @@ const AdminsList = ({
       className: "cursor-pointer",
       dataIndex: "",
       key: "name",
-      align: "center" as "center",  // Ajuste aquí: 'center' como valor válido de AlignType
+      align: "center" as "center", // Ajuste aquí: 'center' como valor válido de AlignType
       width: 200,
       render: ({ id, name }: any) => (
         <div className="flex items-center text-center w-full">
           <div className="flex flex-col whitespace-nowrap font-medium ms-2 justify-center 0 w-full">
-            {
-              modulo === 'Cliente' ? (
-                <AnchorLink
-                  href={`${routes.infoUsuario}/${id}`}
-                  className="text-lg text-black font-bold hover:text-brand transition duration-300"
-                >
-                  {name}
-                </AnchorLink>
-              ) :
-                (
-                  <span className="text-lg text-black font-bold">{name}</span>
-                )
-            }
-
+            {modulo === "Cliente" ? (
+              <AnchorLink
+                href={`${routes.infoUsuario}/${id}`}
+                className="text-lg text-black font-bold hover:text-brand transition duration-300"
+              >
+                {name}
+              </AnchorLink>
+            ) : (
+              <span className="text-lg text-black font-bold">{name}</span>
+            )}
           </div>
         </div>
       ),
@@ -169,7 +184,9 @@ const AdminsList = ({
       render: (email: string) => (
         <div className="flex items-center">
           <div className="flex flex-col whitespace-nowrap font-medium ms-2 justify-center 0 w-full">
-            <span className="text-[13px] font-normal text-gray-500/80 ">{email}</span>
+            <span className="text-[13px] font-normal text-gray-500/80 ">
+              {email}
+            </span>
           </div>
         </div>
       ),
@@ -190,7 +207,9 @@ const AdminsList = ({
         <div className="flex items-center">
           <div className="flex flex-col whitespace-nowrap font-medium ms-2 justify-center 0 w-full">
             <span className="text-[13px] font-normal text-gray-500/80 ">
-              <span className="text-sm text-gray-500">{phone || "No disponible"}</span>
+              <span className="text-sm text-gray-500">
+                {phone || "No disponible"}
+              </span>
             </span>
           </div>
         </div>
@@ -208,6 +227,15 @@ const AdminsList = ({
       width: 200, // Establecer un ancho fijo para las acciones
       render: (user: User) => (
         <div className="flex justify-center space-x-2">
+          {modulo === "Distribuidor" &&
+          <Button
+            variant="outline"
+            className="py-2 px-4 border-2 border-[#396336] rounded-2xl text-green-700 hover:bg-green-700 hover:text-white transition-colors duration-300"
+            onClick={() => handleBilletera(user)}
+          >
+            Billetera
+          </Button>
+          }
 
           <Button
             variant="outline"
@@ -270,8 +298,6 @@ const AdminsList = ({
       )}
     </>
   );
-
-
 };
 
 export default AdminsList;

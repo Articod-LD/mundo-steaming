@@ -57,7 +57,7 @@ export default function Wallet() {
               onChange={(e) => setAmount(Number(e.target.value))}
               className="mt-1 block w-full px-4 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-color-brand focus:outline-none text-black"
               placeholder="Ejemplo: 50000"
-              min={1000}
+              min={50000}
               step={1000}
               required
             />

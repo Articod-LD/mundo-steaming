@@ -299,6 +299,10 @@ export const userClient = {
     return HttpClient.post<AuthResponse>(API_ENDPOINTS.RECHARGE, variables);
   },
 
+  rechargeManual: (variables: any) => {
+    return HttpClient.post<AuthResponse>(API_ENDPOINTS.RECHARGE+ '/manual', variables);
+  },
+  
   suscriptionClient: (variables: any) => {
     return HttpClient.post<AuthResponse>(API_ENDPOINTS.CREAR_SUSCRIPCION_CLIENT, variables);
   },

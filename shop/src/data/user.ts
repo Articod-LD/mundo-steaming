@@ -63,6 +63,12 @@ export function useRegisterWallet() {
   });
 }
 
+export function useRegisterWalletManual() {
+  return useMutation({
+    mutationFn: userClient.rechargeManual,
+  });
+}
+
 export function useRegisterSuscriptionClient() {
   return useMutation({
     mutationFn: userClient.suscriptionClient,

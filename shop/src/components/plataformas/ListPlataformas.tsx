@@ -123,7 +123,7 @@ const ListPlataformas: React.FC<{}> = () => {
                 className="max-w-sm cursor-pointer"
                 onClick={() => router.push(routes.detalle + plataforma.id)}
               >
-                <div className="relative w-full h-48">
+                <div className="relative w-full h-20 md:h-28 lg:h-40">
                   <Image
                     src={plataforma.image_url}
                     objectFit="cover"

@@ -46,12 +46,12 @@ export const ListCategorias: React.FC<{}> = () => {
       <Title title="Categorias" />
 
       {categories.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-7">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-7">
           {categoriasParaMostrar.map((data, i) => (
             // 
             <div
               key={i}
-              className="bg-black h-[300px] rounded-xl overflow-hidden relative shadow-lg transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+              className="bg-black h-[250px] lg:h-[300px] rounded-xl overflow-hidden relative shadow-lg transition duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
               onClick={()=>verCategoria(data.titulo)}
             >
               <Image

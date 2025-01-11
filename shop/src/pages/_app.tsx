@@ -57,6 +57,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
                     getLayout(<Component {...pageProps} />)
                   )}
                 </>
+          
                 <ManagedModal />
                 <Toaster containerClassName="!top-16 sm:!top-3.5 !bottom-16 sm:!bottom-3.5" />
               </AnimatePresence>

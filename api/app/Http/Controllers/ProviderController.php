@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Permission;
+use App\Http\Requests\createRecharge;
+use App\Http\Requests\RecargaBilleteraManual;
 use App\Http\Requests\updapteUserProfileRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\Models\User;
@@ -167,5 +169,18 @@ class ProviderController extends Controller
 
 
         return response()->json(['error' => 'El usuario no se puede eliminar porque tiene suscripciones activas o pendientes.'], 200);
+    }
+
+    function recargBilleteraManual(createRecharge $request) {
+        $user = User::where('id', $request->user_id)->first();
+
+        if (!$user) {
+            return response()->json(['error' => "La usuario con ID {$request->user_id} no existe"], 404);
+        }
+
+        $user->wallet = $request->amount;
+        $user->save();
+
+        return response()->json(['error' => 'Wallet Actualizada correctamente'], 200);
     }
 }

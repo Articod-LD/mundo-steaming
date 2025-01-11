@@ -193,6 +193,11 @@ export type RegisterInputType = {
   phone?: string | null | undefined;
 };
 
+export type RecargeManual = {
+  amount:number;
+  user_id?:number | undefined
+}
+
 export type UpdateProfileInputType = {
   name: string;
   documento: string;

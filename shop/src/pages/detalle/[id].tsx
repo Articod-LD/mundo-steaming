@@ -157,18 +157,17 @@ const Home: any = ({ userPermissions }: { userPermissions: string[] }) => {
         <Title title={`Detalle plataforma ${plataforma?.name}`} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2  sm:border-r-2 sm:border-gray-800 p-2 md:p-10 gap-20 pb-10 sm:pb-0">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2 lg:border-r-2 sm:border-gray-800 p-2 md:p-10 gap-20 pb-10 sm:pb-0">
           <div
-            className={`w-full h-72 rounded-xl flex justify-center items-center relative`}
+            className={`w-full !h-auto  md:h-64 rounded-xl flex justify-center items-center relative`}
           >
             <Image
               src={plataforma?.image_url ?? ""}
-              objectFit="cover"
               layout="fill"
               quality={100}
               alt="img banner"
-              className="object-cover rounded-lg opacity-80"
+              className="rounded-lg opacity-80 !h-auto !relative"
             />
           </div>
           <div className="flex sm:flex-col flex-row justify-between sm:justify-normal">

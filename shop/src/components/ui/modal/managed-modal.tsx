@@ -15,6 +15,7 @@ import CrearCategoriaModal from "@/components/modals/createCategoria";
 import EditarUsuarioModal from "@/components/modals/editarUsuario";
 import CrearProductoModal from "@/components/modals/createproducto";
 import BulkProductUploadModal from "@/components/modals/cargarProductos";
+import RecargarBilletera from "@/components/modals/RecargaBilletera";
 
 function renderModal(view: MODAL_VIEWS | undefined, data: any) {
   const modalKey = `${view}-${data?.id || ''}`;  
@@ -60,6 +61,10 @@ function renderModal(view: MODAL_VIEWS | undefined, data: any) {
 
     case "EDITAR_USUARIO":
       return <EditarUsuarioModal data={data}  key={modalKey} />;
+
+      
+    case "BILLETERA_MANUAL":
+      return <RecargarBilletera data={data}  key={modalKey} />;
 
     default:
       return null;

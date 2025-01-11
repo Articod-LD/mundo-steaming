@@ -64,9 +64,9 @@ export type MODAL_VIEWS =
   | "CREAR_BANNER"
   | "CREAR_CATEGORIA"
   | "EDITAR_USUARIO"
+  | "BILLETERA_MANUAL"
   | "CREAR_PRODUCTO"
-  | "CARGA_PRODUCTO"
-  ;
+  | "CARGA_PRODUCTO";
 
 interface State {
   view?: MODAL_VIEWS;
