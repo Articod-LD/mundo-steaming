@@ -24,7 +24,7 @@ class PlataformaController extends Controller
      */
     public function index()
     {
-        return $this->repository->with(['productos','categoria'])->get()
+        return $this->repository->with(['productos', 'categoria'])->get()
             ->filter(function ($categoria) {
                 return $categoria->is_active === 1; // Filtrar las categorías que están activas
             })
@@ -129,6 +129,14 @@ class PlataformaController extends Controller
             ], 400);
         }
 
+        $categoria = categorias::where('id', $request->categoria_id)->first();
+        if (!$categoria) {
+            return response()->json([
+                'error' => 'No Existe una categoria con este ID.'
+            ], 400);
+        }
+
+
         // Si se proporciona una nueva imagen, subirla
         if ($request->hasFile('image_url')) {
             $imageName = time() . '.' . $request->image_url->extension();
@@ -147,6 +155,7 @@ class PlataformaController extends Controller
         $platform->public_price = $request->public_price;
         $platform->provider_price = $request->provider_price;
         $platform->type = $request->type;
+        $platform->categoria_id = $categoria->id;
         $platform->save();
 
         return response()->json(['Plataforma actualizada' => $platform], 200);
@@ -181,5 +190,4 @@ class PlataformaController extends Controller
         // Si tiene productos, devuelve un mensaje
         return response()->json(['error' => 'No se puede inhabilitar porque tiene productos asociados.'], 400);
     }
-
 }
