@@ -80,7 +80,7 @@ class SuscripcionesController extends Controller
 
             foreach ($productosDisponibles as $producto) {
                 // Calcular la fecha de vencimiento de cada producto
-                $productoEndDate = Carbon::parse($producto->purchase_date)->addMonths($producto->months);
+                $productoEndDate = Carbon::parse($producto->purchase_date)->addDays($producto->months);
 
                 // Actualizar la fecha de vencimiento más lejana
                 if ($productoEndDate->greaterThan($latestEndDate)) {

@@ -299,7 +299,7 @@ function CrearProductoModal({ producto }: { producto?: Product }) {
                 />
 
                 <Input
-                  label="Meses Comprados"
+                  label="Dias Comprados"
                   {...register("meses")}
                   type="number"
                   variant="outline"

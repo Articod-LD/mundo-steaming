@@ -146,7 +146,7 @@ class PaymentController extends Controller
 
 
                     foreach ($purchase->productos as $producto) {
-                        $productoEndDate = Carbon::parse($producto->purchase_date)->addMonths($producto->months);
+                        $productoEndDate = Carbon::parse($producto->purchase_date)->addDays($producto->months);
                         if ($productoEndDate->greaterThan($latestEndDate)) {
                             $latestEndDate = $productoEndDate;
                         }
