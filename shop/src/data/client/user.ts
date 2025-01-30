@@ -3,11 +3,15 @@ import {
   AuthResponse,
   Banner,
   BannerInput,
+  Beneficio,
   Categorie,
   ChangePasswordInput,
   CrearSuscripcionInput,
+  IAbout,
+  IConfig,
   ISolicitud,
   ISolicitudPaginator,
+  ISuscrption,
   LoginInput,
   Plataforma,
   PlataformaInput,
@@ -27,6 +31,7 @@ import {
 } from "@/types";
 import { HttpClient } from "./http-client";
 import { API_ENDPOINTS } from "./api-endpoints";
+import { Config } from "tailwindcss";
 
 export const userClient = {
   login: (variables: LoginInput) => {
@@ -80,6 +85,10 @@ export const userClient = {
       ...params,
     });
   },
+
+  fetchSuscriptions: () => {
+    return HttpClient.get<ISuscrption[]>(API_ENDPOINTS.SUSCRIPTION_LIST);
+  },
   fetchProductos: ({ ...params }: Partial<UserQueryOptions>) => {
     return HttpClient.get<ProductPaginator>(API_ENDPOINTS.PRODUCTS_LIST, {
       ...params,
@@ -130,6 +139,22 @@ export const userClient = {
   },
   fetchCategories: ({ ...params }: Partial<UserQueryOptions>) => {
     return HttpClient.get<Categorie[]>(API_ENDPOINTS.CATEGORIE_LIST, {
+      ...params,
+    });
+  },
+
+  fetchBeneficios: ({ ...params }: Partial<UserQueryOptions>) => {
+    return HttpClient.get<Beneficio[]>(API_ENDPOINTS.BENEFICIOS_LIST, {
+      ...params,
+    });
+  },
+  fetchAbout: ({ ...params }: Partial<UserQueryOptions>) => {
+    return HttpClient.get<IAbout>(API_ENDPOINTS.ABOUT_LIST, {
+      ...params,
+    });
+  },
+  fetchConfiguracion: ({ ...params }: Partial<UserQueryOptions>) => {
+    return HttpClient.get<IConfig>(API_ENDPOINTS.CONFIG_LIST, {
       ...params,
     });
   },

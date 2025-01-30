@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\aboutUSController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\CategoriasController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\configController;
 use App\Http\Controllers\CredencialesController;
+use App\Http\Controllers\ourbenefitsController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PlataformaController;
 use App\Http\Controllers\ProductoController;
@@ -100,6 +103,25 @@ Route::delete('/productos/{product_id}', [ProductoController::class, 'destroy'])
 Route::post('/recharge', [PaymentController::class, 'createPayment']);
 Route::get('/recharge/list', [rechargeController::class, 'index']);
 Route::get('/recharge/{recharge_id}', [rechargeController::class, 'find']);
+
+
+Route::get('/beneficio/list', [ourbenefitsController::class, 'index']);
+Route::post('/beneficio/register', [ourbenefitsController::class, 'create']);
+Route::post('/beneficio/{beneficio_id}', [ourbenefitsController::class, 'update']);
+Route::delete('/beneficio/{beneficio_id}', [ourbenefitsController::class, 'destroy']);
+
+
+Route::get('/configuracion/list', [configController::class, 'index']);
+Route::post('/configuracion/register', [configController::class, 'create']);
+Route::post('/configuracion/{configuracion_id}', [configController::class, 'update']);
+Route::delete('/configuracion/{configuracion_id}', [configController::class, 'destroy']);
+
+
+
+Route::get('/about/list', [aboutUSController::class, 'index']);
+Route::post('/about/register', [aboutUSController::class, 'create']);
+Route::post('/about/{configuracion_id}', [aboutUSController::class, 'update']);
+Route::delete('/about/{configuracion_id}', [aboutUSController::class, 'destroy']);
 
 
 Route::post('/recharge/manual', [ProviderController::class, 'recargBilleteraManual']);

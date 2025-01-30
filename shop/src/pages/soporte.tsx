@@ -2,7 +2,7 @@ import LoginForm from "@/components/auth/login-form";
 import { FacebookIcon, InstagramIcon } from "@/components/icons/social";
 import { WhatsappIcon } from "@/components/icons/social/whatsapp";
 import BannerBack from "@/components/ui/banner/BannerBack";
-import { useLogin, useSoporte } from "@/data/user";
+import { useConfiguracionQuery, useLogin, useSoporte } from "@/data/user";
 import AuthLayout from "@/layouts/_auth_layout";
 import Layout from "@/layouts/_layout";
 import { NextPageWithLayout } from "@/types";
@@ -26,6 +26,10 @@ const Login: NextPageWithLayout = () => {
     reset,
     formState: { errors },
   } = useForm<Inputs>();
+
+  const { configuracion, loading } = useConfiguracionQuery({
+    limit: 20,
+  });
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     mutate(data, {
@@ -61,12 +65,26 @@ const Login: NextPageWithLayout = () => {
             ¿TIENES PREGUNTAS? ¡PONTE EN CONTACTO!
           </h3>
           <div className="flex items-center gap-3 mt-4 text-gray-300">
-            <WhatsappIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 text-brand" />
-            <p>3165794854</p>
+            <a
+              href={configuracion.whatsapp_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition ease-in-out hover:scale-110 duration-300"
+            >
+              <WhatsappIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 text-brand" />
+            </a>
+            <p>{configuracion.cel}</p>
           </div>
           <div className="flex items-center gap-3 mt-4 text-gray-300">
-            <InstagramIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 text-brand" />
-            <p>@COMBIIPREMIUM</p>
+            <a
+              href={configuracion.insta_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition ease-in-out hover:scale-110 duration-300"
+            >
+              <InstagramIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 text-brand" />
+            </a>
+            <p>{configuracion.plataforma}</p>
           </div>
         </div>
         <div className="w-full lg:w-1/2 h-full pb-10">

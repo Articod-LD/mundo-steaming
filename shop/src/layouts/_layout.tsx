@@ -12,6 +12,7 @@ import { FacebookIcon, InstagramIcon } from "@/components/icons/social";
 import { LinkedlnIcon } from "@/components/icons/social/linkedln";
 import Footer from "./_footer";
 import { WhatsappIcon } from "@/components/icons/social/whatsapp";
+import { useBeneficiosQuery, useConfiguracionQuery } from "@/data/user";
 
 export default function Layout({
   children,
@@ -23,6 +24,10 @@ export default function Layout({
   const { lightLogo, darkLogo } = siteSettings;
 
   const [plataforma] = useState(process.env.NEXT_PUBLIC_PLATAFORMA);
+
+  const { configuracion, error, loading } = useConfiguracionQuery({
+    limit: 20,
+  });
 
   let [collapse, setCollapse] = useState(false);
   function toggleSidebar() {
@@ -63,7 +68,24 @@ export default function Layout({
           </main>
         </div>
 
-        {subFooter && (
+        {loading && (
+          <div className="w-full h-[400px] flex justify-center items-center bg-gray-950">
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <div className="animate-spin rounded-full border-4 border-t-4 border-brand-dark w-16 h-16 border-t-brand"></div>
+              <p className="text-xl font-semibold text-gray-200">Cargando...</p>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="w-full h-[400px] flex justify-center items-center bg-gray-950">
+            <p className="text-xl font-semibold text-gray-700">
+              Ocurrió un error al cargar las categorías.
+            </p>
+          </div>
+        )}
+
+        {subFooter && Object.keys(configuracion).length > 0 && (
           <section className="bg-black text-white flex flex-col">
             <div className="flex flex-col justify-center items-center py-12">
               <Image
@@ -76,16 +98,29 @@ export default function Layout({
                 alt="Logo Mundo Streaming"
               />
               <div className="flex gap-3 mt-6">
-                {/* <FacebookIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 " /> */}
-                <InstagramIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 " />
-                <WhatsappIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 inline-block" />
+                <a
+                  href={configuracion.insta_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition ease-in-out hover:scale-110 duration-300"
+                >
+                  <InstagramIcon className="w-8 h-8" />
+                </a>
+                <a
+                  href={configuracion.whatsapp_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition ease-in-out hover:scale-110 duration-300"
+                >
+                  <WhatsappIcon className="w-8 h-8 inline-block" />
+                </a>
               </div>
 
               <div className="flex flex-col mt-6">
-                <p>@combiipremium</p>
+                <p>{configuracion.plataforma}</p>
                 {/* <p>Lorem ipsum dolor sit Lorem ipsum dolor</p> */}
               </div>
-              <p className="mt-6">Cel: 3165794854</p>
+              <p className="mt-6">Cel: {configuracion.cel}</p>
             </div>
           </section>
         )}

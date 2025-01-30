@@ -10,8 +10,12 @@ import routes from "@/config/routes";
 import useAuth from "@/components/auth/use-auth";
 import {
   Banner,
+  Beneficio,
   Categorie,
+  IAbout,
+  IConfig,
   ISolicitudPaginator,
+  ISuscrption,
   Plataforma,
   PlataformasPaginator,
   ProductPaginator,
@@ -23,6 +27,7 @@ import {
   UserPaginator,
 } from "@/types";
 import { mapPaginatorData } from "@/utils/date-mapper";
+import { Config } from "tailwindcss";
 const AUTH_TOKEN_KEY = process.env.NEXT_PUBLIC_AUTH_TOKEN_KEY ?? "authToken";
 export function useMe() {
   const { isAuthorized } = useAuth();
@@ -177,6 +182,22 @@ export const useClientsQuery = (params: Partial<QueryOptionsType>) => {
   };
 };
 
+export const useSuscriptionQuery = () => {
+  const { data, isLoading, error } = useQuery<ISuscrption[]>(
+    [API_ENDPOINTS.SUSCRIPTION_LIST],
+    () => userClient.fetchSuscriptions(),
+    {
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    suscripcions: data ?? ([] as ISuscrption[]),
+    loading: isLoading,
+    error,
+  };
+};
+
 export const useProductsQuery = (params: Partial<QueryOptionsType>) => {
   const { data, isLoading, error } = useQuery<ProductPaginator, Error>(
     [API_ENDPOINTS.PRODUCTS_LIST, params],
@@ -301,7 +322,7 @@ export const useSuscriptionAdminQuery = (params: { orden_code: string }) => {
     }
   );
   console.log(data);
-  
+
   return {
     suscription: data ?? ({} as SuscriptionSuccess),
     loading: isLoading,
@@ -335,6 +356,54 @@ export const useCategoriesQuery = (params: Partial<QueryOptionsType>) => {
 
   return {
     categories: data ?? ([] as Categorie[]),
+    loading: isLoading,
+    error,
+  };
+};
+
+export const useBeneficiosQuery = (params: Partial<QueryOptionsType>) => {
+  const { data, isLoading, error } = useQuery<Beneficio[], Error>(
+    [API_ENDPOINTS.BENEFICIOS_LIST, params],
+    () => userClient.fetchBeneficios(params),
+    {
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    beneficios: data ?? ([] as Beneficio[]),
+    loading: isLoading,
+    error,
+  };
+};
+
+export const useAboutQuery = (params: Partial<QueryOptionsType>) => {
+  const { data, isLoading, error } = useQuery<IAbout, Error>(
+    [API_ENDPOINTS.ABOUT_LIST, params],
+    () => userClient.fetchAbout(params),
+    {
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    about: data ?? ({} as IAbout),
+    loading: isLoading,
+    error,
+  };
+};
+
+export const useConfiguracionQuery = (params: Partial<QueryOptionsType>) => {
+  const { data, isLoading, error } = useQuery<IConfig, Error>(
+    [API_ENDPOINTS.CONFIG_LIST, params],
+    () => userClient.fetchConfiguracion(params),
+    {
+      keepPreviousData: true,
+    }
+  );
+
+  return {
+    configuracion: data ?? ({} as IConfig),
     loading: isLoading,
     error,
   };

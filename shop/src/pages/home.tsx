@@ -1,12 +1,18 @@
+import AboutAdmin from "@/components/plataformas/admin/aboutAdmin";
 import BannerAdmin from "@/components/plataformas/admin/BannerListAdmin";
+import BeneficiosAdmin from "@/components/plataformas/admin/BeneficiosAdmin";
 import CategoriasAdmin from "@/components/plataformas/admin/CategoriesListAdmin";
+import ConfiguracionAdmin from "@/components/plataformas/admin/configuracionAdmin";
 import PlataformasAdmin from "@/components/plataformas/admin/PlataformaListAdmin";
 import Loader from "@/components/ui/loader/loader";
 import { Title } from "@/components/ui/tittleSections";
 import {
+  useAboutQuery,
   useBannerQuery,
+  useBeneficiosQuery,
   useCategoriesQuery,
   useClientsQuery,
+  useConfiguracionQuery,
   usePlataformasQuery,
 } from "@/data/user";
 import AdminLayout from "@/layouts/admin";
@@ -34,18 +40,49 @@ export default function Dashboard({
     limit: 20,
   });
 
+  const { beneficios } = useBeneficiosQuery({
+    limit: 20,
+  });
+
+  const { configuracion } = useConfiguracionQuery({
+    limit: 20,
+  });
+
+
+  const { about } = useAboutQuery({
+    limit: 20,
+  });
+
   if (loadingBanner || loadingCategories) return <Loader text="Cargando" />;
 
   return (
     <>
-      <div className="flex gap-6 flex-col lg:flex-row">
-        <div className="w-full">
-          <Title title="Banners" />
-          <BannerAdmin Banners={banner} />
+      <div className="flex gap-6 flex-col">
+        <div className="w-full flex gap-6 flex-col lg:flex-row ">
+          <div className="w-full lg:w-1/2">
+            <Title title="Configuracion" />
+            <ConfiguracionAdmin configuracion={configuracion} />
+          </div>
+          <div className="w-full lg:w-1/2">
+            <Title title="Categorias" />
+            <CategoriasAdmin categorias={categories} />
+          </div>
         </div>
-        <div className="w-full">
-          <Title title="Categorias" />
-          <CategoriasAdmin categorias={categories} />
+        <div className="w-full flex gap-6 flex-col lg:flex-row ">
+          <div className="w-full lg:w-1/2">
+            <Title title="Beneficios" />
+            <BeneficiosAdmin beneficios={beneficios} />
+          </div>
+          <div className="w-full lg:w-1/2">
+            <Title title="Banners" />
+            <BannerAdmin Banners={banner} />
+          </div>
+        </div>
+        <div className="w-full flex gap-6 flex-col lg:flex-row ">
+          <div className="w-full lg:w-2/3">
+            <Title title="Sobre Nosotros" />
+            <AboutAdmin about={about} />
+          </div>
         </div>
       </div>
     </>

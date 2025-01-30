@@ -107,6 +107,19 @@ export interface SuscriptionPlataforma {
   type: string;
 }
 
+export interface ISuscrption {
+  id: 1;
+  start_date: string;
+  end_date: string;
+  price:string;
+  order_code: string;
+  usuario_id: string;
+  created_at: string;
+  updated_at: string;
+  user:User;
+  productos: Product[]
+}
+
 export interface Product {
   id: number;
   screen_count: number;
@@ -194,9 +207,9 @@ export type RegisterInputType = {
 };
 
 export type RecargeManual = {
-  amount:number;
-  user_id?:number | undefined
-}
+  amount: number;
+  user_id?: number | undefined;
+};
 
 export type UpdateProfileInputType = {
   name: string;
@@ -277,6 +290,27 @@ export interface Categorie {
   titulo: string;
   imagen: string;
   imagen_url: string;
+}
+
+export interface Beneficio {
+  id: number;
+  beneficio: string;
+}
+
+export interface IAbout {
+  id: number;
+  description: string;
+  image_url: string;
+  video_url: string;
+}
+
+export interface IConfig {
+  id: number;
+  title: string;
+  cel: string;
+  insta_url: string;
+  whatsapp_url: string;
+  plataforma: string;
 }
 
 export interface Banner {

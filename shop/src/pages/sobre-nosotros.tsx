@@ -4,7 +4,7 @@ import BannerBack from "@/components/ui/banner/BannerBack";
 import Image from "@/components/ui/image";
 import VideoPlayer from "@/components/ui/videoPlayer";
 import routes from "@/config/routes";
-import { useMe } from "@/data/user";
+import { useAboutQuery, useBeneficiosQuery, useMe } from "@/data/user";
 import AuthLayout from "@/layouts/_auth_layout";
 import Layout from "@/layouts/_layout";
 import { NextPageWithLayout } from "@/types";
@@ -14,15 +14,36 @@ import { useState } from "react";
 const Login: NextPageWithLayout = () => {
   const { me } = useMe();
 
-  const [Beneficios, setBeneficios] = useState([
-    "Variedad de plataformas de streaming.",
-    "Acceso a contenido en cualquier momento y lugar.",
-    "Pantallas personalizadas.",
-    "Precios razonables.",
-    "Contenido original exclusivo.",
-    "Atención al cliente 7 días a la semana.",
-    "Garantía durante todo el tiempo contratado.",
-  ]);
+  const { beneficios } = useBeneficiosQuery({
+    limit: 20,
+  });
+
+  const { about, error, loading} = useAboutQuery({
+    limit: 20,
+  });
+
+
+  if (loading) {
+    return (
+      <div className="w-full h-[400px] flex justify-center items-center bg-gray-950">
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <div className="animate-spin rounded-full border-4 border-t-4 border-brand-dark w-16 h-16 border-t-brand"></div>
+          <p className="text-xl font-semibold text-gray-200">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-[400px] flex justify-center items-center bg-gray-950">
+        <p className="text-xl font-semibold text-gray-700">
+          Ocurrió un error al cargar las categorías.
+        </p>
+      </div>
+    );
+  }
+
 
   return (
     <div className="w-full">
@@ -38,7 +59,7 @@ const Login: NextPageWithLayout = () => {
       <div className="mt-24 px-5 lg:px-20 w-full flex flex-col lg:flex-row">
         <div className="w-full md:w-1/2 h-[500px] relative">
           <Image
-            src={`/contacto/banner.png`}
+            src={about.image_url}
             layout="fill"
             objectFit="cover"
             quality={100}
@@ -48,7 +69,7 @@ const Login: NextPageWithLayout = () => {
         <div className="w-full lg:w-1/2 sm:pl-12 lg:py-28 bg-gradient-to-t from-black via-transparent to-transparent p-8 rounded-lg">
           <h3 className="text-4xl font-bold text-white">SOBRE NOSOTROS</h3>
           <p className="text-base mt-3 text-white">
-            COMBIPREMIUM es una tienda online de plataformas de streaming, con más de 5 años de trayectoria, ofreciendo una experiencia de entretenimiento sin igual. Con más de 200 proveedores, garantizamos una selección incomparable de contenido para todos los gustos.
+          {about.description}
           </p>
           {me ? (
             <button
@@ -74,21 +95,24 @@ const Login: NextPageWithLayout = () => {
           <h3 className="text-4xl font-bold text-brand">NUESTROS BENEFICIOS</h3>
         </div>
         <div className="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-6">
-          {Beneficios.map((item, i) => (
-            <div key={i} className="flex flex-col items-center gap-3 text-center">
+          {beneficios.map(({beneficio}, i) => (
+            <div
+              key={i}
+              className="flex flex-col items-center gap-3 text-center"
+            >
               <MovieIcon className="text-brand h-16 w-16" />
-              <p className="text-sm text-white">{item}</p>
+              <p className="text-sm text-white">{beneficio}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Video de presentación */}
-      <div className="mt-48 lg:mt-24 lg:px-20 w-full flex justify-center relative">
-        <div className="w-full h-[505px] lg:h-[640px] relative rounded-xl overflow-hidden shadow-lg">
+      <div className="mt-48 mb-14 lg:mt-24 lg:px-20 w-full flex justify-center relative">
+        <div className="w-full h-[505px] lg:h-[740px] relative rounded-xl overflow-hidden shadow-lg">
           <iframe
             className="w-full h-full"
-            src="https://www.youtube.com/embed/73_1biulkYk?si=gyIurToe91pnELpB"
+            src={about.video_url}
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
