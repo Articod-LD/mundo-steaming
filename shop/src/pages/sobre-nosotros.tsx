@@ -18,10 +18,9 @@ const Login: NextPageWithLayout = () => {
     limit: 20,
   });
 
-  const { about, error, loading} = useAboutQuery({
+  const { about, error, loading } = useAboutQuery({
     limit: 20,
   });
-
 
   if (loading) {
     return (
@@ -44,6 +43,18 @@ const Login: NextPageWithLayout = () => {
     );
   }
 
+  if (Object.keys(beneficios).length === 0) {
+    return (
+      <div className="w-full h-[400px] flex justify-center items-center bg-gray-950">
+        <div className="text-center text-xl font-semibold text-gray-200">
+          <p>No tenemos Beneficios disponibles en este momento</p>
+          <p className="text-sm text-gray-500">
+            Vuelve más tarde o explora otras secciones.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -68,9 +79,7 @@ const Login: NextPageWithLayout = () => {
         </div>
         <div className="w-full lg:w-1/2 sm:pl-12 lg:py-28 bg-gradient-to-t from-black via-transparent to-transparent p-8 rounded-lg">
           <h3 className="text-4xl font-bold text-white">SOBRE NOSOTROS</h3>
-          <p className="text-base mt-3 text-white">
-          {about.description}
-          </p>
+          <p className="text-base mt-3 text-white">{about.description}</p>
           {me ? (
             <button
               className="p-3 bg-brand text-white rounded mt-4 uppercase transition ease-in-out hover:bg-red-900"
@@ -95,7 +104,7 @@ const Login: NextPageWithLayout = () => {
           <h3 className="text-4xl font-bold text-brand">NUESTROS BENEFICIOS</h3>
         </div>
         <div className="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-6">
-          {beneficios.map(({beneficio}, i) => (
+          {beneficios.map(({ beneficio }, i) => (
             <div
               key={i}
               className="flex flex-col items-center gap-3 text-center"
