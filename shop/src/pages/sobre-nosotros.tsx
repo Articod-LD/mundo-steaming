@@ -69,7 +69,7 @@ const Login: NextPageWithLayout = () => {
               <Image
                 src={about.image_url}
                 layout="fill"
-                objectFit="cover"
+                objectFit="contain"
                 quality={100}
                 alt="Banner sobre nosotros"
               />

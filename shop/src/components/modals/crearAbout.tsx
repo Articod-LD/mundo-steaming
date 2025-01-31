@@ -56,9 +56,9 @@ const createConfiguracionFormSchema = yup.object().shape({
         );
       }
     )
-    .test("fileSize", "La imagen no puede ser mayor a 2MB", (value) => {
+    .test("fileSize", "La imagen no puede ser mayor a 1MB", (value) => {
       if (!value || value.length === 0) return true;
-      return value && value[0]?.size <= 2 * 1024 * 1024; // 2MB
+      return value && value[0]?.size <= 1 * 1024 * 1024; // 1MB
     }),
 });
 
