@@ -108,6 +108,21 @@ export const useProductRegisterMutation = () => {
   });
 };
 
+
+export const useProductConfigMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.registerConfig,
+    onSuccess() {
+      toast.success("Registrado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries([API_ENDPOINTS.CONFIG_LIST]);
+    },
+  });
+};
+
 export const useRegisterAdminMutation = () => {
   const queryClient = useQueryClient();
 
@@ -519,6 +534,38 @@ export const useRegisterPlataformaMutation = () => {
   });
 };
 
+export const useRegisterAboutMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.registerAbout,
+    onSuccess() {
+      toast.success("Registrado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.ABOUT_LIST],
+      });
+    },
+  });
+};
+
+export const useRegisterBeneficioMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.registerBeneficio,
+    onSuccess() {
+      toast.success("Registrado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.BENEFICIOS_LIST],
+      });
+    },
+  });
+};
+
 export const useRegisterBannerMutation = () => {
   const queryClient = useQueryClient();
 
@@ -583,6 +630,39 @@ export const useUpdatePlataformaMutation = () => {
   });
 };
 
+export const useUpdateAboutMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.updateAbout,
+    onSuccess() {
+      toast.success("Actualizado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.ABOUT_LIST],
+      });
+    },
+  });
+};
+
+
+export const useUpdateBeneficioMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.updateBeneficio,
+    onSuccess() {
+      toast.success("Actualizado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.BENEFICIOS_LIST],
+      });
+    },
+  });
+};
+
 export const useUpdateProductoMutation = () => {
   const queryClient = useQueryClient();
 
@@ -594,6 +674,23 @@ export const useUpdateProductoMutation = () => {
     onSettled() {
       queryClient.invalidateQueries({
         queryKey: [API_ENDPOINTS.PRODUCTS_LIST],
+      });
+    },
+  });
+};
+
+
+export const useUpdateConfigMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userClient.updateConfig,
+    onSuccess() {
+      toast.success("Actualizado Correctamente");
+    },
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.CONFIG_LIST],
       });
     },
   });
@@ -659,6 +756,18 @@ export const useDeleteBannerMutation = () => {
   });
 };
 
+export const useDeleteBeneficioMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: userClient.deleteBeneficio,
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.BENEFICIOS_LIST],
+      });
+    },
+  });
+};
+
 export const useDeleteCategoriaMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -690,6 +799,31 @@ export const useDeletePlataformaMutation = () => {
     onSettled() {
       queryClient.invalidateQueries({
         queryKey: [API_ENDPOINTS.PLATAFORMA_LIST],
+      });
+    },
+  });
+};
+
+
+export const useDeleteConfigMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: userClient.deleteConfig,
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.CONFIG_LIST],
+      });
+    },
+  });
+};
+
+export const useDeleteAbout = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: userClient.deletAbout,
+    onSettled() {
+      queryClient.invalidateQueries({
+        queryKey: [API_ENDPOINTS.ABOUT_LIST],
       });
     },
   });

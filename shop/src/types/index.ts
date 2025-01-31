@@ -111,13 +111,13 @@ export interface ISuscrption {
   id: 1;
   start_date: string;
   end_date: string;
-  price:string;
+  price: string;
   order_code: string;
   usuario_id: string;
   created_at: string;
   updated_at: string;
-  user:User;
-  productos: Product[]
+  user: User;
+  productos: Product[];
 }
 
 export interface Product {
@@ -297,6 +297,10 @@ export interface Beneficio {
   beneficio: string;
 }
 
+export interface BeneficioSinId {
+  beneficio: string;
+}
+
 export interface IAbout {
   id: number;
   description: string;
@@ -304,8 +308,14 @@ export interface IAbout {
   video_url: string;
 }
 
+export interface IAboutSinId {
+  description: string;
+  image_url: string;
+  video_url: string;
+}
+
 export interface IConfig {
-  id: number;
+  id?: number | undefined;
   title: string;
   cel: string;
   insta_url: string;
@@ -313,6 +323,13 @@ export interface IConfig {
   plataforma: string;
 }
 
+export interface IConfigSinID {
+  title: string;
+  cel: number | string;
+  insta_url: string;
+  whatsapp_url: string;
+  plataforma: string;
+}
 export interface Banner {
   id: number;
   titulo: string;

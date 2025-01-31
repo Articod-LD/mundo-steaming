@@ -21,6 +21,7 @@ import {
   usePlataformasQuery,
   useProductRegisterMutation,
   useRegisterMutation,
+  useUpdateConfigMutation,
   useUpdatePlataformaMutation,
   useUpdateProductoMutation,
 } from "@/data/user";
@@ -91,7 +92,7 @@ function CrearProductoModal({ producto }: { producto?: Product }) {
   const { mutate: registerProduct, isLoading } = useProductRegisterMutation();
   const [plataformaDefault, setPlataformaDefault] = useState<string | null>();
   const { mutate: updatePlataforma, isLoading: isLoadingUpdate } =
-    useUpdateProductoMutation();
+  useUpdateConfigMutation();
 
   const { plataformas, error, loading } = usePlataformasQuery({
     limit: 20,

@@ -4,11 +4,13 @@ import {
   Banner,
   BannerInput,
   Beneficio,
+  BeneficioSinId,
   Categorie,
   ChangePasswordInput,
   CrearSuscripcionInput,
   IAbout,
   IConfig,
+  IConfigSinID,
   ISolicitud,
   ISolicitudPaginator,
   ISuscrption,
@@ -41,13 +43,25 @@ export const userClient = {
     return HttpClient.post<AuthResponse>(API_ENDPOINTS.REGISTER, variables);
   },
   registerProduct: (variables: RegisterProductInput) => {
-    return HttpClient.post<any>(API_ENDPOINTS.ONE_PRODUCTOS + 'register', variables);
+    return HttpClient.post<any>(
+      API_ENDPOINTS.ONE_PRODUCTOS + "register",
+      variables
+    );
+  },
+  registerConfig: (variables: IConfigSinID) => {
+    return HttpClient.post<any>(API_ENDPOINTS.CONFIG + "register", variables);
   },
   registerAdmin: (variables: RegisterInput) => {
-    return HttpClient.post<AuthResponse>(API_ENDPOINTS.ONE_ADMIN + 'register', variables);
+    return HttpClient.post<AuthResponse>(
+      API_ENDPOINTS.ONE_ADMIN + "register",
+      variables
+    );
   },
   registerProvider: (variables: RegisterInput) => {
-    return HttpClient.post<AuthResponse>(API_ENDPOINTS.ONE_PROVIDER + 'register', variables);
+    return HttpClient.post<AuthResponse>(
+      API_ENDPOINTS.ONE_PROVIDER + "register",
+      variables
+    );
   },
   logout: () => {
     return HttpClient.post<any>(API_ENDPOINTS.LOGOUT, {});
@@ -127,14 +141,14 @@ export const userClient = {
   },
 
   fetchRechargedAdmin: () => {
-    return HttpClient.get<Recharge[]>(API_ENDPOINTS.RECHARGE_ONE + 'list');
+    return HttpClient.get<Recharge[]>(API_ENDPOINTS.RECHARGE_ONE + "list");
   },
 
-  fetchSuscriptionAdmin: ({orden_code }: Partial<{orden_code:string}>) => {
+  fetchSuscriptionAdmin: ({ orden_code }: Partial<{ orden_code: string }>) => {
     return HttpClient.get<any>(API_ENDPOINTS.SUSCRIPCION_ONE + orden_code);
   },
 
-  fetchRecharged: ({user_id }: Partial<{user_id:number}>) => {
+  fetchRecharged: ({ user_id }: Partial<{ user_id: number }>) => {
     return HttpClient.get<Recharge[]>(API_ENDPOINTS.RECHARGE_ONE + user_id);
   },
   fetchCategories: ({ ...params }: Partial<UserQueryOptions>) => {
@@ -158,8 +172,10 @@ export const userClient = {
       ...params,
     });
   },
-  fetchCategoriesPlataformas: ({ ...params }: Partial<{name:string}>) => {
-    return HttpClient.get<Plataforma[]>(`${API_ENDPOINTS.DELETE_CATEGORIA}${params.name}/plataformas`);
+  fetchCategoriesPlataformas: ({ ...params }: Partial<{ name: string }>) => {
+    return HttpClient.get<Plataforma[]>(
+      `${API_ENDPOINTS.DELETE_CATEGORIA}${params.name}/plataformas`
+    );
   },
   fetchBanner: ({ ...params }: Partial<UserQueryOptions>) => {
     return HttpClient.get<Banner[]>(API_ENDPOINTS.BANNER_LIST, {
@@ -170,17 +186,29 @@ export const userClient = {
   deleteBanner: (params: Partial<{ bannerId: number }>) => {
     return HttpClient.delete(API_ENDPOINTS.BANNER_DELETE + params.bannerId);
   },
+  deleteBeneficio: (params: Partial<{ beneficioID: number }>) => {
+    return HttpClient.delete(API_ENDPOINTS.BENEFICIOS + params.beneficioID);
+  },
 
   deleteCategoria: (params: Partial<{ categorieId: number }>) => {
-    return HttpClient.delete(API_ENDPOINTS.DELETE_CATEGORIA + params.categorieId);
+    return HttpClient.delete(
+      API_ENDPOINTS.DELETE_CATEGORIA + params.categorieId
+    );
   },
   deleteClient: (params: Partial<{ clientId: number }>) => {
     return HttpClient.delete(API_ENDPOINTS.ONE_CLIENT + params.clientId);
   },
   deletePlataforma: (params: Partial<{ plataformaId: number }>) => {
-    return HttpClient.delete(API_ENDPOINTS.ONE_PLATAFORMA + params.plataformaId);
+    return HttpClient.delete(
+      API_ENDPOINTS.ONE_PLATAFORMA + params.plataformaId
+    );
   },
-
+  deleteConfig: (params: Partial<{ configId: number }>) => {
+    return HttpClient.delete(API_ENDPOINTS.CONFIG + params.configId);
+  },
+  deletAbout: (params: Partial<{ aboutId: number }>) => {
+    return HttpClient.delete(API_ENDPOINTS.ABOUT + params.aboutId);
+  },
   deleteProducto: (params: Partial<{ productoId: number }>) => {
     return HttpClient.delete(API_ENDPOINTS.ONE_PRODUCTOS + params.productoId);
   },
@@ -192,47 +220,99 @@ export const userClient = {
     return HttpClient.delete(API_ENDPOINTS.ONE_PROVIDER + params.providerId);
   },
 
-  updateCategoria: (params: Partial<{ categoriaId: number, params: any }>) => {
-
-    return HttpClient.post(API_ENDPOINTS.DELETE_CATEGORIA + params.categoriaId, params.params, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+  updateCategoria: (params: Partial<{ categoriaId: number; params: any }>) => {
+    return HttpClient.post(
+      API_ENDPOINTS.DELETE_CATEGORIA + params.categoriaId,
+      params.params,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
   },
 
-  updatePlataforma: (params: Partial<{ plataformaId: number, params: any }>) => {
-
-    return HttpClient.post(API_ENDPOINTS.ONE_PLATAFORMA + params.plataformaId, params.params, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+  updatePlataforma: (
+    params: Partial<{ plataformaId: number; params: any }>
+  ) => {
+    return HttpClient.post(
+      API_ENDPOINTS.ONE_PLATAFORMA + params.plataformaId,
+      params.params,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+  },
+  updateAbout: (params: Partial<{ aboutId: number; params: any }>) => {
+    return HttpClient.post(
+      API_ENDPOINTS.ABOUT + params.aboutId,
+      params.params,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
   },
 
-  updateProducto: (params: Partial<{ productoId: number, params: RegisterProductInput }>) => {
-    return HttpClient.post(API_ENDPOINTS.ONE_PRODUCTOS + params.productoId, params.params);
+  updateBeneficio: (params: Partial<{ beneficioId: number; params: any }>) => {
+    return HttpClient.post(
+      API_ENDPOINTS.BENEFICIOS + params.beneficioId,
+      params.params
+    );
   },
 
-  updateClient: (params: Partial<{ clientId: number, params: any }>) => {
-    return HttpClient.post(API_ENDPOINTS.ONE_CLIENT + params.clientId, params.params);
+  updateProducto: (
+    params: Partial<{ productoId: number; params: RegisterProductInput }>
+  ) => {
+    return HttpClient.post(
+      API_ENDPOINTS.ONE_PRODUCTOS + params.productoId,
+      params.params
+    );
   },
 
-  updateAdmin: (params: Partial<{ adminId: number, params: any }>) => {
-    return HttpClient.post(API_ENDPOINTS.ONE_ADMIN + params.adminId, params.params);
+  updateConfig: (
+    params: Partial<{ configId: number; params: IConfigSinID }>
+  ) => {
+    return HttpClient.post(
+      API_ENDPOINTS.CONFIG + params.configId,
+      params.params
+    );
   },
 
-
-  updateProvider: (params: Partial<{ providerId: number, params: any }>) => {
-    return HttpClient.post(API_ENDPOINTS.ONE_PROVIDER + params.providerId, params.params);
+  updateClient: (params: Partial<{ clientId: number; params: any }>) => {
+    return HttpClient.post(
+      API_ENDPOINTS.ONE_CLIENT + params.clientId,
+      params.params
+    );
   },
 
-  updateBanner: (params: Partial<{ bannerId: number, params: any }>) => {
-    return HttpClient.post(API_ENDPOINTS.BANNER_DELETE + params.bannerId, params.params, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+  updateAdmin: (params: Partial<{ adminId: number; params: any }>) => {
+    return HttpClient.post(
+      API_ENDPOINTS.ONE_ADMIN + params.adminId,
+      params.params
+    );
+  },
+
+  updateProvider: (params: Partial<{ providerId: number; params: any }>) => {
+    return HttpClient.post(
+      API_ENDPOINTS.ONE_PROVIDER + params.providerId,
+      params.params
+    );
+  },
+
+  updateBanner: (params: Partial<{ bannerId: number; params: any }>) => {
+    return HttpClient.post(
+      API_ENDPOINTS.BANNER_DELETE + params.bannerId,
+      params.params,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
   },
   fetchDisponibles: ({ ...params }: Partial<UserQueryOptions>) => {
     return HttpClient.get<Plataforma[]>(API_ENDPOINTS.PLATAFORMA_DISPONIBLES, {
@@ -250,6 +330,22 @@ export const userClient = {
         },
       }
     );
+  },
+
+  registerAbout: (variables: FormData) => {
+    return HttpClient.post<Plataforma>(
+      API_ENDPOINTS.ABOUT + "register",
+      variables,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+  },
+
+  registerBeneficio: (variables: { beneficio: string }) => {
+    return HttpClient.post(API_ENDPOINTS.BENEFICIOS + "register", variables);
   },
 
   registerBanner: (variables: FormData): Promise<Banner> => {
@@ -273,7 +369,7 @@ export const userClient = {
 
   registerCargaMasivaProductos: (variables: FormData): Promise<any> => {
     return HttpClient.post<any>(
-      API_ENDPOINTS.ONE_PRODUCTOS + 'carga-masiva/register',
+      API_ENDPOINTS.ONE_PRODUCTOS + "carga-masiva/register",
       variables,
       {
         headers: {
@@ -325,10 +421,16 @@ export const userClient = {
   },
 
   rechargeManual: (variables: any) => {
-    return HttpClient.post<AuthResponse>(API_ENDPOINTS.RECHARGE+ '/manual', variables);
+    return HttpClient.post<AuthResponse>(
+      API_ENDPOINTS.RECHARGE + "/manual",
+      variables
+    );
   },
-  
+
   suscriptionClient: (variables: any) => {
-    return HttpClient.post<AuthResponse>(API_ENDPOINTS.CREAR_SUSCRIPCION_CLIENT, variables);
+    return HttpClient.post<AuthResponse>(
+      API_ENDPOINTS.CREAR_SUSCRIPCION_CLIENT,
+      variables
+    );
   },
 };

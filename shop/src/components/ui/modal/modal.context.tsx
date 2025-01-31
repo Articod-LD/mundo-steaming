@@ -66,7 +66,10 @@ export type MODAL_VIEWS =
   | "EDITAR_USUARIO"
   | "BILLETERA_MANUAL"
   | "CREAR_PRODUCTO"
-  | "CARGA_PRODUCTO";
+  | "CARGA_PRODUCTO"
+  | "CONFIGURACIONES"
+  | "ABOUT_MODAL"
+  | "BENEFICIO_MODAL";
 
 interface State {
   view?: MODAL_VIEWS;

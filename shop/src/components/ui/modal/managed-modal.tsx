@@ -16,6 +16,9 @@ import EditarUsuarioModal from "@/components/modals/editarUsuario";
 import CrearProductoModal from "@/components/modals/createproducto";
 import BulkProductUploadModal from "@/components/modals/cargarProductos";
 import RecargarBilletera from "@/components/modals/RecargaBilletera";
+import CrearConfigModal from "@/components/modals/createConfiguracion";
+import CrearAboutModal from "@/components/modals/crearAbout";
+import CrearBeneficioModal from "@/components/modals/crearBeneficios";
 
 function renderModal(view: MODAL_VIEWS | undefined, data: any) {
   const modalKey = `${view}-${data?.id || ''}`;  
@@ -65,6 +68,15 @@ function renderModal(view: MODAL_VIEWS | undefined, data: any) {
       
     case "BILLETERA_MANUAL":
       return <RecargarBilletera data={data}  key={modalKey} />;
+      
+     case "CONFIGURACIONES":
+      return <CrearConfigModal config={data}  key={modalKey}/> 
+
+      case "ABOUT_MODAL":
+        return <CrearAboutModal about={data}  key={modalKey}/>
+
+      case "BENEFICIO_MODAL":
+        return <CrearBeneficioModal beneficios={data} key={modalKey}/>
 
     default:
       return null;

@@ -58,28 +58,28 @@ export default function Dashboard({
   return (
     <>
       <div className="flex gap-6 flex-col">
-        <div className="w-full flex gap-6 flex-col lg:flex-row ">
-          <div className="w-full lg:w-1/2">
+        <div className="w-full flex gap-6 flex-col">
+          <div className="w-full">
             <Title title="Configuracion" />
             <ConfiguracionAdmin configuracion={configuracion} />
           </div>
-          <div className="w-full lg:w-1/2">
+          <div className="w-full">
             <Title title="Categorias" />
             <CategoriasAdmin categorias={categories} />
           </div>
         </div>
-        <div className="w-full flex gap-6 flex-col lg:flex-row ">
-          <div className="w-full lg:w-1/2">
+        <div className="w-full flex gap-6 flex-col">
+          <div className="w-full">
             <Title title="Beneficios" />
             <BeneficiosAdmin beneficios={beneficios} />
           </div>
-          <div className="w-full lg:w-1/2">
+          <div className="w-full">
             <Title title="Banners" />
             <BannerAdmin Banners={banner} />
           </div>
         </div>
-        <div className="w-full flex gap-6 flex-col lg:flex-row ">
-          <div className="w-full lg:w-2/3">
+        <div className="w-full flex gap-6 flex-col">
+          <div className="w-full">
             <Title title="Sobre Nosotros" />
             <AboutAdmin about={about} />
           </div>
