@@ -121,19 +121,7 @@ export const siteSettings: any = {
             label: "Plataformas",
             icon: "ProductsIcon",
             permissions: ["customer", "super_admin"],
-          },
-          {
-            href: routes.recargarBilletera,
-            label: "Recargar Billetera",
-            icon: "UsersIcon",
-            permissions: ["super_admin","customer"],
-          },
-          {
-            href: routes.recargasUsers,
-            label: "Recargas",
-            icon: "UsersIcon",
-            permissions: ["super_admin","customer"],
-          },
+          }
         ],
       },
       configuracion: {
