@@ -158,12 +158,6 @@ export const siteSettings: any = {
         icon: "UsersIcon",
         childMenu: [
           {
-            href: routes.plataformasClientes,
-            label: "Plataformas",
-            icon: "ProductsIcon",
-            permissions: ["customer", "super_admin"],
-          },
-          {
             href: routes.recargarBilletera,
             label: "Recargar Billetera",
             icon: "UsersIcon",
