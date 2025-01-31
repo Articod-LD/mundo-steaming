@@ -50,7 +50,7 @@ const SuscriptionAdmin = ({
                 <div className="col-span-1 text-lg">Usuario</div>
                 <div className="col-span-1 text-lg">Plataforma</div>
                 <div className="col-span-1 text-lg">Estado</div>
-                <div className="col-span-1 text-lg">Meses</div>
+                <div className="col-span-1 text-lg">Dias</div>
                 <div className="col-span-1 text-lg">Credencial</div>
               </div>
 
