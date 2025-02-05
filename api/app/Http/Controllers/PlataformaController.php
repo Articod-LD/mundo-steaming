@@ -156,6 +156,7 @@ class PlataformaController extends Controller
         $platform->provider_price = $request->provider_price;
         $platform->type = $request->type;
         $platform->categoria_id = $categoria->id;
+        $platform->description = $request->description;
         $platform->save();
 
         return response()->json(['Plataforma actualizada' => $platform], 200);
