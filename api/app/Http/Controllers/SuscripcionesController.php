@@ -128,7 +128,7 @@ class SuscripcionesController extends Controller
     {
         $suscription = $this->repository
             ->where('order_code', $ordenCode)
-            ->with(['user', 'productos', 'productos.plataforma'])
+            ->with(['user', 'productos', 'productos.plataforma', 'productos.credencial'])
             ->first();
     
         if (!$suscription) {
@@ -143,7 +143,7 @@ class SuscripcionesController extends Controller
                 'email' => $suscription->user->email,
                 'phone'=> $suscription->user->phone
             ],
-            'plataformas' => [],
+            'plataformas' => []
         ];
     
         // Agrupar los productos por plataforma y contar la cantidad de productos asociados
@@ -170,9 +170,22 @@ class SuscripcionesController extends Controller
                         'image_url' => $plataforma->image_url,
                         'type' => $plataforma->type,
                         'cantidad' => 0,
+                        'productos' => [],
                     ];
                 }
     
+                $plataformasCantidad[$plataforma->id]['productos'][] = [
+                    'id' => $producto->id,
+                    'fecha_compra' => $producto->purchase_date,
+                    'profile_name' => $producto->profile_name,
+                    'profile_pin' =>$producto->profile_pin,
+                    'months' => $producto->months,
+                    'email'=> $producto->credencial->email,
+                    'password'=> $producto->credencial->password,
+
+                ];
+
+
                 $plataformasCantidad[$plataforma->id]['cantidad']++;
             }
         }

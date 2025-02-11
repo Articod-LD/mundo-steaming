@@ -1,5 +1,6 @@
 import { NextPage } from "next";
 import { ReactElement, ReactNode } from "react";
+import { number } from "yup";
 
 export interface UserPaginator extends PaginatorInfo<User> {}
 export interface ProductPaginator extends PaginatorInfo<Product> {}
@@ -105,6 +106,15 @@ export interface SuscriptionPlataforma {
   image_url: string;
   cantidad: number;
   type: string;
+  productos: {
+    id: number;
+    fecha_compra: string;
+    profile_name?: string;
+    profile_pin?: string;
+    months: string;
+    email: string;
+    password: string;
+  }[];
 }
 
 export interface ISuscrption {

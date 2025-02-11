@@ -140,12 +140,12 @@ export default function Header({
       <div className="flex items-center gap-4">
         <Logo />
       </div>
-      <div className="relative flex items-center gap-5 xs:gap-6 sm:gap-5">
+      <div className="relative flex items-center gap-5 xs:gap-6 sm:gap-5 ">
         {showMenu && <MenuRender />}
         {!isSuperAdmin && (
           <button
             onClick={() => router.push(routes.checkout)}
-            className="bg-brand p-2 rounded-md text-2xl flex items-center justify-center hover:bg-brand/80 hover:shadow-lg hover:scale-105 transition duration-200 relative"
+            className="focus:ring-accent-700 h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-black outline-none transition duration-300 ease-in-out hover:bg-brand/80 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105"
           >
             <Cart className="w-5 h-5 text-black " />
             <div className="absolute -top-2 right-0 text-sm bg-brand rounded-full w-5 h-5 text-black">
@@ -159,7 +159,7 @@ export default function Header({
             href={routes.dashboard}
             className={classNames(
               "focus:ring-accent-700 h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-black outline-none transition duration-300 ease-in-out hover:bg-brand/80 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105",
-              isLogin ? "hidden lg:flex" : "hidden"
+              isLogin ? "hidden md:flex" : "hidden"
             )}
           >
             Dashboard
