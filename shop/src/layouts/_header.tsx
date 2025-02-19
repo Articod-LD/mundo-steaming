@@ -4,13 +4,15 @@ import { useLogoutMutation, useMe } from "@/data/user";
 import { useIsMounted } from "@/lib/hooks/use-is-mounted";
 import { useRouter } from "next/router";
 import { Menu } from "@/components/ui/dropdown";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Transition } from "@headlessui/react";
 import routes from "@/config/routes";
 import ActiveLink from "@/components/ui/links/active-link";
 import Button from "@/components/ui/button";
 import AnchorLink from "@/components/ui/links/anchor-link";
 import classNames from "classnames";
+import Cart from "@/components/icons/cart";
+import { formatPrecioColombiano } from "@/utils/price";
 
 interface HeaderProps {
   isCollapse?: boolean;
@@ -90,8 +92,36 @@ export default function Header({
   const { me } = useMe();
 
   const [plataforma] = useState(process.env.NEXT_PUBLIC_PLATAFORMA);
+  const isSuperAdmin = me?.permissions?.some(
+    (permission) => permission.name === "super_admin"
+  );
 
-  const isLogin = typeof me !== "undefined";
+  const isProvider = me?.permissions?.some(
+    (permission) => permission.name === "provider"
+  );
+
+  const [countCart, setCountCart] = useState(0);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      const cartString = localStorage.getItem("cart");
+      const currentCart = cartString ? JSON.parse(cartString) : [];
+      setCountCart(currentCart.length);
+    };
+
+    // Escucha el evento personalizado "cartUpdated"
+    window.addEventListener("cartUpdated", updateCartCount);
+
+    // Llama al efecto una vez al montar el componente
+    updateCartCount();
+
+    // Cleanup del evento
+    return () => {
+      window.removeEventListener("cartUpdated", updateCartCount);
+    };
+  }, []);
 
   return (
     <header
@@ -100,17 +130,35 @@ export default function Header({
         plataforma === "COMBO" ? "h-24 sm:h-[100px]" : "h-16 sm:h-[80px]"
       )}
     >
+      {me && isProvider && (
+        <div className="absolute top-full right-10 md:right-20 w-48 h-12 border-dashed border-2 border-brand flex justify-center items-center bg-black">
+          Saldo:{" "}
+          {formatPrecioColombiano(me.wallet)}
+        </div>
+      )}
       <div className="flex items-center gap-4">
         <Logo />
       </div>
-      <div className="relative flex items-center gap-5 xs:gap-6 sm:gap-5">
+      <div className="relative flex items-center gap-5 xs:gap-6 sm:gap-5 ">
         {showMenu && <MenuRender />}
+        {!isSuperAdmin && (
+          <button
+            onClick={() => router.push(routes.checkout)}
+            className="focus:ring-accent-700 h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-black outline-none transition duration-300 ease-in-out hover:bg-brand/80 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105"
+          >
+            <Cart className="w-5 h-5 text-black " />
+            <div className="absolute -top-2 right-0 text-sm bg-brand rounded-full w-5 h-5 text-black">
+              {countCart}
+            </div>
+          </button>
+        )}
+
         {showHamburger && (
           <AnchorLink
             href={routes.dashboard}
             className={classNames(
-              "focus:ring-accent-700 h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-light outline-none transition duration-300 ease-in-out hover:bg-red-900 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105",
-              isLogin ? "hidden lg:flex" : "hidden"
+              "focus:ring-accent-700 h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-black outline-none transition duration-300 ease-in-out hover:bg-brand/80 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105",
+              isLogin ? "hidden md:flex" : "hidden"
             )}
           >
             Dashboard

@@ -17,13 +17,10 @@ class credenciales extends Model
         'tipo_id',
     ];
 
-    public function subscription()
+
+    public function productos()
     {
-        return $this->belongsTo(suscription::class, 'suscripcion_id');
+        return $this->hasMany(Producto::class,'producto_id');
     }
 
-    public function tipo()
-    {
-        return $this->belongsTo(suscriptionType::class, 'tipo_id');
-    }
 }

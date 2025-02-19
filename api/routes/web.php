@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,3 +13,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+
+Route::get('/payment/success', [PaymentController::class, 'handlePaymentStatus'])->name('mercadopago.success');
+Route::get('/payment/failed', [PaymentController::class, 'handlePaymentStatus'])->name('mercadopago.failed');

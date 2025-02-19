@@ -2,23 +2,23 @@ import LoginForm from "@/components/auth/login-form";
 import { FacebookIcon, InstagramIcon } from "@/components/icons/social";
 import { WhatsappIcon } from "@/components/icons/social/whatsapp";
 import BannerBack from "@/components/ui/banner/BannerBack";
-import { useLogin, useSoporte } from "@/data/user";
+import { useConfiguracionQuery, useLogin, useSoporte } from "@/data/user";
 import AuthLayout from "@/layouts/_auth_layout";
 import Layout from "@/layouts/_layout";
 import { NextPageWithLayout } from "@/types";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
+
 type Inputs = {
   name: string;
   email: string;
   telefono: string;
   pregunta: string;
-  isAcepted: any;
+  isAcepted: boolean;
 };
 
 const Login: NextPageWithLayout = () => {
   const { mutate, isLoading, error } = useSoporte();
-
   const {
     register,
     handleSubmit,
@@ -27,13 +27,17 @@ const Login: NextPageWithLayout = () => {
     formState: { errors },
   } = useForm<Inputs>();
 
+  const { configuracion, loading } = useConfiguracionQuery({
+    limit: 20,
+  });
+
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     mutate(data, {
-      onSuccess: (succes) => {
-        console.log("salio bien", succes);
+      onSuccess: () => {
+        toast.success("Tu solicitud ha sido enviada correctamente.");
       },
       onError: () => {
-        toast.error("ha ocurrido un error");
+        toast.error("Ha ocurrido un error, por favor intenta de nuevo.");
       },
     });
 
@@ -55,29 +59,38 @@ const Login: NextPageWithLayout = () => {
         img="/contacto.png"
       />
       <div className="mt-24 px-5 lg:px-28 w-full flex h-auto lg:flex-row flex-col">
-        <div className="w-full lg:w-1/2 h-full lg:pr-56">
-          <span className="text-base">CONTÁCTENOS</span>
-          <h3 className="text-4xl font-bold">
+        <div className="w-full lg:w-1/2 h-full lg:pr-56 mb-10">
+          <span className="text-base text-gray-400">CONTÁCTENOS</span>
+          <h3 className="text-4xl font-bold text-white">
             ¿TIENES PREGUNTAS? ¡PONTE EN CONTACTO!
           </h3>
-          {/* <p className="text-base mt-3">
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam
-            nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat
-            volutpat.
-          </p> */}
-          <div className="flex items-center gap-3 mt-4">
-            <WhatsappIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 text-brand" />
-            <p>3147937096</p>
+          <div className="flex items-center gap-3 mt-4 text-gray-300">
+            <a
+              href={configuracion.whatsapp_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition ease-in-out hover:scale-110 duration-300"
+            >
+              <WhatsappIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 text-brand" />
+            </a>
+            <p>{configuracion.cel}</p>
           </div>
-          <div className="flex items-center gap-3 mt-4">
-            <InstagramIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 text-brand" />
-            <p>@MUNDOSTREAMING</p>
+          <div className="flex items-center gap-3 mt-4 text-gray-300">
+            <a
+              href={configuracion.insta_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition ease-in-out hover:scale-110 duration-300"
+            >
+              <InstagramIcon className="w-8 h-8 transition ease-in-out hover:scale-110 duration-300 text-brand" />
+            </a>
+            <p>{configuracion.plataforma}</p>
           </div>
         </div>
         <div className="w-full lg:w-1/2 h-full pb-10">
           <div className="w-full">
             <form
-              className="border border-black shadow-md rounded-xl px-8 pt-6 pb-8 mb-4"
+              className="border border-white shadow-lg rounded-xl px-8 pt-6 pb-8 mb-4 bg-gray-800"
               onSubmit={handleSubmit(onSubmit)}
             >
               <div className="mb-4">
@@ -158,7 +171,7 @@ const Login: NextPageWithLayout = () => {
                 )}
               </div>
               <div className="mb-4">
-                <label className="flex items-center cursor-pointer">
+                <label className="flex items-center cursor-pointer text-white">
                   <input
                     className="mr-2 leading-tight"
                     type="checkbox"
@@ -171,7 +184,7 @@ const Login: NextPageWithLayout = () => {
               </div>
               <div className="flex items-center justify-center">
                 <button
-                  className="bg-brand  text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className="bg-brand text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                   type="submit"
                 >
                   Ponerse en Contacto

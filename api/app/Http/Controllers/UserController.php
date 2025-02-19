@@ -8,6 +8,7 @@ use App\Http\Requests\actualizarBilleteraRequest;
 use App\Http\Requests\authRequest;
 use App\Http\Requests\ChagePassRequest;
 use App\Http\Requests\udapteUserProfileRequest;
+use App\Http\Requests\updapteUserProfileRequest;
 use App\Http\Requests\UserCreateRequest;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -17,8 +18,6 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-
-
 
     public $repository;
 
@@ -30,81 +29,20 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $limit = $request->limit ? $request->limit : 15;
+        $users = $this->repository
+            ->where('is_active', true)
+            ->with(['suscriptions', 'permissions'])
+            ->paginate($limit);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
-
-    public function me(Request $request)
-    {
-        try {
-            $user = $request->user();
-
-            if (isset($user)) {
-                return $this->repository->with(['suscription' => function ($query) {
-                    $query->with(['credential', 'credential.tipo']);
-                }, 'permissions', 'solicitudes'])->find($user->id);
-            }
-            throw new AuthorizationException('NOT_AUTHORIZED');
-        } catch (ShopException $e) {
-            throw new ShopException('NOT_AUTHORIZED');
-        }
+        return $users;
     }
 
     public function token(authRequest $request)
     {
         $user = User::where('email', $request->email)->where('is_active', true)->first();
-
-
         if (!$user || !Hash::check($request->password, $user->password)) {
             return ["token" => null, "permissions" => []];
         }
@@ -114,84 +52,57 @@ class UserController extends Controller
         return ["token" => $user->createToken('auth_token')->plainTextToken, "permissions" => $user->getPermissionNames(), "email_verified" => $email_verified];
     }
 
-    public function register(UserCreateRequest $request)
+    public function me(Request $request)
     {
-        $notAllowedPermissions = [Permission::SUPER_ADMIN];
+        try {
+            $user = $request->user();
 
-        if ((isset($request->permission->value) && in_array($request->permission->value, $notAllowedPermissions)) || (isset($request->permission) && in_array($request->permission, $notAllowedPermissions))) {
+            if (isset($user)) {
+                $user = $this->repository->with([
+                    'suscriptions',
+                    'permissions',
+                    'purchases',
+                    'suscriptions.productos',
+                    'suscriptions.productos.plataforma',
+                    'suscriptions.productos.credencial'
+                ])->find($user->id);
+                
+
+                // Asegúrate de que el usuario existe
+                if ($user) {
+
+                    // Iterar sobre las suscripciones
+                    $user->suscriptions->each(function ($suscripcion) {
+                        // Iteramos sobre los productos de cada suscripción
+                        $suscripcion->productos->each(function ($producto) {
+                            // Verificamos si la plataforma existe para el producto
+                            if ($producto->plataforma) {
+                                if (!str_starts_with($producto->plataforma->image_url, 'http://') && !str_starts_with($producto->plataforma->image_url, 'https://')) {
+                                    $producto->plataforma->image_url = url('images/' . $producto->plataforma->image_url);
+                                }
+                            }
+                        });
+                    });
+                }
+
+                return response()->json($user);
+            }
             throw new AuthorizationException('NOT_AUTHORIZED');
+        } catch (ShopException $e) {
+            throw new ShopException('NOT_AUTHORIZED');
         }
-        $permissions = [];
-        if (isset($request->permission)) {
-            $permissions[] = isset($request->permission->value) ? $request->permission->value : $request->permission;
-        }
-
-        $user = $this->repository->create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'documento' => $request->documento,
-            'telefono' => $request->telefono,
-            'direccion' => $request->direccion,
-        ]);
-
-        $user->givePermissionTo($permissions);
-
-        return ["token" => $user->createToken('auth_token')->plainTextToken, "permissions" => $user->getPermissionNames()];
     }
 
-    public function logout(Request $request)
+    public function updateProfile(updapteUserProfileRequest $request, $user_id)
     {
-        $user = $request->user();
+        $data = $request->all();
+        $user = User::find($user_id);
         if (!$user) {
-            return true;
+            throw new HttpResponseException(response()->json(['message' => 'Usuario no encontrado'], 404));
         }
-        return $request->user()->currentAccessToken()->delete();
-    }
+        $user->update($data);
 
-    function clientes(Request $request)
-    {
-        $limit = $request->limit ? $request->limit : 15;
-        $clientes = $this->repository
-            ->where('is_active', true)
-            ->with(['suscription', 'permissions'])
-            ->whereHas('permissions', function ($query) {
-                $query->where('name', Permission::CUSTOMER);
-            })
-            ->paginate($limit);
-
-        return $clientes;
-    }
-
-    function providers(Request $request)
-    {
-        $limit = $request->limit ? $request->limit : 15;
-        $clientes = $this->repository
-            ->where('is_active', true)
-            ->with(['suscription', 'permissions'])
-            ->whereHas('permissions', function ($query) {
-                $query->where('name', Permission::PROVIDER);
-            })
-            ->paginate($limit);
-
-        return $clientes;
-    }
-
-    function findOne(Request $request, $client_id)
-    {
-        $cliente = $this->repository
-            ->where('id', $client_id)
-            ->where('is_active', true)
-            ->with(['suscription' => function ($query) {
-                $query->with(['credential', 'credential.tipo']);
-            }, 'permissions', 'solicitudes'])
-            ->whereHas('permissions', function ($query) {
-                $query->where('name', Permission::CUSTOMER);
-            })
-            ->first();
-
-
-        return $cliente;
+        return response()->json(['message' => 'Usuario actualizado correctamente'], 200);
     }
 
     function changePassword(ChagePassRequest $request, $user_id)
@@ -217,38 +128,12 @@ class UserController extends Controller
         return ["token" => $user->createToken('auth_token')->plainTextToken, "permissions" => $user->getPermissionNames()];
     }
 
-    function updateProfile(udapteUserProfileRequest $request, $user_id)
+    public function logout(Request $request)
     {
-        $data = $request->all();
-        $user = User::find($user_id);
+        $user = $request->user();
         if (!$user) {
-            throw new HttpResponseException(response()->json(['message' => 'Usuario no encontrado'], 404));
+            return true;
         }
-        $user->update($data);
-
-        return response()->json(['message' => 'Usuario actualizado correctamente'], 200);
-    }
-
-
-    public function updateWallet(actualizarBilleteraRequest $request)
-    {
-        $user = User::findOrFail($request->userId);
-        if ($request->operation !== 'add' &&  $request->operation !== 'subtract') {
-            return response()->json(['error' => 'Operación no válida'], 422);
-        }
-
-        if ($request->operation === 'add') {
-            $user->billetera += $request->amount;
-        } else {
-            $user->billetera -= $request->amount;
-            if ($user->wallet < 0) {
-                return response()->json(['error' => 'No tienes suficientes fondos en tu billetera'], 422);
-            }
-        }
-
-        // Guardar los cambios en la base de datos
-        $user->save();
-
-        return response()->json(['message' => 'Billetera actualizada exitosamente', 'new_balance' => $user->billetera]);
+        return $request->user()->currentAccessToken()->delete();
     }
 }

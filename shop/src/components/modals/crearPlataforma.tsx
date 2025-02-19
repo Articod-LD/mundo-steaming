@@ -4,7 +4,11 @@ import Input from "../ui/input";
 import Button from "../ui/button";
 import { useState } from "react";
 import {
+  useCategoriesQuery,
+  useRegisterCategorieMutation,
   useRegisterPlataformaMutation,
+  useUpdateCategoriaMutation,
+  useUpdatePlataformaMutation,
   useUpdateProfileMutation,
 } from "@/data/user";
 import Alert from "../ui/alert";
@@ -13,16 +17,18 @@ import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/data/client/api-endpoints";
 import { useModalAction } from "../ui/modal/modal.context";
+import SelectInput from "../ui/select-input";
+import Image from "next/image";
 
 const createPlataformaFormSchema = yup.object().shape({
   name: yup.string().required("El nombre es requerido"),
   image_url: yup
     .mixed()
-    .required("La imagen es requerida")
     .test(
       "fileFormat",
       "La imagen debe ser un archivo válido (jpeg, jpg, gif, png)",
       (value) => {
+        if (!value || value.length === 0) return true;
         return (
           value &&
           ["image/jpeg", "image/jpg", "image/png", "image/gif"].includes(
@@ -32,56 +38,117 @@ const createPlataformaFormSchema = yup.object().shape({
       }
     )
     .test("fileSize", "La imagen no puede ser mayor a 2MB", (value) => {
+      if (!value || value.length === 0) return true;
       return value && value[0]?.size <= 2 * 1024 * 1024; // 2MB
     }),
-  precio: yup
+  public_price: yup
     .string()
-    .required("El precio es requerido")
+    .required("El precio público es requerido")
     .matches(
       /^\d+(\.\d{1,2})?$/,
       "El precio debe ser un número válido con hasta 2 decimales"
     ),
-  precio_provider: yup
+  provider_price: yup
     .string()
-    .required("El precio es requerido")
+    .required("El precio del proveedor es requerido")
     .matches(
       /^\d+(\.\d{1,2})?$/,
       "El precio debe ser un número válido con hasta 2 decimales"
     ),
+  type: yup.object().required("el tipo es requerido"),
+  categoria_id: yup
+    .object()
+    .shape({
+      id: yup.number().required(),
+      titulo: yup.string().required(),
+    })
+    .typeError("Debe seleccionar una plataforma")
+    .required("La plataforma es requerida"),
+  description: yup.string().required("La descipcion es requerida"),
 });
 
 function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { mutate: createPlataforma, isLoading } =
-    useRegisterPlataformaMutation();
+
+  const [previewImage, setPreviewImage] = useState<string | null>(
+    plataforma?.image_url || null
+  );
 
   const queryClient = useQueryClient();
   const { closeModal } = useModalAction();
 
+  const { mutate: createPlataforma, isLoading } =
+    useRegisterPlataformaMutation();
+  const { mutate: updatePlataforma, isLoading: isLoadingUpdate } =
+    useUpdatePlataformaMutation();
+
+  const { categories, error, loading } = useCategoriesQuery({
+    limit: 20,
+  });
+
+  console.log(categories);
+
   function onSubmit({
     image_url,
     name,
-    precio,
-    precio_provider,
+    provider_price,
+    public_price,
+    type,
+    categoria_id,
+    description
   }: PlataformaInput) {
-    if (!plataforma) {
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("image_url", image_url[0]);
-      formData.append("precio", precio);
-      formData.append("precio_provider", precio_provider);
+    const typeConverted = type as unknown as { name: string };
+    const categorie = categoria_id as unknown as { id: string };
 
+    const typeName = typeConverted.name;
+    const formData = new FormData();
+    formData.append("name", name);
+
+    if (image_url && image_url[0]) {
+      formData.append("image_url", image_url[0]); // Solo si se seleccionó una imagen nueva
+    }
+
+
+    formData.append("provider_price", provider_price);
+    formData.append("public_price", public_price);
+    formData.append("type", typeName);
+    formData.append("categoria_id", categorie.id);
+    formData.append("description", description);
+
+    if (!plataforma) {
       createPlataforma(formData, {
         onSuccess(data, variables, context) {
-          toast.success("Plataforma creada correctamente");
-          queryClient.invalidateQueries([API_ENDPOINTS.PLATAFORMA_LIST]);
           closeModal();
         },
         onError(error: any) {
-          setErrorMessage(error.response.data.message);
+          setErrorMessage(error.response.data.error);
         },
       });
-      return;
+    } else {
+      updatePlataforma(
+        { plataformaId: plataforma.id, params: formData },
+        {
+          onSuccess(data, variables, context) {
+            closeModal();
+          },
+          onError(error: any) {
+            console.log(error);
+
+            setErrorMessage(error.response.data.error);
+          },
+        }
+      );
+    }
+  }
+
+  function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (file) {
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        setPreviewImage(fileReader.result as string);
+      };
+      fileReader.readAsDataURL(file);
     }
   }
 
@@ -96,46 +163,137 @@ function CrearPlataformaModal({ plataforma }: { plataforma?: Plataforma }) {
           validationSchema={createPlataformaFormSchema}
           onSubmit={onSubmit}
         >
-          {({ register, formState: { errors } }) => (
+          {({ register, formState: { errors }, control }) => (
             <>
               <Input
-                label="Name"
+                label="Nombre"
                 {...register("name")}
                 variant="outline"
                 className="mb-4"
                 isEditar={true}
                 defaultValue={plataforma?.name}
                 error={errors?.name?.message!}
+                isRequired={!plataforma}
               />
+
+              <div className="mb-4">
+                <SelectInput
+                  label="Categoria"
+                  name="categoria_id"
+                  required={!plataforma}
+                  control={control}
+                  getOptionLabel={(option: any) => {
+                    return option.titulo;
+                  }}
+                  getOptionValue={(option: any) => {
+                    return option.titulo;
+                  }}
+                  defaultValue={
+                    categories
+                      ? (categories.filter(
+                          (pla) => pla.titulo === plataforma?.categoria.titulo
+                        ) as unknown as object[])
+                      : undefined
+                  }
+                  options={categories}
+                  placeholder="Selecionar"
+                  isClearable={true}
+                />
+                <p className="my-2 text-xs text-red-500 text-start">
+                  {errors?.categoria_id?.message!}
+                </p>
+              </div>
+
+              <div className="flex flex-col mb-3">
+                <label className="block text-sm text-gray-600 mb-1">
+                  Imagen
+                  {!plataforma && <span className="text-red-500 px-1">*</span>}
+                </label>
+
+                {previewImage && (
+                  <Image
+                    src={previewImage}
+                    width={150}
+                    height={52}
+                    quality={100}
+                    alt="img banner"
+                    className="mb-4"
+                  />
+                )}
+
+                <Input
+                  type="file"
+                  {...register("image_url", { onChange: handleImageChange })}
+                  variant="outline"
+                  className="mb-4"
+                  isEditar={true}
+                  error={errors?.image_url?.message!}
+                />
+              </div>
+
               <Input
-                label="Imagen Url"
-                type="file"
-                {...register("image_url")}
-                variant="outline"
-                className="mb-4"
-                isEditar={true}
-                error={errors?.image_url?.message!}
-              />
-              <Input
-                label="Precio"
+                label="Precio Publico"
                 type="Number"
-                {...register("precio")}
+                {...register("public_price")}
                 variant="outline"
                 className="mb-4"
                 isEditar={true}
-                defaultValue={plataforma?.precio}
-                error={errors?.precio?.message!}
+                defaultValue={plataforma?.public_price}
+                error={errors?.public_price?.message!}
+                isRequired={!plataforma}
               />
               <Input
-                label="Precio Proveedor"
+                label="Precio Distribuidor"
                 type="Number"
-                {...register("precio_provider")}
+                {...register("provider_price")}
                 variant="outline"
                 className="mb-4"
                 isEditar={true}
-                defaultValue={plataforma?.precio_provider}
-                error={errors?.precio?.message!}
+                defaultValue={plataforma?.provider_price}
+                error={errors?.provider_price?.message!}
+                isRequired={!plataforma}
               />
+
+              <div className="mb-4">
+                <SelectInput
+                  label="tipo"
+                  name="type"
+                  control={control}
+                  getOptionLabel={(option: any) => {
+                    return option.name;
+                  }}
+                  getOptionValue={(option: any) => {
+                    return option.name;
+                  }}
+                  defaultValue={[
+                    { id: 1, name: "completa" },
+                    { id: 2, name: "pantalla" },
+                  ].filter((value) => value.name === plataforma?.type)}
+                  options={[
+                    { id: 1, name: "completa" },
+                    { id: 2, name: "pantalla" },
+                  ]}
+                  placeholder="Selecionar"
+                  isClearable={true}
+                  required={!plataforma}
+                />
+                <p className="my-2 text-xs text-red-500 text-start">
+                  {errors?.type?.message!}
+                </p>
+              </div>
+
+              <Input
+                label="Descripcion"
+                type="textarea"
+                {...register("description")}
+                variant="outline"
+                className="mb-4"
+                isEditar={true}
+                defaultValue={plataforma?.description}
+                error={errors?.description?.message!}
+                isRequired={!plataforma}
+              />
+
               <Button
                 className="w-full uppercase"
                 isLoading={isLoading}

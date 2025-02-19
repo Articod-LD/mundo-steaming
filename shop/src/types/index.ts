@@ -1,7 +1,9 @@
 import { NextPage } from "next";
 import { ReactElement, ReactNode } from "react";
+import { number } from "yup";
 
 export interface UserPaginator extends PaginatorInfo<User> {}
+export interface ProductPaginator extends PaginatorInfo<Product> {}
 export interface PlataformasPaginator extends PaginatorInfo<Plataforma> {}
 export interface ISolicitudPaginator extends PaginatorInfo<ISolicitud> {}
 
@@ -66,19 +68,89 @@ export interface Location {
 }
 
 export interface User {
-  id: string;
+  id: number;
   name: string;
   role: string;
   permissions: any[];
-  suscription: any[];
-  solicitudes: ISolicitud[];
+  suscriptions: Suscriptions[];
   email: string;
-  documento: string;
-  direccion: string;
-  telefono: string;
+  phone: string;
   created_at: string;
   updated_at: string;
-  billetera: string;
+  wallet: string;
+  is_active: number;
+}
+export interface Suscriptions {
+  productos: Product[];
+  start_date: string;
+  end_date: string;
+  id: number;
+  price: string;
+}
+
+export interface SuscriptionSuccess {
+  usuario: SuscriptionUser;
+  plataformas: SuscriptionPlataforma[];
+}
+
+export interface SuscriptionUser {
+  id: number;
+  name: string;
+  email: string;
+  phone: null | string;
+}
+
+export interface SuscriptionPlataforma {
+  id: number;
+  name: string;
+  image_url: string;
+  cantidad: number;
+  type: string;
+  productos: {
+    id: number;
+    fecha_compra: string;
+    profile_name?: string;
+    profile_pin?: string;
+    months: string;
+    email: string;
+    password: string;
+  }[];
+}
+
+export interface ISuscrption {
+  id: 1;
+  start_date: string;
+  end_date: string;
+  price: string;
+  order_code: string;
+  usuario_id: string;
+  created_at: string;
+  updated_at: string;
+  user: User;
+  productos: Product[];
+}
+
+export interface Product {
+  id: number;
+  screen_count: number;
+  profile_name?: string;
+  profile_pin?: string;
+  purchase_date: string;
+  months: number;
+  plataforma: Plataforma;
+  credencial: Credencial;
+  created_at: string;
+  updated_at: string;
+  status: string;
+}
+
+export interface Credencial {
+  id: number;
+  email: string;
+  password: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface LoginInput {
@@ -123,19 +195,30 @@ export interface RegisterInput {
   password: string;
   name: string;
   permission: Permission;
-  documento: string;
-  telefono: string;
-  direccion: string;
+  phone?: string | null | undefined;
+}
+
+export interface RegisterProductInput {
+  plataforma_id: number;
+  email: string;
+  password: string;
+  perfil?: string | null | undefined;
+  pin_perfil?: string | null | undefined;
+  fecha_compra: Date;
+  meses: number;
 }
 
 export type RegisterInputType = {
   name: string;
   email: string;
-  password: string;
+  password: string | null | undefined;
   permission: any;
-  documento: string;
-  telefono: string;
-  direccion: string;
+  phone?: string | null | undefined;
+};
+
+export type RecargeManual = {
+  amount: number;
+  user_id?: number | undefined;
 };
 
 export type UpdateProfileInputType = {
@@ -190,21 +273,75 @@ export interface UserQueryOptions extends QueryOptions {
 }
 
 export interface Plataforma {
-  id: string;
+  id: number;
   name: string;
   image_url: string;
-  imagen: string;
-  precio: string;
-  precio_provider: string;
+  provider_price: string;
+  public_price: string;
+  count_avaliable: number;
+  productos: unknown[];
+  type: string;
+  categoria: Categorie;
+  cantidad?: number;
+  description: string;
+}
+
+export interface Recharge {
+  user: User;
+  amount: string;
+  payment_status: string;
+  payment_method: string;
+  payment_reference: string;
+  created_at: string;
 }
 
 export interface Categorie {
+  id: number;
   titulo: string;
   imagen: string;
   imagen_url: string;
 }
 
+export interface Beneficio {
+  id: number;
+  beneficio: string;
+}
+
+export interface BeneficioSinId {
+  beneficio: string;
+}
+
+export interface IAbout {
+  id: number;
+  description: string;
+  image_url: string;
+  video_url: string;
+}
+
+export interface IAboutSinId {
+  description: string;
+  image_url: string;
+  video_url: string;
+}
+
+export interface IConfig {
+  id?: number | undefined;
+  title: string;
+  cel: string;
+  insta_url: string;
+  whatsapp_url: string;
+  plataforma: string;
+}
+
+export interface IConfigSinID {
+  title: string;
+  cel: number | string;
+  insta_url: string;
+  whatsapp_url: string;
+  plataforma: string;
+}
 export interface Banner {
+  id: number;
   titulo: string;
   imagen: string;
   imagen_url: string;
@@ -215,20 +352,36 @@ export interface Banner {
 export interface PlataformaInput {
   name: string;
   image_url: string;
-  precio: string;
-  precio_provider: string;
+  public_price: string;
+  provider_price: string;
+  type: unknown;
+  categoria_id: unknown;
+  description: string;
 }
 
 export interface BannerInput {
   titulo: string;
   texto: string;
-  logo: string;
   imagen: string;
 }
 
 export interface CategorieInput {
   titulo: string;
   imagen: string;
+}
+
+export interface CreateProductoForm {
+  plataforma: {
+    id: number;
+    name: string;
+    type: string;
+  };
+  correo: string;
+  contrasena: string;
+  perfil?: string | null | undefined;
+  pin_perfil?: string | null | undefined;
+  fecha_compra: Date;
+  meses: number;
 }
 
 export interface ISolicitud {
@@ -255,14 +408,11 @@ export interface AceptarSolicitudInput {
 }
 
 export interface CrearSuscripcionInput {
-  fecha_inicio: Date;
-  fecha_fin: Date;
-  precio: string;
-  pagado?: boolean;
-  email: string;
-  password: string;
-  tipo_id: number;
-  usuario_id: number;
+  user_id: number;
+  plataformas: {
+    id: number;
+    cantidad: number;
+  }[];
 }
 
 export interface walletInput {

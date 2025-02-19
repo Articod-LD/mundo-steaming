@@ -44,17 +44,12 @@ const PreguntasList = ({
   });
 
   const { openModal } = useModalAction();
-  console.log(solicitudes);
 
   const columns: any = [
     {
       title: (
         <TitleWithSort
           title="Nombre"
-          ascending={
-            sortingObj.sort === SortOrder.Asc && sortingObj.column === "id"
-          }
-          isActive={sortingObj.column === "id"}
           className="text-brand text-xl font-bold"
         />
       ),
@@ -75,10 +70,6 @@ const PreguntasList = ({
       title: (
         <TitleWithSort
           title="Correo"
-          ascending={
-            sortingObj.sort === SortOrder.Asc && sortingObj.column === "id"
-          }
-          isActive={sortingObj.column === "id"}
           className="text-brand text-xl font-bold"
         />
       ),
@@ -100,10 +91,6 @@ const PreguntasList = ({
       title: (
         <TitleWithSort
           title="Telefono"
-          ascending={
-            sortingObj.sort === SortOrder.Asc && sortingObj.column === "id"
-          }
-          isActive={sortingObj.column === "id"}
           className="text-brand text-xl font-bold"
         />
       ),
@@ -125,10 +112,6 @@ const PreguntasList = ({
       title: (
         <TitleWithSort
           title="Pregunta"
-          ascending={
-            sortingObj.sort === SortOrder.Asc && sortingObj.column === "id"
-          }
-          isActive={sortingObj.column === "id"}
           className="text-brand text-xl font-bold"
         />
       ),

@@ -2,7 +2,7 @@ import classNames from "classnames";
 import cn from "classnames";
 import React, { InputHTMLAttributes } from "react";
 
-export interface Props extends InputHTMLAttributes<HTMLInputElement> {
+export interface Props extends InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
   className?: string;
   inputClassName?: string;
   label?: string;
@@ -14,6 +14,7 @@ export interface Props extends InputHTMLAttributes<HTMLInputElement> {
   variant?: "normal" | "solid" | "outline";
   dimension?: "small" | "medium" | "big";
   showLabel?: boolean;
+  isRequired?: boolean;
   isEditar?: boolean;
 }
 
@@ -31,7 +32,7 @@ const sizeClasses = {
   medium: "h-12",
   big: "h-14",
 };
-const Input = React.forwardRef<HTMLInputElement, Props>(
+const Input = React.forwardRef<HTMLInputElement | HTMLTextAreaElement, Props>(
   (
     {
       className,
@@ -48,6 +49,7 @@ const Input = React.forwardRef<HTMLInputElement, Props>(
       isEditar = false,
       disabled,
       showLabel = true,
+      isRequired = false,
       ...rest
     },
     ref
@@ -72,33 +74,48 @@ const Input = React.forwardRef<HTMLInputElement, Props>(
           <label
             htmlFor={name}
             className={classNames(
-              "text-sm font-semibold leading-none",
+              "text-sm font-normal leading-none",
               isEditar ? "text-gray-600" : "text-white"
             )}
           >
             {label}
+            {isRequired && <span className="text-red-500 px-1">*</span>}
           </label>
         ) : (
           ""
         )}
-        <input
-          id={name}
-          name={name}
-          type={type}
-          ref={ref}
-          className={`${rootClassName} ${
-            disabled
-              ? `cursor-not-allowed border-[#D4D8DD] bg-[#EEF1F4] ${numberDisable} select-none`
-              : ""
-          }`}
-          autoComplete="off"
-          autoCorrect="off"
-          autoCapitalize="off"
-          spellCheck="false"
-          disabled={disabled}
-          aria-invalid={error ? "true" : "false"}
-          {...rest}
-        />
+        {type === "textarea" ? (
+          <textarea
+            id={name}
+            name={name}
+            cols={3}
+            rows={6}
+            ref={ref as React.ForwardedRef<HTMLTextAreaElement>}
+            className={`${rootClassName} resize-none h-20 ${
+              disabled
+                ? `cursor-not-allowed border-[#D4D8DD] bg-[#EEF1F4] ${numberDisable} select-none`
+                : ""
+            }`}
+            disabled={disabled}
+            aria-invalid={error ? "true" : "false"}
+            {...rest}
+          />
+        ) : (
+          <input
+            id={name}
+            name={name}
+            type={type}
+            ref={ref as React.ForwardedRef<HTMLInputElement>}
+            className={`${rootClassName} ${
+              disabled
+                ? `cursor-not-allowed border-[#D4D8DD] bg-[#EEF1F4] ${numberDisable} select-none`
+                : ""
+            }`}
+            disabled={disabled}
+            aria-invalid={error ? "true" : "false"}
+            {...rest}
+          />
+        )}
         {note && <p className="mt-2 text-xs text-white">{note}</p>}
         {error && (
           <p className="my-2 text-xs text-red-500 text-start">{error}</p>

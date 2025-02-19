@@ -25,12 +25,29 @@ class DatabaseSeeder extends Seeder
         $user = User::create([
             'name'     => 'Usuario Admin',
             'email'    => 'admin@mundostreaming.com',
-            'password' => Hash::make('mundostreamingadmin'),
-            'documento' => '123456789',
-            'telefono' => '123456789',
-            'direccion' => 'direccion mundo streaming',
+            'password' => Hash::make('mundostreamingadmin')
         ]);
         $permissions = [EnumsPermission::SUPER_ADMIN];
+        $user->givePermissionTo($permissions);
+
+
+        
+        $user = User::create([
+            'name'     => 'Usuario Cliente',
+            'email'    => 'cliente@mundostreaming.com',
+            'password' => Hash::make('mundostreamingadmin')
+        ]);
+        $permissions = [EnumsPermission::CUSTOMER];
+        $user->givePermissionTo($permissions);
+
+
+                
+        $user = User::create([
+            'name'     => 'Usuario PROVEEDOR',
+            'email'    => 'PROVIDER@mundostreaming.com',
+            'password' => Hash::make('mundostreamingadmin')
+        ]);
+        $permissions = [EnumsPermission::PROVIDER];
         $user->givePermissionTo($permissions);
     }
 }

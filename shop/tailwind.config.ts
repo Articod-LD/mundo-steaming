@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+const colors = require('tailwindcss/colors');
 
 const config: Config = {
   content: [
@@ -22,6 +23,7 @@ const config: Config = {
       colors: {
         brand: {
           DEFAULT: "#D72229",
+          dark:'#8d1003'
         },
         light: {
           DEFAULT: "#ffffff",
@@ -78,6 +80,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("@tailwindcss/typography"), require("@tailwindcss/forms")],
+  plugins: [require("@tailwindcss/typography"), require("@tailwindcss/forms"),require('@tailwindcss/line-clamp')],
 };
 export default config;

@@ -22,39 +22,36 @@ function SolicitarPlataforma({ plataforma }: { plataforma: Plataforma }) {
   const { closeModal } = useModalAction();
 
   function CreateSolicitud() {
-    // createSolicitudMutation(
-    //   { tipo_id: plataforma.id, usuario_id: me!.id },
-    //   {
-    //     onSuccess(data, variables, context) {
-    //       closeModal();
+    createSolicitudMutation(
+      { tipo_id: String(plataforma.id), usuario_id: String(me!.id) },
+      {
+        onSuccess(data, variables, context) {
+          closeModal();
 
-    //       updateWallet(
-    //         {
-    //           variables: {
-    //             operation: "add",
-    //             userId: me!.id,
-    //             amount: +getPrecio(),
-    //           },
-    //         },
-    //         {
-    //           onSuccess(data, variables, context) {
-    //             toast.success("billetera actualizada correctamente");
-    //           },
-    //           onError(error, variables, context) {
-    //             toast.error("error actualizando billetera");
-    //           },
-    //         }
-    //       );
-    //     },
-    //     onError(error: any) {
-    //       toast.error(error.response.data.error);
-    //       closeModal();
-    //     },
-    //   }
-    // );
-
-    closeModal();
-    router.push(routes.checkout);
+          updateWallet(
+            {
+              variables: {
+                operation: "add",
+                userId: String(me!.id),
+                amount: +getPrecio(),
+              },
+            },
+            {
+              onSuccess(data, variables, context) {
+                toast.success("billetera actualizada correctamente");
+              },
+              onError(error, variables, context) {
+                toast.error("error actualizando billetera");
+              },
+            }
+          );
+        },
+        onError(error: any) {
+          toast.error(error.response.data.error);
+          closeModal();
+        },
+      }
+    );
   }
 
   function getPrecio() {
@@ -64,7 +61,7 @@ function SolicitarPlataforma({ plataforma }: { plataforma: Plataforma }) {
       (permission) => permission.name === "provider"
     );
 
-    return isProvider ? plataforma.precio_provider : plataforma.precio;
+    return isProvider ? plataforma.provider_price : plataforma.public_price;
   }
 
   return (
@@ -74,7 +71,7 @@ function SolicitarPlataforma({ plataforma }: { plataforma: Plataforma }) {
       </h3>
       <div className="w-full flex items-center flex-col">
         <Image
-          src={plataforma.imagen}
+          src={plataforma.image_url}
           width={400}
           height={52}
           quality={100}

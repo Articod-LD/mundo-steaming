@@ -18,7 +18,6 @@ export function hasAccess(
   _allowedRoles: string[],
   _userPermissions: string[] | undefined | null
 ) {
-  console.log({ _allowedRoles, _userPermissions });
 
   if (_userPermissions) {
     return Boolean(

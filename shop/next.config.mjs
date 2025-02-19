@@ -12,6 +12,14 @@ const nextConfig = {
         protocol: "https",
         hostname: "**",
       },
+      {
+        protocol: "http",
+        hostname: "backend.combipremium.com", // Permitir imágenes desde backend.combipremium.com (HTTP)
+      },
+      {
+        protocol: "https",
+        hostname: "backend.combipremium.com", // Permitir imágenes desde backend.combipremium.com (HTTPS)
+      },
     ],
   },
 };

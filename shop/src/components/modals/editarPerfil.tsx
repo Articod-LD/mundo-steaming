@@ -34,7 +34,7 @@ function EditarPerfilModal() {
   }: UpdateProfileInputType) {
     updateProfile(
       {
-        userId: me!.id,
+        userId: String(me!.id),
         variables: {
           direccion,
           documento,
@@ -44,11 +44,11 @@ function EditarPerfilModal() {
       },
       {
         onSuccess(data, variables, context) {
-          console.log(data);
+
           queryClient.invalidateQueries([API_ENDPOINTS.ME]);
         },
         onError(error: any) {
-          console.log(error);
+
 
           setErrorMessage(error.response.data.message);
         },
@@ -79,33 +79,14 @@ function EditarPerfilModal() {
                 error={errors?.name?.message!}
               />
               <Input
-                label="Documento"
-                type="Number"
-                {...register("documento")}
-                variant="outline"
-                className="mb-4"
-                isEditar={true}
-                defaultValue={me?.documento}
-                error={errors?.documento?.message!}
-              />
-              <Input
                 label="Telefono"
                 type="Number"
                 {...register("telefono")}
                 variant="outline"
                 className="mb-4"
                 isEditar={true}
-                defaultValue={me?.telefono}
+                defaultValue={me?.phone}
                 error={errors?.telefono?.message!}
-              />
-              <Input
-                label="Direccion"
-                {...register("direccion")}
-                variant="outline"
-                className="mb-4"
-                isEditar={true}
-                defaultValue={me?.direccion}
-                error={errors?.direccion?.message!}
               />
               <Input
                 label="Email"

@@ -9,21 +9,26 @@ class suscription extends Model
 {
     use HasFactory;
 
+    protected $table = 'suscripciones';
+
     protected $fillable = [
-        'Fecha_Inicio',
-        'Fecha_Fin',
-        'precio',
-        'pagado',
+        'start_date',
+        'end_date',
+        'price',
         'usuario_id',
+        'product_id',
+        'order_code'
     ];
+
+    protected $dates = ['start_date', 'end_date'];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'usuario_id');
     }
 
-    public function credential()
+    public function productos()
     {
-        return $this->hasOne(credenciales::class, 'suscripcion_id');
+        return $this->hasMany(Producto::class, 'suscripcion_id');
     }
 }

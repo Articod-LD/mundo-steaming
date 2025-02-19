@@ -20,9 +20,7 @@ const registrationFormSchema = yup.object().shape({
     .required("Correo es requerido"),
   password: yup.string().required("Contraseña es requerida"),
   name: yup.string().required("form:error-name-required"),
-  documento: yup.string().required("form:error-name-required"),
-  telefono: yup.string().required("form:error-name-required"),
-  direccion: yup.string().required("form:error-name-required"),
+  phone: yup.string().required("form:error-name-required"),
   permission: yup.string().default("provider").oneOf(["provider"]),
 });
 
@@ -37,19 +35,15 @@ function AgregateProvidersModal() {
     email,
     password,
     permission,
-    direccion,
-    documento,
-    telefono,
+    phone,
   }: RegisterInputType) {
     registerUser(
       {
         name,
         email,
-        password,
+        password: password as string,
         permission,
-        direccion,
-        documento,
-        telefono,
+        phone
       },
       {
         onSuccess: (data) => {
@@ -95,31 +89,15 @@ function AgregateProvidersModal() {
                 isEditar={true}
                 error={errors?.name?.message!}
               />
-              <Input
-                label="Documento"
-                type="Number"
-                {...register("documento")}
-                variant="outline"
-                className="mb-4"
-                isEditar={true}
-                error={errors?.documento?.message!}
-              />
+
               <Input
                 label="Telefono"
                 type="Number"
-                {...register("telefono")}
+                {...register("phone")}
                 variant="outline"
                 className="mb-4"
                 isEditar={true}
-                error={errors?.telefono?.message!}
-              />
-              <Input
-                label="Direccion"
-                {...register("direccion")}
-                variant="outline"
-                className="mb-4"
-                isEditar={true}
-                error={errors?.direccion?.message!}
+                error={errors?.phone?.message!}
               />
               <Input
                 label="Email"

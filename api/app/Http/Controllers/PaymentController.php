@@ -2,367 +2,311 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\paymentNequiRequest;
-use App\Http\Requests\paymentPSERequest;
-use App\Http\Requests\paymentRequest;
-use App\Models\suscriptionType;
+use App\Http\Requests\createRecharge;
+use App\Http\Requests\createSuscriptionRequest;
+use App\Models\plataforma;
+use App\Models\Producto;
+use App\Models\purchase;
+use App\Models\recharge;
+use App\Models\suscription;
 use App\Models\User;
-use App\Services\ApiService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Tzsk\Payu\Concerns\Attributes;
-use Tzsk\Payu\Concerns\Customer;
-use Tzsk\Payu\Concerns\Transaction;
-use Tzsk\Payu\Facades\Payu;
+use MercadoPago\Client\Preference\PreferenceClient;
+use MercadoPago\MercadoPagoConfig;
+use Illuminate\Support\Str;
 
 class PaymentController extends Controller
 {
-    protected $apiService;
-
-    public function __construct(ApiService $apiService)
+    public function __construct()
     {
-        $this->apiService = $apiService;
+        MercadoPagoConfig::setAccessToken(config('mercadopago.access_token'));
     }
 
-    public function index()
+    function createPreferenceRequest($items, $payer): array
     {
-        $response = $this->apiService->request('post', null, [
-            'command' => 'GET_PAYMENT_METHODS'
-        ], true);
+        $paymentMethods = [
+            "excluded_payment_methods" => [],
+            "installments" => 12,
+            "default_installments" => 1
+        ];
 
-        if ($response === null) {
-            return response()->json(['error' => 'Error al realizar la solicitud'], 500);
+        $backUrls = array(
+            'success' => route('mercadopago.success'),
+            'failure' => route('mercadopago.failed'),
+        );
+
+        $request = [
+            "items" => $items,
+            "payer" => $payer,
+            "payment_methods" => $paymentMethods,
+            "back_urls" => $backUrls,
+            "statement_descriptor" => "NAME_DISPLAYED_IN_USER_BILLING",
+            "external_reference" => "1234567890",
+            "expires" => false,
+            "auto_return" => 'approved',
+        ];
+
+        return $request;
+    }
+
+
+    public function createPayment(createRecharge $request)
+    {
+        $user = User::where('id', $request->user_id)->first();
+
+        $payer = array(
+            "name" => $user->name,
+            "email" => $user->email,
+        );
+
+        $product1 = array(
+            "id" => "recarga_billetera_virtual_001",
+            "title" => "Recarga Billetera Virtual",
+            "description" => "Recarga para billetera virtual",
+            "currency_id" => "COP",
+            "quantity" => 1,
+            "unit_price" => $request->amount
+        );
+
+        $items = array($product1);
+
+        $requestMP = $this->createPreferenceRequest($items, $payer);
+
+        $client = new PreferenceClient();
+
+        $preference = $client->create($requestMP);
+
+        $recharge = new recharge();
+        $recharge->user_id = $user->id;
+        $recharge->amount = $request->amount;
+        $recharge->payment_status = 'pending';
+        $recharge->payment_reference = $preference->id;
+        $recharge->save();
+
+        return response()->json([
+            'payment_url' => $preference->init_point,
+            'preference' => $preference->id,
+            'status' => 'pending',
+            'message' => 'Recarga Creada'
+        ]);
+    }
+
+    public function handlePaymentStatus(Request $request)
+    {
+        $paymentReference = $request->get('preference_id');
+        $paymentStatus = $request->get('status');
+
+        // Verificar si es una recarga
+        $recharge = recharge::where('payment_reference', $paymentReference)->first();
+
+        if ($recharge) {
+            // Manejar el pago de recargas
+            switch ($paymentStatus) {
+                case 'approved':
+                    $recharge->payment_status = 'approved';
+                    $recharge->save();
+
+                    $user = $recharge->user;
+                    $user->wallet += $recharge->amount;
+                    $user->save();
+                    return redirect()->away(env('FRONTEND_URL_TRANSACTION') . '?status=approved&amount=' . $recharge->amount . '&wallet=' . $user->wallet);
+
+                case 'pending':
+                    $recharge->payment_status = 'pending';
+                    $recharge->save();
+
+                    return redirect()->away(env('FRONTEND_URL_TRANSACTION') . '?status=pending&reference=' . $paymentReference);
+
+                case 'rejected':
+                    $recharge->payment_status = 'rejected';
+                    $recharge->save();
+
+                    return redirect()->away(env('FRONTEND_URL_TRANSACTION') . '?status=rejected&message=Pago rechazado');
+
+                case 'cancelled':
+                    $recharge->payment_status = 'cancelled';
+                    $recharge->save();
+
+                    return redirect()->away(env('FRONTEND_URL_TRANSACTION') . '?status=cancelled&message=Pago cancelado por el usuario');
+
+                default:
+                    return redirect()->away(env('FRONTEND_URL_TRANSACTION') . '?status=unknown&message=Estado desconocido');
+            }
         }
 
-        return $response;
+        // Verificar si es una compra
+        $purchase = purchase::where('payment_reference', $paymentReference)->with(['productos', 'user'])->first();
+
+        if ($purchase) {
+            // Manejar el pago de compras
+            switch ($paymentStatus) {
+                case 'approved':
+                    $latestEndDate = Carbon::now();
+
+
+                    foreach ($purchase->productos as $producto) {
+                        $productoEndDate = Carbon::parse($producto->purchase_date)->addDays($producto->months);
+                        if ($productoEndDate->greaterThan($latestEndDate)) {
+                            $latestEndDate = $productoEndDate;
+                        }
+                    }
+                    $orde_code = 'ORD-' . strtoupper(Str::random(8));
+                    $purchase->payment_status = 'approved';
+                    $purchase->save();
+                    $subscription = new suscription();
+                    $subscription->start_date = now();
+                    $subscription->end_date = $latestEndDate;
+                    $subscription->price = $purchase->price;
+                    $subscription->order_code = $orde_code;
+                    $subscription->usuario_id = $purchase->user->id;
+                    $subscription->save();
+
+                    foreach ($purchase->productos as $producto) {
+                        Producto::where('id', $producto['id'])->update([
+                            'suscripcion_id' => $subscription->id,
+                            'status' => 'COMPRADO',
+                        ]);
+
+                        $plataforma = Plataforma::find($producto['plataforma_id']);
+                        $plataforma->count_avaliable -= 1;
+                        $plataforma->save();
+                    }
+                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?ordenCode=' . $orde_code);
+
+                case 'pending':
+                    $purchase->payment_status = 'pending';
+                    $purchase->save();
+
+                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=pending&reference=' . $paymentReference);
+
+                case 'rejected':
+                    $purchase->payment_status = 'rejected';
+                    $purchase->save();
+
+                    $productosAsociados = Producto::where('purchase_id', $purchase->id)->get();
+
+                    foreach ($productosAsociados as $producto) {
+                        $producto->purchase_id = null;
+                        $producto->status = 'DISPONIBLE';
+                        $producto->save();
+                    }
+
+                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=rejected&message=Pago rechazado');
+
+                case 'cancelled':
+                    $purchase->payment_status = 'cancelled';
+                    $purchase->save();
+                    $productosAsociados = Producto::where('purchase_id', $purchase->id)->get();
+
+                    foreach ($productosAsociados as $producto) {
+                        $producto->purchase_id = null;
+                        $producto->status = 'DISPONIBLE';
+                        $producto->save();
+                    }
+
+                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=cancelled&message=Pago cancelado por el usuario');
+
+                default:
+                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=unknown&message=Estado desconocido');
+            }
+        }
+
+        // Si no es recarga ni compra
+        return redirect()->away(env('FRONTEND_URL') . '?message=Referencia de pago no encontrada');
     }
 
-    function ping()
+
+
+    public function createPaymentCompraCliente(createSuscriptionRequest $request)
     {
+        $user = User::where('id', $request->user_id)->first();
 
-        $response = $this->apiService->request('post', null, [
-            'command' => 'PING'
-        ], true);
+        $payer = array(
+            "name" => $user->name,
+            "email" => $user->email,
+        );
 
+        $productosCompra = [];
+        $productosAsociados = [];
+        $totalPrice = 0;
+        $latestEndDate = Carbon::now();
 
-        return  $response;
-    }
+        foreach ($request->plataformas as $item) {
+            $plataforma = plataforma::find($item['id']);
+            if (!$plataforma) {
+                return response()->json(['error' => "La plataforma con ID {$item['id']} no existe"], 404);
+            }
 
+            $price = $plataforma->provider_price;
+            $cantidadSolicitada = $item['cantidad'];
 
-    function bankList()
-    {
-        $response = $this->apiService->request('post', null, [
-            'command' => 'GET_BANKS_LIST',
-            "bankListInformation" => [
-                "paymentMethod" => "PSE",
-                "paymentCountry" => "CO"
-            ]
-        ], true);
+            $productosDisponibles = $plataforma->productos()
+                ->where('status', 'DISPONIBLE')
+                ->limit($cantidadSolicitada)
+                ->get();
 
+            if ($productosDisponibles->count() < $cantidadSolicitada) {
+                return response()->json([
+                    'error' => "No hay suficientes productos disponibles en la plataforma {$plataforma->name}"
+                ], 400);
+            }
 
-        return  $response;
-    }
+            $totalPrice += $price * $productosDisponibles->count();
+            $productosAsociados = array_merge($productosAsociados, $productosDisponibles->toArray());
 
+            foreach ($productosDisponibles as $producto) {
+                // Calcular la fecha de vencimiento de cada producto
+                $productoEndDate = Carbon::parse($producto->purchase_date)->addMonths($producto->months);
 
-    function SendTransactionByCard(paymentRequest $request)
-    {
-        $plataforma = suscriptionType::find($request->plataforma_id);
-        $user = User::find($request->user_id);
+                // Actualizar la fecha de vencimiento más lejana
+                if ($productoEndDate->greaterThan($latestEndDate)) {
+                    $latestEndDate = $productoEndDate;
+                }
 
-        $data = [
-            'command' => 'SUBMIT_TRANSACTION',
-            'transaction' => [
-                'order' => [
-                    'accountId' => env('PAYU_API_ACCOUND_ID'),
-                    'referenceCode' => 'Plataforma_' . $plataforma->name,
-                    'description' => 'Compra en web de una plataforma de streaming',
-                    'language' => 'es',
-                    'signature' => $this->apiService->generateSignature('Plataforma_' . $plataforma->name, $plataforma->precio, 'COP'),
-                    "notifyUrl" => "http://www.payu.com/notify",
-                    "additionalValues" => [
-                        "TX_VALUE" => [
-                            "value" => $plataforma->precio,
-                            "currency" => "COP"
-                        ],
-                        "TX_TAX" => [
-                            "value" => 0,
-                            "currency" => "COP"
-                        ],
-                    ],
-                    'buyer' => [
-                        "merchantBuyerId" => $user->id,
-                        "fullName" => $user->name,
-                        "emailAddress" => $user->email,
-                        "contactPhone" => $user->telefono,
-                        "dniNumber" => $user->documento,
-                        "shippingAddress" => [
-                            "street1" => $user->direccion,
-                            "city" => "Bogotá",
-                            "state" => "Bogotá D.C.",
-                            "country" => "CO",
-                            "postalCode" => "000000",
-                            "phone" => $user->telefono
-                        ]
-                    ],
-                    "shippingAddress" => [
-                        "street1" => $user->direccion,
-                        "city" => "Bogotá",
-                        "state" => "Bogotá D.C.",
-                        "country" => "CO",
-                        "postalCode" => "000000",
-                        "phone" => $user->telefono
-                    ]
-                ],
-                'payer' => [
-                    "merchantPayerId" => $user->id,
-                    "fullName" => $user->name,
-                    "emailAddress" => $user->email,
-                    "contactPhone" => $user->telefono,
-                    "dniNumber" => $user->documento,
-                    "billingAddress" => [
-                        "street1" => $user->direccion,
-                        "city" => "Bogotá",
-                        "country" => "CO",
-                    ]
-                ],
-                'creditCard' => [
-                    "number" => $request->card_number,
-                    "securityCode" => $request->card_cvv,
-                    "expirationDate" => $request->expirationDate,
-                    "name" => 'APPROVED'
-                ],
-                "extraParameters" => [
-                    "INSTALLMENTS_NUMBER" => 1
-                ],
-                "type" => "AUTHORIZATION_AND_CAPTURE",
-                "paymentMethod" => "VISA",
-                "paymentCountry" => "CO",
-                "deviceSessionId" => "vghs6tvkcle931686k1900o6e1",
-                "ipAddress" => "127.0.0.1",
-                "cookie" => "pt1t38347bs6jc9ruv2ecpv7o2",
-                "userAgent" => "Mozilla/5.0 (Windows NT 5.1; rv:18.0) Gecko/20100101 Firefox/18.0",
-                "threeDomainSecure" => [
-                    "embedded" => false,
-                    "eci" => "01",
-                    "cavv" => "AOvG5rV058/iAAWhssPUAAADFA==",
-                    "xid" => "Nmp3VFdWMlEwZ05pWGN3SGo4TDA=",
-                    "directoryServerTransactionId" => "00000-70000b-5cc9-0000-000000000cb"
-                ]
-            ]
-        ];
+                $product = array(
+                    "id" => "compra_producto_" . $producto->id,
+                    "title" =>  $plataforma->name,
+                    "description" => "Compra plataforma virtual",
+                    "currency_id" => "COP",
+                    "quantity" => 1,
+                    "unit_price" => floatval($plataforma->public_price)
+                );
 
-        $response = $this->apiService->request('post', null, $data);
-
-        return $response;
-    }
-
-    function SendTransactionByNequi(paymentNequiRequest $request)
-    {
-        $plataforma = suscriptionType::find($request->plataforma_id);
-        $user = User::find($request->user_id);
-
-        $data = [
-            'command' => 'SUBMIT_TRANSACTION',
-            'transaction' => [
-                'order' => [
-                    'accountId' => env('PAYU_API_ACCOUND_ID'),
-                    'referenceCode' => 'Plataforma_' . $plataforma->name,
-                    'description' => 'Compra en web de una plataforma de streaming',
-                    'language' => 'es',
-                    'signature' => $this->apiService->generateSignature('Plataforma_' . $plataforma->name, $plataforma->precio, 'COP'),
-                    "notifyUrl" => "http://www.payu.com/notify",
-                    "additionalValues" => [
-                        "TX_VALUE" => [
-                            "value" => $plataforma->precio,
-                            "currency" => "COP"
-                        ],
-                        "TX_TAX" => [
-                            "value" => 0,
-                            "currency" => "COP"
-                        ],
-                    ],
-                    'buyer' => [
-                        "merchantBuyerId" => $user->id,
-                        "fullName" => $user->name,
-                        "emailAddress" => $user->email,
-                        "contactPhone" =>  "57 " . $user->telefono,
-                        "dniNumber" => $user->documento,
-                        "shippingAddress" => [
-                            "street1" => $user->direccion,
-                            "city" => "Bogotá",
-                            "state" => "Bogotá D.C.",
-                            "country" => "CO",
-                            "postalCode" => "000000",
-                            "phone" => "57 " . $user->telefono,
-                        ]
-                    ],
-                    "shippingAddress" => [
-                        "street1" => $user->direccion,
-                        "city" => "Bogotá",
-                        "state" => "Bogotá D.C.",
-                        "country" => "CO",
-                        "postalCode" => "000000",
-                        "phone" =>  "57 " . $user->telefono,
-                    ]
-                ],
-                'payer' => [
-                    "merchantPayerId" => $user->id,
-                    "fullName" => $user->name,
-                    "emailAddress" => $user->email,
-                    "contactPhone" =>  "57 " . $user->telefono,
-                    "dniNumber" => $user->documento,
-                    "billingAddress" => [
-                        "street1" => $user->direccion,
-                        "city" => "Bogotá",
-                        "country" => "CO",
-                    ]
-                ],
-                "type" => "AUTHORIZATION_AND_CAPTURE",
-                "paymentMethod" => "NEQUI",
-                "paymentCountry" => "CO",
-                "deviceSessionId" => "vghs6tvkcle931686k1900o6e1",
-                "ipAddress" => "127.0.0.1",
-                "cookie" => "pt1t38347bs6jc9ruv2ecpv7o2",
-                "userAgent" => "Mozilla/5.0 (Windows NT 5.1; rv:18.0) Gecko/20100101 Firefox/18.0",
-                "threeDomainSecure" => [
-                    "embedded" => false,
-                    "eci" => "01",
-                    "cavv" => "AOvG5rV058/iAAWhssPUAAADFA==",
-                    "xid" => "Nmp3VFdWMlEwZ05pWGN3SGo4TDA=",
-                    "directoryServerTransactionId" => "00000-70000b-5cc9-0000-000000000cb"
-                ]
-            ]
-        ];
+                $productosCompra[] = $product;
+            }
+        }
 
 
-        $response = $this->apiService->request('post', null, $data);
 
-        return $response;
-    }
+        $requestMP = $this->createPreferenceRequest($productosCompra, $payer);
 
-    function SendTransactionByPSE(paymentPSERequest $request)
-    {
-        $plataforma = suscriptionType::find($request->plataforma_id);
-        $user = User::find($request->user_id);
-        $data = [
-            'command' => 'SUBMIT_TRANSACTION',
-            'transaction' => [
-                'order' => [
-                    'accountId' => env('PAYU_API_ACCOUND_ID'),
-                    'referenceCode' => 'Plataforma_' . $plataforma->name,
-                    'description' => 'Compra en web de una plataforma de streaming',
-                    'language' => 'es',
-                    'signature' => $this->apiService->generateSignature('Plataforma_' . $plataforma->name, $plataforma->precio, 'COP'),
-                    "notifyUrl" => "http://www.payu.com/notify",
-                    "additionalValues" => [
-                        "TX_VALUE" => [
-                            "value" => $plataforma->precio,
-                            "currency" => "COP"
-                        ],
-                        "TX_TAX" => [
-                            "value" => 0,
-                            "currency" => "COP"
-                        ],
-                    ],
-                    'buyer' => [
-                        "merchantBuyerId" => $user->id,
-                        "fullName" => $user->name,
-                        "emailAddress" => $user->email,
-                        "contactPhone" =>  "57 " . $user->telefono,
-                        "dniNumber" => $user->documento,
-                        "shippingAddress" => [
-                            "street1" => $user->direccion,
-                            "city" => "Bogotá",
-                            "state" => "Bogotá D.C.",
-                            "country" => "CO",
-                            "postalCode" => "000000",
-                            "phone" => "57 " . $user->telefono,
-                        ]
-                    ],
-                    "shippingAddress" => [
-                        "street1" => $user->direccion,
-                        "city" => "Bogotá",
-                        "state" => "Bogotá D.C.",
-                        "country" => "CO",
-                        "postalCode" => "000000",
-                        "phone" =>  "57 " . $user->telefono,
-                    ]
-                ],
-                'payer' => [
-                    "merchantPayerId" => $user->id,
-                    "fullName" => $user->name,
-                    "emailAddress" => $user->email,
-                    "contactPhone" =>  "57 " . $user->telefono,
-                    "dniNumber" => $user->documento,
-                    "billingAddress" => [
-                        "street1" => $user->direccion,
-                        "city" => "Bogotá",
-                        "country" => "CO",
-                    ]
-                ],
-                "extraParameters" => [
-                    "RESPONSE_URL" => "http://www.payu.com/response",
-                    "PSE_REFERENCE1" => "127.0.0.1",
-                    "FINANCIAL_INSTITUTION_CODE" => $request->FINANCIAL_INSTITUTION_CODE,
-                    "USER_TYPE" => $request->USER_TYPE,
-                    "PSE_REFERENCE2" => $request->PSE_REFERENCE2,
-                    "PSE_REFERENCE3" => "123456789"
-                ],
-                "type" => "AUTHORIZATION_AND_CAPTURE",
-                "paymentMethod" => "PSE",
-                "paymentCountry" => "CO",
-                "deviceSessionId" => "vghs6tvkcle931686k1900o6e1",
-                "ipAddress" => "127.0.0.1",
-                "cookie" => "pt1t38347bs6jc9ruv2ecpv7o2",
-                "userAgent" => "Mozilla/5.0 (Windows NT 5.1; rv:18.0) Gecko/20100101 Firefox/18.0",
-                "threeDomainSecure" => [
-                    "embedded" => false,
-                    "eci" => "01",
-                    "cavv" => "AOvG5rV058/iAAWhssPUAAADFA==",
-                    "xid" => "Nmp3VFdWMlEwZ05pWGN3SGo4TDA=",
-                    "directoryServerTransactionId" => "00000-70000b-5cc9-0000-000000000cb"
-                ]
-            ]
-        ];
+        $client = new PreferenceClient();
 
-        $response = $this->apiService->request('post', null, $data);
+        $preference = $client->create($requestMP);
 
-        return $response;
-    }
+        $purchase = new purchase();
+        $purchase->user_id = $user->id;
+        $purchase->price = $totalPrice;
+        $purchase->payment_status = 'pending';
+        $purchase->payment_reference = $preference->id;
+        $purchase->save();
 
-    function getPaymentByOrderId(Request $request, string $orderId)
-    {
-        $response = $this->apiService->request('post', null, [
-            "command" => "ORDER_DETAIL",
-            "details" => [
-                "orderId" => $orderId
-            ]
-        ], true);
+        //setear el producto al purchase
+        foreach ($productosAsociados as $producto) {
+            $productModel = Producto::find($producto['id']);
+            if ($productModel) {
+                $productModel->purchase_id = $purchase->id;
+                // $productModel->status = 'PENDIENTE';
+                $productModel->save();
+            }
+        }
 
-        return $response;
-    }
-
-    function getPaymentByTransationId(Request $request, string $transactionId)
-    {
-        $response = $this->apiService->request('post', null, [
-            "command" => "TRANSACTION_RESPONSE_DETAIL",
-            "details" => [
-                "transactionId" => $transactionId
-            ]
-        ], true);
-
-        return $response;
-    }
-
-    function getPaymentByReferenceId(Request $request, string $referenceCode)
-    {
-        $response = $this->apiService->request('post', null, [
-            "command" => "ORDER_DETAIL_BY_REFERENCE_CODE",
-            "details" => [
-                "referenceCode" => $referenceCode
-            ]
-        ], true);
-
-        return $response;
+        return response()->json([
+            'payment_url' => $preference->init_point,
+            'preference' => $preference->id,
+            'status' => 'pending',
+            'message' => 'Compra creada'
+        ]);
     }
 }

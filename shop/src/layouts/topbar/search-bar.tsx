@@ -33,7 +33,6 @@ const SearchBar: React.FC<IProps> = ({}: IProps) => {
     locale,
   } = useRouter();
   const { permissions: currentUserPermissions } = getAuthCredentials();
-  console.log(currentUserPermissions);
 
   const { me } = useMe();
 

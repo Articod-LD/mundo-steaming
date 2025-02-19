@@ -26,8 +26,7 @@ class BannerRequest extends FormRequest
         return [
             'titulo' => 'required|string|max:255',
             'texto' => 'required|string',
-            'logo' => 'required|string',
-            'imagen' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'imagen' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 

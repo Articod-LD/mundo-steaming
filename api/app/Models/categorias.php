@@ -13,4 +13,9 @@ class categorias extends Model
         'imagen',
         'titulo'
     ];
+
+    public function plataformas()
+    {
+        return $this->hasMany(plataforma::class,'categoria_id');
+    }
 }

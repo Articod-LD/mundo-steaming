@@ -29,8 +29,6 @@ export default function Solicitudes({
     sortedBy,
   });
 
-  console.log(solicitudes);
-
   function handlePagination(current: any) {
     setPage(current);
   }

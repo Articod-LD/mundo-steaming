@@ -12,45 +12,72 @@ import VerInfoPlataforma from "@/components/modals/verInfoPlataforma";
 import AgregateProvidersModal from "@/components/modals/agregarProviders";
 import CrearBannerModal from "@/components/modals/crearBanner";
 import CrearCategoriaModal from "@/components/modals/createCategoria";
+import EditarUsuarioModal from "@/components/modals/editarUsuario";
+import CrearProductoModal from "@/components/modals/createproducto";
+import BulkProductUploadModal from "@/components/modals/cargarProductos";
+import RecargarBilletera from "@/components/modals/RecargaBilletera";
+import CrearConfigModal from "@/components/modals/createConfiguracion";
+import CrearAboutModal from "@/components/modals/crearAbout";
+import CrearBeneficioModal from "@/components/modals/crearBeneficios";
 
 function renderModal(view: MODAL_VIEWS | undefined, data: any) {
-  console.log(data);
-
+  const modalKey = `${view}-${data?.id || ''}`;  
   switch (view) {
     case "SEARCH_VIEW":
-      return <SearchModal />;
+      return <SearchModal key={modalKey} />;
     case "AGREGAR_PLATAFORMA_USUARIO":
-      return <AgregatePlataformaModal id={data} />;
+      return <AgregatePlataformaModal id={data}  key={modalKey}/>;
 
     case "AGREGAR_PLATAFORMA_CLIENTE":
-      return <AgregateClienteModal />;
+      return <AgregateClienteModal type={data}  key={modalKey} />;
 
     case "EDITAR_USER_PROFILE":
-      return <EditarPerfilModal />;
+      return <EditarPerfilModal  key={modalKey} />;
 
     case "CREAR_PLATAFORMA":
-      return <CrearPlataformaModal plataforma={data} />;
+      return <CrearPlataformaModal plataforma={data}  key={modalKey}/>;
+    case "CREAR_PRODUCTO":
+      return <CrearProductoModal producto={data} key={modalKey} />;
+    case "CARGA_PRODUCTO":
+      return <BulkProductUploadModal  key={modalKey}/>;
 
     case "CREAR_BANNER":
-      return <CrearBannerModal banner={data} />;
+      return <CrearBannerModal banner={data}  key={modalKey}/>;
 
     case "CREAR_CATEGORIA":
-      return <CrearCategoriaModal categorie={data} />;
+      return <CrearCategoriaModal categorie={data}  key={modalKey}/>;
 
     case "CLIENTE_SOLICITAR_PLATAFORMA":
-      return <SolicitarPlataforma plataforma={data} />;
+      return <SolicitarPlataforma plataforma={data} key={modalKey} />;
 
     case "ELIMINAR_SOLICITUD":
-      return <DeleteSolicitud id={data} />;
+      return <DeleteSolicitud id={data}  key={modalKey}/>;
 
     case "ACEPTAR_SOLICITUD":
-      return <AceptarSolicitud data={data} />;
+      return <AceptarSolicitud data={data}  key={modalKey}/>;
 
     case "VER_INFO_PLATAFORMA":
-      return <VerInfoPlataforma data={data} />;
+      return <VerInfoPlataforma producto={data}  key={modalKey}/>;
 
     case "PROVIDER_SOLICITAR_PLATAFORMA":
-      return <AgregateProvidersModal />;
+      return <AgregateProvidersModal key={modalKey} />;
+
+    case "EDITAR_USUARIO":
+      return <EditarUsuarioModal data={data}  key={modalKey} />;
+
+      
+    case "BILLETERA_MANUAL":
+      return <RecargarBilletera data={data}  key={modalKey} />;
+      
+     case "CONFIGURACIONES":
+      return <CrearConfigModal config={data}  key={modalKey}/> 
+
+      case "ABOUT_MODAL":
+        return <CrearAboutModal about={data}  key={modalKey}/>
+
+      case "BENEFICIO_MODAL":
+        return <CrearBeneficioModal beneficios={data} key={modalKey}/>
+
     default:
       return null;
   }

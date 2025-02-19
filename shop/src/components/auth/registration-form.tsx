@@ -23,9 +23,24 @@ const registrationFormSchema = yup.object().shape({
     .required("Correo es requerido"),
   password: yup.string().required("Contraseña es requerida"),
   name: yup.string().required("form:error-name-required"),
-  documento: yup.string().required("form:error-name-required"),
-  telefono: yup.string().required("form:error-name-required"),
-  direccion: yup.string().required("form:error-name-required"),
+  phone: yup
+  .string() // Asegura que el campo es una cadena
+  .nullable() // Permite valores nulos
+  .transform((value) => {
+    console.log(typeof value);
+    
+    // Si el valor es un número o NaN, lo transformamos a una cadena vacía
+    if (typeof value === 'number' || isNaN(value)) {
+      return '';
+    }
+    return value;
+  })
+  .matches(/^\d*$/, "El teléfono debe contener solo números") // Aseguramos que solo contenga números
+  .test("len", "El teléfono debe tener al menos 8 dígitos", (value) => {
+    // Si es nulo o vacío, no validamos longitud
+    if (!value) return true;
+    return value.length >= 8; // Validamos que tenga al menos 8 dígitos
+  }),
   permission: yup.string().default("customer").oneOf(["customer"]),
 });
 
@@ -40,19 +55,15 @@ const RegistrationForm = () => {
     email,
     password,
     permission,
-    direccion,
-    documento,
-    telefono,
+    phone,
   }: RegisterInputType) {
     registerUser(
       {
         name,
         email,
-        password,
+        password: password as string,
         permission,
-        direccion,
-        documento,
-        telefono,
+        phone: phone ? phone : undefined
       },
       {
         onSuccess: (data) => {
@@ -87,57 +98,47 @@ const RegistrationForm = () => {
       >
         {({ register, formState: { errors } }) => (
           <>
+
             <Input
-              label="Name"
-              {...register("name")}
-              variant="outline"
-              className="mb-4"
-              error={errors?.name?.message!}
-            />
-            <Input
-              label="Documento"
-              type="Number"
-              {...register("documento")}
-              variant="outline"
-              className="mb-4"
-              error={errors?.documento?.message!}
-            />
-            <Input
-              label="Telefono"
-              type="Number"
-              {...register("telefono")}
-              variant="outline"
-              className="mb-4"
-              error={errors?.telefono?.message!}
-            />
-            <Input
-              label="Direccion"
-              {...register("direccion")}
-              variant="outline"
-              className="mb-4"
-              error={errors?.direccion?.message!}
-            />
-            <Input
-              label="Email"
+              label="Correo Electronico"
               {...register("email")}
               type="email"
               variant="outline"
               className="mb-4"
               error={errors?.email?.message}
+              isRequired
             />
             <PasswordInput
-              label="Password"
+              label="Contraseña"
               {...register("password")}
               error={errors?.password?.message!}
               variant="outline"
               className="mb-4"
+              isRequired
             />
+            <Input
+              label="Nombre Completo"
+              {...register("name")}
+              variant="outline"
+              className="mb-4"
+              error={errors?.name?.message!}
+              isRequired
+            />
+            <Input
+              label="Telefono"
+              type="number"
+              {...register("phone")}
+              variant="outline"
+              className="mb-4"
+              error={errors?.phone?.message!}
+            />
+
             <Button
               className="w-full uppercase"
               isLoading={isLoading}
               disabled={isLoading}
             >
-              Register
+              Registrar
             </Button>
             <div className="relative mt-8 mb-6 flex flex-col items-center justify-center text-sm text-heading sm:mt-11 sm:mb-8">
               <hr className="w-full" />

@@ -21,7 +21,7 @@ class CredencialesController extends Controller
      */
     public function index()
     {
-        $credenciales = $this->repository::with('subscription', 'tipo')->get();
+        $credenciales = $this->repository::with([])->get();
         return response()->json(['credenciales' => $credenciales], 200);
     }
     /**

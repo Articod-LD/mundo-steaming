@@ -51,11 +51,9 @@ export default function EditarPerfilComponent() {
       },
       {
         onSuccess(data, variables, context) {
-          console.log(data);
+
         },
         onError(error: any) {
-          console.log(error);
-
           setErrorMessage(error.response.data.message);
         },
       }
@@ -83,11 +81,6 @@ export default function EditarPerfilComponent() {
             <span className="text-brand text-lg text-center font-bold">
               {client?.name}
             </span>
-            <div className="w-full flex justify-center flex-col items-center text-center">
-              <p>Documento de identidad</p>
-              <span className="font-bold text-sm">{client?.documento}</span>
-            </div>
-
             <div className="w-full  flex justify-center flex-col items-center text-center">
               <p>Cargo</p>
               <span className="font-bold text-lg uppercase">
@@ -106,7 +99,7 @@ export default function EditarPerfilComponent() {
               <div className="w-1/2">
                 <span>Telefono</span>
                 <p className="w-full border-b-2 border-light-800 font-bold">
-                  {client?.telefono}
+                  {client?.phone}
                 </p>
               </div>
             </div>

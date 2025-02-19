@@ -24,14 +24,10 @@ class createSuscriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fecha_inicio' => ['required'],
-            'fecha_fin' => ['required'],
-            'precio' => ['required', 'string'],
-            'pagado'  => ['boolean'],
-            'email' => ['required', 'email', 'unique:credenciales'],
-            'password' => ['required', 'string'],
-            'usuario_id' => ['required', 'exists:App\Models\User,id'],
-            'tipo_id' => ['required', 'exists:suscription_types,id'],
+            'user_id' => ['required', 'exists:App\Models\User,id'],
+            'plataformas' => ['required', 'array'],
+            'plataforma_id.*.id' => ['required', 'exists:App\Models\Plataforma,id'],
+            'plataforma_id.*.cantidad' => ['required', 'integer', 'min:1'],
         ];
     }
 

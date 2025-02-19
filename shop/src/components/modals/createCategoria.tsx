@@ -7,6 +7,7 @@ import {
   useRegisterBannerMutation,
   useRegisterCategorieMutation,
   useRegisterPlataformaMutation,
+  useUpdateCategoriaMutation,
   useUpdateProfileMutation,
 } from "@/data/user";
 import Alert from "../ui/alert";
@@ -22,6 +23,7 @@ import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { API_ENDPOINTS } from "@/data/client/api-endpoints";
 import { useModalAction } from "../ui/modal/modal.context";
+import Image from "next/image";
 
 const createCategoriaFormSchema = yup.object().shape({
   titulo: yup
@@ -30,11 +32,12 @@ const createCategoriaFormSchema = yup.object().shape({
     .max(255, "El título no puede tener más de 255 caracteres"),
   imagen: yup
     .mixed()
-    .required("La imagen es requerida")
+    .nullable()
     .test(
       "fileFormat",
       "La imagen debe ser un archivo válido (jpeg, jpg, gif, png)",
       (value) => {
+        if (!value || value.length === 0) return true; 
         return (
           value &&
           ["image/jpeg", "image/jpg", "image/png", "image/gif"].includes(
@@ -44,25 +47,41 @@ const createCategoriaFormSchema = yup.object().shape({
       }
     )
     .test("fileSize", "La imagen no puede ser mayor a 2MB", (value) => {
+      if (!value || value.length === 0) return true; 
       return value && value[0]?.size <= 2 * 1024 * 1024; // 2MB
     }),
 });
 
 function CrearCategoriaModal({ categorie }: { categorie?: Categorie }) {
-  console.log(categorie);
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { mutate: createBanner, isLoading } = useRegisterCategorieMutation();
+  const { mutate: updateBanner, isLoading:isLoadingUpdate } = useUpdateCategoriaMutation();
+
+
+  const [previewImage, setPreviewImage] = useState<string | null>(
+    categorie?.imagen_url || null
+  );
 
   const queryClient = useQueryClient();
   const { closeModal } = useModalAction();
 
   function onSubmit({ imagen, titulo }: CategorieInput) {
-    if (!categorie) {
-      const formData = new FormData();
-      formData.append("titulo", titulo);
-      formData.append("imagen", imagen[0]);
 
+    const formData = new FormData();
+    formData.append("titulo", titulo);
+
+
+    if (imagen && imagen[0]) {
+      formData.append("imagen", imagen[0]); // Solo si se seleccionó una imagen nueva
+    } 
+    
+    if (!categorie && imagen.length===0) {
+      setErrorMessage("La imagen es requerida");
+      return;
+    }
+
+    if (!categorie) {
       createBanner(formData, {
         onSuccess(data, variables, context) {
           toast.success("Banner creado correctamente");
@@ -73,8 +92,29 @@ function CrearCategoriaModal({ categorie }: { categorie?: Categorie }) {
           setErrorMessage(error.response.data.message);
         },
       });
+    }else{
 
-      return;
+      updateBanner({ categoriaId: categorie.id, params:formData }, {
+        onSuccess(data, variables, context) {
+          closeModal();
+        },
+        onError(error: any) {
+          setErrorMessage(error.response?.data?.message || "Error al actualizar el banner");
+        },
+      });
+    }
+  }
+
+  
+  function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+
+    const file = event.target.files?.[0];
+    if (file) {
+      const fileReader = new FileReader();
+      fileReader.onload = () => {
+        setPreviewImage(fileReader.result as string);
+      };
+      fileReader.readAsDataURL(file);
     }
   }
 
@@ -99,21 +139,42 @@ function CrearCategoriaModal({ categorie }: { categorie?: Categorie }) {
                 isEditar={true}
                 defaultValue={categorie?.titulo}
                 error={errors?.titulo?.message!}
+                isRequired={!categorie}
               />
-              <Input
-                label="Imagen"
-                type="file"
-                {...register("imagen")}
-                variant="outline"
-                className="mb-4"
-                isEditar={true}
-                error={errors?.imagen?.message!}
-              />
+       <div className="flex flex-col mb-3">
+                  <label className="block text-sm text-gray-600 mb-1">
+                    Imagen
+                    {
+                      !categorie &&
+                      <span className="text-red-500 px-1">*</span>
+                    }
+                  </label>
+
+                  {
+                    previewImage &&
+                    <Image
+                      src={previewImage}
+                      width={150}
+                      height={52}
+                      quality={100}
+                      alt="img banner"
+                      className="mb-4"
+                    />
+                  }
+
+                  <Input
+                    className="border-dashed border border-brand"
+                    type="file"
+                    {...register("imagen", { onChange: handleImageChange })}
+                    variant="outline"
+                    error={errors?.imagen?.message!}
+                  />
+                </div>
 
               <Button
                 className="w-full uppercase"
-                isLoading={isLoading}
-                disabled={isLoading}
+                isLoading={isLoading || isLoadingUpdate}
+                disabled={isLoading ||isLoadingUpdate }
               >
                 {categorie ? "Update" : "Register"}
               </Button>
