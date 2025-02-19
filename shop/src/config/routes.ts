@@ -25,7 +25,6 @@ const routes = {
   productos: "/productos",
   administradores: "/administradores",
   detalle: "/detalle/",
-  checkout: "/checkout",
   suscription:"/suscription"
 };
 export default routes;
