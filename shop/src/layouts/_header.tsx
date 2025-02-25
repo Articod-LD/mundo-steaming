@@ -145,7 +145,7 @@ export default function Header({
         {!isSuperAdmin && (
           <button
             onClick={() => router.push(routes.checkout)}
-            className="focus:ring-accent-700 h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-black outline-none transition duration-300 ease-in-out hover:bg-brand/80 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105"
+            className="relative focus:ring-accent-700 h-9 shrink-0 items-center justify-center rounded border border-transparent bg-brand px-3 py-0 text-sm font-semibold leading-none text-black outline-none transition duration-300 ease-in-out hover:bg-brand/80 focus:shadow focus:outline-none focus:ring-1 uppercase hover:scale-105"
           >
             <Cart className="w-5 h-5 text-black " />
             <div className="absolute -top-2 right-0 text-sm bg-brand rounded-full w-5 h-5 text-black">
