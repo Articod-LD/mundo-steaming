@@ -34,6 +34,9 @@ class PaymentController extends Controller
         $backUrls = array(
             'success' => route('mercadopago.success'),
             'failure' => route('mercadopago.failed'),
+            'pending' => route('mercadopago.pending'),
+            'rejected' => route('mercadopago.rejected'),
+            'cancelled'=> route('mercadopago.cancelled'),
         );
 
         $request = [

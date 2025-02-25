@@ -17,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/payment/success', [PaymentController::class, 'handlePaymentStatus'])->name('mercadopago.success');
 Route::get('/payment/failed', [PaymentController::class, 'handlePaymentStatus'])->name('mercadopago.failed');
+Route::get('/payment/pending', [PaymentController::class, 'handlePaymentStatus'])->name('mercadopago.pending');
+Route::get('/payment/rejected', [PaymentController::class, 'handlePaymentStatus'])->name('mercadopago.rejected');
+Route::get('/payment/cancelled', [PaymentController::class, 'handlePaymentStatus'])->name('mercadopago.cancelled');
