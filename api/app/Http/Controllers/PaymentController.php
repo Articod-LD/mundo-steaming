@@ -207,6 +207,20 @@ class PaymentController extends Controller
 
                     return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=rejected&message=Pago rechazado');
 
+                case 'failed':
+                    $purchase->payment_status = 'rejected';
+                    $purchase->save();
+
+                    $productosAsociados = Producto::where('purchase_id', $purchase->id)->get();
+
+                    foreach ($productosAsociados as $producto) {
+                        $producto->purchase_id = null;
+                        $producto->status = 'DISPONIBLE';
+                        $producto->save();
+                    }
+
+                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=rejected&message=Pago rechazado');
+
                 case 'cancelled':
                     $purchase->payment_status = 'cancelled';
                     $purchase->save();
