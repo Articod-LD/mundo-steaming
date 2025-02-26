@@ -101,7 +101,7 @@ export default function Transacction() {
                             <h4 className="text-sm font-semibold text-gray-700">
                               Productos:
                             </h4>
-                            <ul className="mt-1 text-xs text-gray-600">
+                            <ul className="mt-1 text-xs text-gray-100">
                               {plataforma.productos.map((producto) => (
                                 <li key={producto.id} className="border-b py-1">
                                   <p>
