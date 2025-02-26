@@ -100,6 +100,10 @@ class PaymentController extends Controller
         $paymentReference = $request->get('preference_id');
         $paymentStatus = $request->get('status');
 
+        if (!$paymentReference && ! $paymentStatus) {
+            return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=unknown&message=Estado desconocido');
+        }
+
         // Verificar si es una recarga
         $recharge = recharge::where('payment_reference', $paymentReference)->first();
 
