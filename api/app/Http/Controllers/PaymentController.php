@@ -34,6 +34,9 @@ class PaymentController extends Controller
         $backUrls = array(
             'success' => route('mercadopago.success'),
             'failure' => route('mercadopago.failed'),
+            'pending' => route('mercadopago.pending'),
+            'rejected' => route('mercadopago.rejected'),
+            'cancelled' => route('mercadopago.cancelled'),
         );
 
         $request = [
@@ -97,6 +100,10 @@ class PaymentController extends Controller
         $paymentReference = $request->get('preference_id');
         $paymentStatus = $request->get('status');
 
+        if (!$paymentReference && ! $paymentStatus) {
+            return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=unknown&message=Estado desconocido');
+        }
+
         // Verificar si es una recarga
         $recharge = recharge::where('payment_reference', $paymentReference)->first();
 
@@ -156,7 +163,7 @@ class PaymentController extends Controller
                     $purchase->save();
                     $subscription = new suscription();
                     $subscription->start_date = now();
-                    $subscription->end_date = $latestEndDate;
+                    $subscription->end_date  = now();
                     $subscription->price = $purchase->price;
                     $subscription->order_code = $orde_code;
                     $subscription->usuario_id = $purchase->user->id;
@@ -172,7 +179,13 @@ class PaymentController extends Controller
                         $plataforma->count_avaliable -= 1;
                         $plataforma->save();
                     }
-                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?ordenCode=' . $orde_code);
+                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=approved&ordenCode=' . $orde_code);
+
+                case 'in_process':
+                    $purchase->payment_status = 'pending';
+                    $purchase->save();
+
+                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=pending&reference=' . $paymentReference);
 
                 case 'pending':
                     $purchase->payment_status = 'pending';
@@ -181,6 +194,20 @@ class PaymentController extends Controller
                     return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=pending&reference=' . $paymentReference);
 
                 case 'rejected':
+                    $purchase->payment_status = 'rejected';
+                    $purchase->save();
+
+                    $productosAsociados = Producto::where('purchase_id', $purchase->id)->get();
+
+                    foreach ($productosAsociados as $producto) {
+                        $producto->purchase_id = null;
+                        $producto->status = 'DISPONIBLE';
+                        $producto->save();
+                    }
+
+                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=rejected&message=Pago rechazado');
+
+                case 'failed':
                     $purchase->payment_status = 'rejected';
                     $purchase->save();
 

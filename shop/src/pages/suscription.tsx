@@ -19,150 +19,244 @@ export default function Transacction() {
   const [plataformas, setPlataformas] = useState<SuscriptionPlataforma[]>([]);
   const [user, setuser] = useState<SuscriptionUser>();
   const [ordenCodeSuscription, setOrdenCode] = useState("");
+  const [status, setStatus] = useState("");
+  const [referencet, setReference] = useState<any>("");
   const { suscription, loading } = useSuscriptionAdminQuery({
     orden_code: router.query.ordenCode as string,
   });
 
   useEffect(() => {
-    const { ordenCode } = router.query;
-    if (ordenCode) {
+    const { ordenCode, status, reference } = router.query;
+
+    if (status == "approved" && ordenCode) {
+      setStatus("approved");
       setOrdenCode(ordenCode as string);
       setPlataformas(suscription.plataformas);
       setuser(suscription.usuario);
+    }
+
+    if (status == "pending") {
+      setStatus("pending");
+      setReference(reference);
+    }
+
+    if (status == "rejected") {
+      setStatus("rejected");
+    }
+
+    if (status == "cancelled") {
+      setStatus("cancelled");
+    }
+    
+    if (status == "unknown") {
+      setStatus("unknown");
     }
   }, [router.query, suscription]);
 
   return (
     <div className="flex flex-col gap-12 min-h-40 my-auto w-full items-center">
-      <div className="w-full max-w-6xl py-10">
-        <span className="ml-5">Orden: #{ordenCodeSuscription}</span>
-        <div className="w-full flex flex-col lg:flex-row">
-          {/* Sección de plataformas */}
-          <div className="w-full lg:w-1/2 border-r border-gray-500 min-h-72 p-5 order-2 lg:order-1">
-            <h2 className="text-xl font-semibold mb-4">
-              Tu pedido ({plataformas?.length || 0}) producto(s)
-            </h2>
+      {status == "approved" && (
+        <div className="w-full max-w-6xl py-10">
+          <span className="ml-5 text-lg font-medium">
+            Orden: #{ordenCodeSuscription}
+          </span>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {loading ? (
-                <h1>Cargando...</h1>
-              ) : plataformas?.length ? (
-                plataformas.map((plataforma, i) => (
-                  <div key={i} className="border border-gray-400 rounded-lg p-4 shadow-md">
-                    <div className="flex flex-col items-center">
-                      {/* Imagen de la plataforma */}
-                      <div className="relative w-32 h-20">
-                        <Image
-                          src={plataforma.image_url}
-                          layout="fill"
-                          objectFit="cover"
-                          quality={100}
-                          alt={plataforma.name}
-                          className="rounded-2xl object-cover"
-                        />
-                      </div>
+          <div className="w-full flex flex-col lg:flex-row gap-6">
+            {/* Sección de plataformas */}
+            <div className="w-full lg:w-1/2 border-r border-gray-300 min-h-72 p-5">
+              <h2 className="text-xl font-semibold mb-4">
+                Tu pedido ({plataformas?.length || 0}) producto(s)
+              </h2>
 
-                      {/* Información de la plataforma */}
-                      <div className="mt-4 text-center">
-                        <span className="text-sm text-gray-600">
-                          {plataforma.cantidad} {plataforma.type}
-                        </span>
-                        <h3 className="text-lg font-medium">
-                          {plataforma.name}
-                        </h3>
-                      </div>
-
-                      {/* Lista de productos */}
-                      {plataforma.productos?.length > 0 && (
-                        <div className="mt-3 w-full">
-                          <h4 className="text-sm font-semibold text-gray-700">
-                            Productos:
-                          </h4>
-                          <ul className="mt-1 text-xs text-gray-300">
-                            {plataforma.productos.map((producto) => (
-                              <li key={producto.id} className="border-b py-1">
-                                <span className="font-semibold">Compra:</span>{" "}
-                                {producto.fecha_compra}
-                                <br />
-                                <span className="font-semibold">
-                                  Email:
-                                </span>{" "}
-                                {producto.email}
-                                <br />
-                                <span className="font-semibold">
-                                  Meses:
-                                </span>{" "}
-                                {producto.months}
-                                <br />
-                                <span className="font-semibold">
-                                  Contraseña:
-                                </span>{" "}
-                                {producto.password}
-                                {producto.profile_name && (
-                                  <>
-                                    <br />
-                                    <span className="font-semibold">
-                                      Perfil:
-                                    </span>{" "}
-                                    {producto.profile_name}
-                                  </>
-                                )}
-                                {producto.profile_pin && (
-                                  <>
-                                    <br />
-                                    <span className="font-semibold">
-                                      PIN:
-                                    </span>{" "}
-                                    {producto.profile_pin}
-                                  </>
-                                )}
-                              </li>
-                            ))}
-                          </ul>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {loading ? (
+                  <p className="text-center text-gray-600">Cargando...</p>
+                ) : plataformas?.length ? (
+                  plataformas.map((plataforma, i) => (
+                    <div
+                      key={i}
+                      className="border border-gray-400 rounded-lg p-4 shadow-md"
+                    >
+                      <div className="flex flex-col items-center">
+                        <div className="relative w-32 h-20">
+                          <Image
+                            src={plataforma.image_url}
+                            layout="fill"
+                            objectFit="cover"
+                            quality={100}
+                            alt={plataforma.name}
+                            className="rounded-2xl"
+                          />
                         </div>
-                      )}
+                        <div className="mt-4 text-center">
+                          <span className="text-sm text-gray-600">
+                            {plataforma.cantidad} {plataforma.type}
+                          </span>
+                          <h3 className="text-lg font-medium">
+                            {plataforma.name}
+                          </h3>
+                        </div>
+                        {plataforma.productos?.length > 0 && (
+                          <div className="mt-3 w-full">
+                            <h4 className="text-sm font-semibold text-gray-700">
+                              Productos:
+                            </h4>
+                            <ul className="mt-1 text-xs text-gray-100">
+                              {plataforma.productos.map((producto) => (
+                                <li key={producto.id} className="border-b py-1">
+                                  <p>
+                                    <span className="font-semibold">
+                                      Compra:
+                                    </span>{" "}
+                                    {producto.fecha_compra}
+                                  </p>
+                                  <p>
+                                    <span className="font-semibold">
+                                      Email:
+                                    </span>{" "}
+                                    {producto.email}
+                                  </p>
+                                  <p>
+                                    <span className="font-semibold">
+                                      Meses:
+                                    </span>{" "}
+                                    {producto.months}
+                                  </p>
+                                  <p>
+                                    <span className="font-semibold">
+                                      Contraseña:
+                                    </span>{" "}
+                                    {producto.password}
+                                  </p>
+                                  {producto.profile_name && (
+                                    <p>
+                                      <span className="font-semibold">
+                                        Perfil:
+                                      </span>{" "}
+                                      {producto.profile_name}
+                                    </p>
+                                  )}
+                                  {producto.profile_pin && (
+                                    <p>
+                                      <span className="font-semibold">
+                                        PIN:
+                                      </span>{" "}
+                                      {producto.profile_pin}
+                                    </p>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <h1>No hay plataformas</h1>
-              )}
+                  ))
+                ) : (
+                  <p className="text-center text-gray-600">
+                    No hay plataformas disponibles
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Sección de detalles de la orden */}
+            <div className="w-full flex flex-col gap-5 lg:w-1/2 p-5 items-center lg:items-start">
+              <h2 className="text-xl font-semibold">Detalle de la orden</h2>
+              <div className="flex flex-col gap-2 text-gray-700">
+                <DetailItem icon={<EmailIcon />} text={user?.email} />
+                <DetailItem
+                  icon={<UsersIcon className="w-6 h-6" />}
+                  text={user?.name}
+                />
+                <DetailItem
+                  icon={<PhoneOutlineIcon />}
+                  text={user?.phone || "N/A"}
+                />
+                <DetailItem
+                  icon={<PhoneOutlineIcon />}
+                  text={new Date().toDateString()}
+                />
+              </div>
+              <button
+                className="px-4 py-2 w-52 bg-brand text-black rounded-md disabled:opacity-50"
+                onClick={() => router.push("/")}
+              >
+                Finalizar
+              </button>
             </div>
           </div>
+        </div>
+      )}
+      {status === "pending" && (
+        <div className="w-full max-w-6xl py-10 text-center">
+          <h2 className="text-2xl font-semibold">Orden en estado: Pendiente</h2>
+          <div className="w-full flex flex-col items-center p-5">
+            <h2 className="text-xl font-semibold">
+              Detalle de la orden ${referencet}
+            </h2>
 
-          {/* Sección de detalles de la orden */}
-          <div className="w-full flex flex-col gap-5 lg:w-1/2 p-5 order-1 lg:order-2 items-center lg:items-start">
-            <h2 className="text-xl font-semibold">Detalle de la orden</h2>
-            <div className="flex flex-col gap-2">
-              <div className="flex gap-2 items-center">
-                <EmailIcon />
-                <span>{user?.email}</span>
-              </div>
-              <div className="flex gap-2 items-center">
-                <UsersIcon className="w-6 h-6" />
-                <span>{user?.name}</span>
-              </div>
-              <div className="flex gap-2 items-center">
-                <PhoneOutlineIcon />
-                <span>{user?.phone || "N/A"}</span>
-              </div>
-              <div className="flex gap-2 items-center">
-                <PhoneOutlineIcon />
-                <span>{new Date().toDateString()}</span>
-              </div>
-            </div>
             <button
-              className="px-4 py-2 w-52 bg-brand text-black rounded disabled:opacity-50"
+              className="mt-6 px-4 py-2 w-52 bg-yellow-500 text-black rounded disabled:opacity-50"
               onClick={() => router.push("/")}
             >
-              Finalizar
+              Volver al inicio
             </button>
           </div>
         </div>
-      </div>
+      )}
+      {status === "rejected" && (
+        <div className="w-full max-w-6xl py-10 text-center">
+          <h2 className="text-2xl font-semibold">Orden en estado: Rechazado</h2>
+          <div className="w-full flex flex-col items-center p-5">
+            <button
+              className="mt-6 px-4 py-2 w-52 bg-yellow-500 text-black rounded disabled:opacity-50"
+              onClick={() => router.push("/")}
+            >
+              Volver al inicio
+            </button>
+          </div>
+        </div>
+      )}
+      {status === "cancelled" && (
+        <div className="w-full max-w-6xl py-10 text-center">
+          <h2 className="text-2xl font-semibold">Orden en estado: Cancelado</h2>
+          <div className="w-full flex flex-col items-center p-5">
+            <button
+              className="mt-6 px-4 py-2 w-52 bg-yellow-500 text-black rounded disabled:opacity-50"
+              onClick={() => router.push("/")}
+            >
+              Volver al inicio
+            </button>
+          </div>
+        </div>
+      )}
+
+      {status === "unknown" && (
+        <div className="w-full max-w-6xl py-10 text-center">
+          <h2 className="text-2xl font-semibold">
+            Orden en estado: Desconocido
+          </h2>
+          <div className="w-full flex flex-col items-center p-5">
+            <button
+              className="mt-6 px-4 py-2 w-52 bg-yellow-500 text-black rounded disabled:opacity-50"
+              onClick={() => router.push("/")}
+            >
+              Volver al inicio
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+const DetailItem = ({ icon, text }: any) => (
+  <div className="flex gap-2 items-center">
+    {icon}
+    <span>{text}</span>
+  </div>
+);
 
 Transacction.authorization = true;
 
