@@ -14,11 +14,11 @@ const nextConfig = {
       },
       {
         protocol: "http",
-        hostname: "backend.combipremium.com", // Permitir imágenes desde backend.combipremium.com (HTTP)
+        hostname: "backend.mundostreaming.com.co", // Permitir imágenes desde backend.combipremium.com (HTTP)
       },
       {
         protocol: "https",
-        hostname: "backend.combipremium.com", // Permitir imágenes desde backend.combipremium.com (HTTPS)
+        hostname: "backend.mundostreaming.com.co", // Permitir imágenes desde backend.combipremium.com (HTTPS)
       },
     ],
   },
