@@ -36,7 +36,7 @@ class PaymentController extends Controller
             'failure' => route('mercadopago.failed'),
             'pending' => route('mercadopago.pending'),
             'rejected' => route('mercadopago.rejected'),
-            'cancelled' => route('mercadopago.cancelled'),
+            'cancelled'=> route('mercadopago.cancelled'),
         );
 
         $request = [
