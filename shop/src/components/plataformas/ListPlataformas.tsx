@@ -60,6 +60,7 @@ const ListPlataformas: React.FC<{}> = () => {
         MySwal.fire({
           title: "Plataforma Añadida al carrito cantidad 1",
           icon: "success",
+          confirmButtonColor:'red'
         });
       }
 
@@ -67,6 +68,7 @@ const ListPlataformas: React.FC<{}> = () => {
         MySwal.fire({
           title: "Maxima Cantidad de unidades disponibles",
           icon: "warning",
+              confirmButtonColor:'red'
         });
         return;
       }

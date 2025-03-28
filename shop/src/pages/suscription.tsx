@@ -89,7 +89,7 @@ export default function Transacction() {
                           />
                         </div>
                         <div className="mt-4 text-center">
-                          <span className="text-sm text-gray-600">
+                          <span className="text-sm text-gray-100">
                             {plataforma.cantidad} {plataforma.type}
                           </span>
                           <h3 className="text-lg font-medium">
@@ -98,7 +98,7 @@ export default function Transacction() {
                         </div>
                         {plataforma.productos?.length > 0 && (
                           <div className="mt-3 w-full">
-                            <h4 className="text-sm font-semibold text-gray-700">
+                            <h4 className="text-sm font-semibold text-gray-100">
                               Productos:
                             </h4>
                             <ul className="mt-1 text-xs text-gray-100">
@@ -118,7 +118,7 @@ export default function Transacction() {
                                   </p>
                                   <p>
                                     <span className="font-semibold">
-                                      Meses:
+                                      Dias:
                                     </span>{" "}
                                     {producto.months}
                                   </p>
@@ -163,7 +163,7 @@ export default function Transacction() {
             {/* Sección de detalles de la orden */}
             <div className="w-full flex flex-col gap-5 lg:w-1/2 p-5 items-center lg:items-start">
               <h2 className="text-xl font-semibold">Detalle de la orden</h2>
-              <div className="flex flex-col gap-2 text-gray-700">
+              <div className="flex flex-col gap-2 text-gray-100">
                 <DetailItem icon={<EmailIcon />} text={user?.email} />
                 <DetailItem
                   icon={<UsersIcon className="w-6 h-6" />}
