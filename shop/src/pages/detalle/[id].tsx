@@ -105,6 +105,7 @@ const Home: any = ({ userPermissions }: { userPermissions: string[] }) => {
       MySwal.fire({
         title: "Maxima Cantidad de unidades disponibles",
         icon: "warning",
+            confirmButtonColor:'red'
       });
       return;
     }
@@ -130,6 +131,7 @@ const Home: any = ({ userPermissions }: { userPermissions: string[] }) => {
       MySwal.fire({
         title: "Plataforma Actualizada en el carrito",
         icon: "success",
+            confirmButtonColor:'red'
       });
     } else {
       const itemCart = {
@@ -140,6 +142,7 @@ const Home: any = ({ userPermissions }: { userPermissions: string[] }) => {
       MySwal.fire({
         title: "Plataforma Agregada Al carrito",
         icon: "success",
+        confirmButtonColor: "red",
       });
     }
 
