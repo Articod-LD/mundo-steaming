@@ -32,11 +32,11 @@ class PaymentController extends Controller
         ];
 
         $backUrls = array(
-            'success' => route('mercadopago.success'),
+            'approved' => route('mercadopago.success'),
             'failure' => route('mercadopago.failed'),
             'pending' => route('mercadopago.pending'),
             'rejected' => route('mercadopago.rejected'),
-            'cancelled'=> route('mercadopago.cancelled'),
+            'cancelled' => route('mercadopago.cancelled'),
         );
 
         $request = [
@@ -47,7 +47,6 @@ class PaymentController extends Controller
             "statement_descriptor" => "NAME_DISPLAYED_IN_USER_BILLING",
             "external_reference" => "1234567890",
             "expires" => false,
-            "auto_return" => 'approved',
         ];
 
         return $request;
@@ -305,35 +304,39 @@ class PaymentController extends Controller
         }
 
 
-
         $requestMP = $this->createPreferenceRequest($productosCompra, $payer);
 
         $client = new PreferenceClient();
 
-        $preference = $client->create($requestMP);
+        try {
+            $preference = $client->create($requestMP);
+            $purchase = new purchase();
+            $purchase->user_id = $user->id;
+            $purchase->price = $totalPrice;
+            $purchase->payment_status = 'pending';
+            $purchase->payment_reference = $preference->id;
+            $purchase->save();
 
-        $purchase = new purchase();
-        $purchase->user_id = $user->id;
-        $purchase->price = $totalPrice;
-        $purchase->payment_status = 'pending';
-        $purchase->payment_reference = $preference->id;
-        $purchase->save();
-
-        //setear el producto al purchase
-        foreach ($productosAsociados as $producto) {
-            $productModel = Producto::find($producto['id']);
-            if ($productModel) {
-                $productModel->purchase_id = $purchase->id;
-                // $productModel->status = 'PENDIENTE';
-                $productModel->save();
+            //setear el producto al purchase
+            foreach ($productosAsociados as $producto) {
+                $productModel = Producto::find($producto['id']);
+                if ($productModel) {
+                    $productModel->purchase_id = $purchase->id;
+                    // $productModel->status = 'PENDIENTE';
+                    $productModel->save();
+                }
             }
-        }
 
-        return response()->json([
-            'payment_url' => $preference->init_point,
-            'preference' => $preference->id,
-            'status' => 'pending',
-            'message' => 'Compra creada'
-        ]);
+            return response()->json([
+                'payment_url' => $preference->init_point,
+                'preference' => $preference->id,
+                'status' => 'pending',
+                'message' => 'Compra creada'
+            ]);
+        } catch (\Throwable $th) {
+
+            dd($th);
+            return null;
+        }
     }
 }
