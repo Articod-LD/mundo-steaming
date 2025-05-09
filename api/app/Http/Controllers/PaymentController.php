@@ -21,7 +21,6 @@ class PaymentController extends Controller
     public function __construct()
     {
         MercadoPagoConfig::setAccessToken(config('mercadopago.access_token'));
-        MercadoPagoConfig::setRuntimeEnviroment(MercadoPagoConfig::LOCAL);
     }
 
     function createPreferenceRequest($items, $payer): array
@@ -41,6 +40,7 @@ class PaymentController extends Controller
             'cancelled' => route('mercadopago.cancelled'),
         );
 
+        dd($backUrls);
 
         $request = [
             "items" => $items,
