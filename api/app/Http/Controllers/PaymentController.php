@@ -102,7 +102,7 @@ class PaymentController extends Controller
         $paymentStatus = $request->get('status');
 
         if (!$paymentReference && ! $paymentStatus) {
-            return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=unknown&message=Estado desconocido');
+            return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=unknown&message=Estado desconocido' . '&status=' . $paymentStatus . '$referecia='. $paymentReference . '$request=' .$request);
         }
 
         // Verificar si es una recarga
@@ -150,7 +150,7 @@ class PaymentController extends Controller
             // Manejar el pago de compras
             switch ($paymentStatus) {
                 case 'approved':
-                case 'success' :
+                case 'success':
                     $latestEndDate = Carbon::now();
 
 
@@ -237,7 +237,7 @@ class PaymentController extends Controller
                     return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=cancelled&message=Pago cancelado por el usuario');
 
                 default:
-                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=unknown&message=Estado desconocido');
+                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=unknown&message=Estado desconocido' . '&status=' . $paymentStatus . '$referecia='. $paymentReference . '$request=' .$request);
             }
         }
 
