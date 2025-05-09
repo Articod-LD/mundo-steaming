@@ -115,7 +115,9 @@ class PaymentController extends Controller
         }
 
         if (!$paymentReference && !$paymentStatus) {
-            return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=unknown&message=Estado desconocido');
+            return redirect()->away(
+                trim(env('FRONTEND_URL_SUSCRIPTION')) . '?status=unknown&message=No se pudo determinar el estado de la suscripción'
+            );
         }
 
         // Verificar si es una recarga
@@ -131,28 +133,61 @@ class PaymentController extends Controller
                     $user = $recharge->user;
                     $user->wallet += $recharge->amount;
                     $user->save();
-                    return redirect()->away(env('FRONTEND_URL_TRANSACTION') . '?status=approved&amount=' . $recharge->amount . '&wallet=' . $user->wallet);
+                    $url = trim(env('FRONTEND_URL_TRANSACTION'));
+                    $query = http_build_query([
+                        'status' => 'approved',
+                        'amount' => $recharge->amount,
+                        'wallet' => $user->wallet,
+                        // Opcional: puedes agregar un mensaje
+                        'message' => 'Recarga aprobada exitosamente',
+                    ]);
+
+                    return redirect()->away("$url?$query");
 
                 case 'pending':
                     $recharge->payment_status = 'pending';
                     $recharge->save();
 
-                    return redirect()->away(env('FRONTEND_URL_TRANSACTION') . '?status=pending&reference=' . $paymentReference);
+                    $url = trim(env('FRONTEND_URL_TRANSACTION'));
+                    $query = http_build_query([
+                        'status' => 'pending',
+                        'reference' => $paymentReference,
+                        'message' => 'Pago en proceso de confirmación'
+                    ]);
+
+                    return redirect()->away("$url?$query");
 
                 case 'rejected':
                     $recharge->payment_status = 'rejected';
                     $recharge->save();
 
-                    return redirect()->away(env('FRONTEND_URL_TRANSACTION') . '?status=rejected&message=Pago rechazado');
+                    $url = trim(env('FRONTEND_URL_TRANSACTION'));
+                    $query = http_build_query([
+                        'status' => 'rejected',
+                        'message' => 'El pago fue rechazado. Por favor, intenta nuevamente o usa otro método.'
+                    ]);
+
+                    return redirect()->away("$url?$query");
 
                 case 'cancelled':
                     $recharge->payment_status = 'cancelled';
                     $recharge->save();
 
-                    return redirect()->away(env('FRONTEND_URL_TRANSACTION') . '?status=cancelled&message=Pago cancelado por el usuario');
+                    $url = trim(env('FRONTEND_URL_TRANSACTION'));
+                    $query = http_build_query([
+                        'status' => 'cancelled',
+                        'message' => 'El pago fue cancelado por el usuario'
+                    ]);
 
+                    return redirect()->away("$url?$query");
                 default:
-                    return redirect()->away(env('FRONTEND_URL_TRANSACTION') . '?status=unknown&message=Estado desconocido');
+                    $url = trim(env('FRONTEND_URL_TRANSACTION'));
+                    $query = http_build_query([
+                        'status' => 'unknown',
+                        'message' => 'No se pudo determinar el estado de la transacción'
+                    ]);
+
+                    return redirect()->away("$url?$query");
             }
         }
 
@@ -194,20 +229,40 @@ class PaymentController extends Controller
                         $plataforma->count_avaliable -= 1;
                         $plataforma->save();
                     }
-                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=approved&ordenCode=' . $orde_code);
+                    $url = trim(env('FRONTEND_URL_SUSCRIPTION'));
+                    $query = http_build_query([
+                        'status' => 'approved',
+                        'ordenCode' => $orde_code,
+                        'message' => 'La suscripción ha sido aprobada exitosamente.'
+                    ]);
+
+                    return redirect()->away("$url?$query");
 
                 case 'in_process':
                     $purchase->payment_status = 'pending';
                     $purchase->save();
 
-                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=pending&reference=' . $paymentReference);
+                    $url = trim(env('FRONTEND_URL_SUSCRIPTION'));
+                    $query = http_build_query([
+                        'status' => 'pending',
+                        'reference' => $paymentReference,
+                        'message' => 'El pago está en espera de confirmación.'
+                    ]);
+
+                    return redirect()->away("$url?$query");
 
                 case 'pending':
                     $purchase->payment_status = 'pending';
                     $purchase->save();
 
-                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=pending&reference=' . $paymentReference);
+                    $url = trim(env('FRONTEND_URL_SUSCRIPTION'));
+                    $query = http_build_query([
+                        'status' => 'pending',
+                        'reference' => $paymentReference,
+                        'message' => 'El pago está en espera de confirmación.'
+                    ]);
 
+                    return redirect()->away("$url?$query");
                 case 'rejected':
                     $purchase->payment_status = 'rejected';
                     $purchase->save();
@@ -220,8 +275,13 @@ class PaymentController extends Controller
                         $producto->save();
                     }
 
-                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=rejected&message=Pago rechazado');
+                    $url = trim(env('FRONTEND_URL_SUSCRIPTION'));
+                    $query = http_build_query([
+                        'status' => 'rejected',
+                        'message' => 'El pago de la suscripción fue rechazado. Por favor, intenta nuevamente.'
+                    ]);
 
+                    return redirect()->away("$url?$query");
                 case 'failed':
                     $purchase->payment_status = 'rejected';
                     $purchase->save();
@@ -234,7 +294,13 @@ class PaymentController extends Controller
                         $producto->save();
                     }
 
-                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=rejected&message=Pago rechazado');
+                    $url = trim(env('FRONTEND_URL_SUSCRIPTION'));
+                    $query = http_build_query([
+                        'status' => 'rejected',
+                        'message' => 'El pago de la suscripción fue rechazado. Intenta nuevamente o usa otro método de pago.'
+                    ]);
+
+                    return redirect()->away("$url?$query");
 
                 case 'cancelled':
                     $purchase->payment_status = 'cancelled';
@@ -247,15 +313,32 @@ class PaymentController extends Controller
                         $producto->save();
                     }
 
-                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=cancelled&message=Pago cancelado por el usuario');
+                    $url = trim(env('FRONTEND_URL_SUSCRIPTION'));
+                    $query = http_build_query([
+                        'status' => 'cancelled',
+                        'message' => 'El pago fue cancelado por el usuario'
+                    ]);
 
+                    return redirect()->away("$url?$query");
                 default:
-                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=unknown&message=Estado desconocido' . '&status=' . $paymentStatus . '$referecia=' . $paymentReference . '$request=' . $request);
+                    $url = trim(env('FRONTEND_URL_TRANSACTION'));
+                    $query = http_build_query([
+                        'status' => 'unknown',
+                        'message' => 'No se pudo determinar el estado de la transacción'
+                    ]);
+
+                    return redirect()->away("$url?$query");
             }
         }
 
         // Si no es recarga ni compra
-        return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=rejected&message=Referencia de pago no encontrada');
+        $url = trim(env('FRONTEND_URL_SUSCRIPTION'));
+        $query = http_build_query([
+            'status' => 'rejected',
+            'message' => 'La referencia de pago no fue encontrada. Por favor, verifica los detalles e intenta nuevamente.'
+        ]);
+
+        return redirect()->away("$url?$query");
     }
 
 
