@@ -116,7 +116,7 @@ class PaymentController extends Controller
 
         if (!$paymentReference && !$paymentStatus) {
             return redirect()->away(
-                trim(env('FRONTEND_URL_SUSCRIPTION')) . '?status=unknown&message=No se pudo determinar el estado de la suscripción no deberia entrar'
+                trim(env('FRONTEND_URL_SUSCRIPTION')) . '?status=unknown&message=No se pudo determinar el estado de la suscripción'
             );
         }
 
@@ -324,7 +324,7 @@ class PaymentController extends Controller
                     $url = trim(env('FRONTEND_URL_TRANSACTION'));
                     $query = http_build_query([
                         'status' => 'unknown',
-                        'message' => 'No se pudo determinar el estado de la transacción'
+                        'message' => 'No se pudo determinar el estado de la transacción' . $paymentStatus
                     ]);
 
                     return redirect()->away("$url?$query");
