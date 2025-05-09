@@ -26,9 +26,7 @@ class PaymentController extends Controller
     function createPreferenceRequest($items, $payer): array
     {
         $paymentMethods = [
-            "excluded_payment_methods" => [],
-            "installments" => 12,
-            "default_installments" => 1
+            "excluded_payment_methods" => []
         ];
 
         $backUrls = array(
