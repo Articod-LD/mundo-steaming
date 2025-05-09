@@ -150,6 +150,7 @@ class PaymentController extends Controller
             // Manejar el pago de compras
             switch ($paymentStatus) {
                 case 'approved':
+                case 'success' :
                     $latestEndDate = Carbon::now();
 
 
