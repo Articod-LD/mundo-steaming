@@ -21,6 +21,7 @@ class PaymentController extends Controller
     public function __construct()
     {
         MercadoPagoConfig::setAccessToken(config('mercadopago.access_token'));
+        MercadoPagoConfig::setRuntimeEnviroment(MercadoPagoConfig::LOCAL);
     }
 
     function createPreferenceRequest($items, $payer): array
@@ -32,12 +33,14 @@ class PaymentController extends Controller
         ];
 
         $backUrls = array(
+            'success' => route('mercadopago.success'),
             'approved' => route('mercadopago.success'),
             'failure' => route('mercadopago.failed'),
             'pending' => route('mercadopago.pending'),
             'rejected' => route('mercadopago.rejected'),
             'cancelled' => route('mercadopago.cancelled'),
         );
+
 
         $request = [
             "items" => $items,
@@ -46,7 +49,8 @@ class PaymentController extends Controller
             "back_urls" => $backUrls,
             "statement_descriptor" => "NAME_DISPLAYED_IN_USER_BILLING",
             "external_reference" => "1234567890",
-            "expires" => false,
+            "expires" => true,
+            "auto_return" => 'all',
         ];
 
         return $request;
