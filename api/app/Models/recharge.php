@@ -14,7 +14,8 @@ class recharge extends Model
         'payment_method',
         'payment_status',
         'amount',
-        'user_id'
+        'user_id',
+        'external_reference'
     ];
 
     public function user()

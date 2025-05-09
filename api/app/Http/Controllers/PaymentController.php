@@ -12,9 +12,10 @@ use App\Models\suscription;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use MercadoPago\Client\Preference\PreferenceClient;
 use MercadoPago\MercadoPagoConfig;
 use Illuminate\Support\Str;
+use MercadoPago\Client\Payment\PaymentClient;
+use MercadoPago\Client\Preference\PreferenceClient;
 
 class PaymentController extends Controller
 {
@@ -23,7 +24,7 @@ class PaymentController extends Controller
         MercadoPagoConfig::setAccessToken(config('mercadopago.access_token'));
     }
 
-    function createPreferenceRequest($items, $payer): array
+    function createPreferenceRequest($items, $payer, $external): array
     {
         $paymentMethods = [
             "excluded_payment_methods" => [],
@@ -46,7 +47,7 @@ class PaymentController extends Controller
             "payment_methods" => $paymentMethods,
             "back_urls" => $backUrls,
             "statement_descriptor" => "NAME_DISPLAYED_IN_USER_BILLING",
-            "external_reference" => "1234567890",
+            "external_reference" => $external,
             "expires" => true,
             "auto_return" => 'all',
         ];
@@ -75,22 +76,26 @@ class PaymentController extends Controller
 
         $items = array($product1);
 
-        $requestMP = $this->createPreferenceRequest($items, $payer);
+        $external_reference =  strtoupper(Str::random(8));
+
+        $requestMP = $this->createPreferenceRequest($items, $payer, $external_reference);
 
         $client = new PreferenceClient();
 
         $preference = $client->create($requestMP);
+
 
         $recharge = new recharge();
         $recharge->user_id = $user->id;
         $recharge->amount = $request->amount;
         $recharge->payment_status = 'pending';
         $recharge->payment_reference = $preference->id;
+        $recharge->external_reference = $external_reference;
         $recharge->save();
 
         return response()->json([
             'payment_url' => $preference->init_point,
-            'preference' => $preference->id,
+            'preference' => $external_reference,
             'status' => 'pending',
             'message' => 'Recarga Creada'
         ]);
@@ -98,15 +103,23 @@ class PaymentController extends Controller
 
     public function handlePaymentStatus(Request $request)
     {
+
         $paymentReference = $request->get('preference_id');
         $paymentStatus = $request->get('status');
+        $paymentIdReference = $request->get('payment_id');
 
-        if (!$paymentReference && ! $paymentStatus) {
-            return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=unknown&message=Estado desconocido' . '&status=' . $paymentStatus . '$referecia='. $paymentReference . '$request=' .$request);
+        if ($paymentIdReference) {
+            $client = new PaymentClient();
+            $payment = $client->get($paymentIdReference);
+            $paymentReference = $payment->external_reference;
+        }
+
+        if (!$paymentReference && !$paymentStatus) {
+            return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=unknown&message=Estado desconocido');
         }
 
         // Verificar si es una recarga
-        $recharge = recharge::where('payment_reference', $paymentReference)->first();
+        $recharge = recharge::where('external_reference', $paymentReference)->first();
 
         if ($recharge) {
             // Manejar el pago de recargas
@@ -144,7 +157,7 @@ class PaymentController extends Controller
         }
 
         // Verificar si es una compra
-        $purchase = purchase::where('payment_reference', $paymentReference)->with(['productos', 'user'])->first();
+        $purchase = purchase::where('external_reference', $paymentReference)->with(['productos', 'user'])->first();
 
         if ($purchase) {
             // Manejar el pago de compras
@@ -237,12 +250,12 @@ class PaymentController extends Controller
                     return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=cancelled&message=Pago cancelado por el usuario');
 
                 default:
-                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=unknown&message=Estado desconocido' . '&status=' . $paymentStatus . '$referecia='. $paymentReference . '$request=' .$request);
+                    return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=unknown&message=Estado desconocido' . '&status=' . $paymentStatus . '$referecia=' . $paymentReference . '$request=' . $request);
             }
         }
 
         // Si no es recarga ni compra
-        return redirect()->away(env('FRONTEND_URL') . '?message=Referencia de pago no encontrada');
+        return redirect()->away(env('FRONTEND_URL_SUSCRIPTION') . '?status=rejected&message=Referencia de pago no encontrada');
     }
 
 
@@ -305,11 +318,12 @@ class PaymentController extends Controller
                 $productosCompra[] = $product;
             }
         }
+        $external_reference =  strtoupper(Str::random(8));
 
-
-        $requestMP = $this->createPreferenceRequest($productosCompra, $payer);
+        $requestMP = $this->createPreferenceRequest($productosCompra, $payer, $external_reference);
 
         $client = new PreferenceClient();
+
 
         try {
             $preference = $client->create($requestMP);
@@ -318,6 +332,7 @@ class PaymentController extends Controller
             $purchase->price = $totalPrice;
             $purchase->payment_status = 'pending';
             $purchase->payment_reference = $preference->id;
+            $purchase->external_reference = $external_reference;
             $purchase->save();
 
             //setear el producto al purchase
@@ -332,7 +347,7 @@ class PaymentController extends Controller
 
             return response()->json([
                 'payment_url' => $preference->init_point,
-                'preference' => $preference->id,
+                'preference' => $external_reference,
                 'status' => 'pending',
                 'message' => 'Compra creada'
             ]);

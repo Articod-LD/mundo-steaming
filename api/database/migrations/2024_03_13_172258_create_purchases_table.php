@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('payment_status');
             $table->string('payment_method')->nullable();
             $table->string('payment_reference')->nullable();
+            $table->string('external_reference')->nullable();
             $table->timestamps();
         });
     }
