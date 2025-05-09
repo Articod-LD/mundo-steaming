@@ -112,10 +112,9 @@ class PaymentController extends Controller
             $client = new PaymentClient();
             $payment = $client->get($paymentIdReference);
             $paymentReference = $payment->external_reference;
+            $paymentStatus = $payment->status;
         }
-        return redirect()->away(
-            trim(env('FRONTEND_URL_SUSCRIPTION')) . '?status=unknown&message=' . $paymentStatus
-        );
+
 
         if (!$paymentReference && !$paymentStatus) {
             return redirect()->away(
