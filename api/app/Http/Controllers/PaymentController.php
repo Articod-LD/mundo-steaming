@@ -324,7 +324,7 @@ class PaymentController extends Controller
                     $url = trim(env('FRONTEND_URL_TRANSACTION'));
                     $query = http_build_query([
                         'status' => 'unknown',
-                        'message' => 'No se pudo determinar el estado de la transacción' . $paymentStatus
+                        'message' => 'No se pudo determinar el estado de la transacción' . 'paymentmetod='. $paymentStatus
                     ]);
 
                     return redirect()->away("$url?$query");
