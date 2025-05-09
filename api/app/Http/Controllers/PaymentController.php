@@ -40,8 +40,6 @@ class PaymentController extends Controller
             'cancelled' => route('mercadopago.cancelled'),
         );
 
-        dd($backUrls);
-
         $request = [
             "items" => $items,
             "payer" => $payer,
