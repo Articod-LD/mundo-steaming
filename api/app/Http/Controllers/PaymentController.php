@@ -198,6 +198,44 @@ class PaymentController extends Controller
             // Manejar el pago de compras
             switch ($paymentStatus) {
                 case 'approved':
+                    $latestEndDate = Carbon::now();
+
+
+                    foreach ($purchase->productos as $producto) {
+                        $productoEndDate = Carbon::parse($producto->purchase_date)->addDays($producto->months);
+                        if ($productoEndDate->greaterThan($latestEndDate)) {
+                            $latestEndDate = $productoEndDate;
+                        }
+                    }
+                    $orde_code = 'ORD-' . strtoupper(Str::random(8));
+                    $purchase->payment_status = 'approved';
+                    $purchase->save();
+                    $subscription = new suscription();
+                    $subscription->start_date = now();
+                    $subscription->end_date  = now();
+                    $subscription->price = $purchase->price;
+                    $subscription->order_code = $orde_code;
+                    $subscription->usuario_id = $purchase->user->id;
+                    $subscription->save();
+
+                    foreach ($purchase->productos as $producto) {
+                        Producto::where('id', $producto['id'])->update([
+                            'suscripcion_id' => $subscription->id,
+                            'status' => 'COMPRADO',
+                        ]);
+
+                        $plataforma = Plataforma::find($producto['plataforma_id']);
+                        $plataforma->count_avaliable -= 1;
+                        $plataforma->save();
+                    }
+                    $url = trim(env('FRONTEND_URL_SUSCRIPTION'));
+                    $query = http_build_query([
+                        'status' => 'approved',
+                        'ordenCode' => $orde_code,
+                        'message' => 'La suscripción ha sido aprobada exitosamente.'
+                    ]);
+
+                    return redirect()->away("$url?$query");
                 case 'success':
                     $latestEndDate = Carbon::now();
 
