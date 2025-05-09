@@ -116,7 +116,7 @@ class PaymentController extends Controller
 
         if (!$paymentReference && !$paymentStatus) {
             return redirect()->away(
-                trim(env('FRONTEND_URL_SUSCRIPTION')) . '?status=unknown&message=No se pudo determinar el estado de la suscripción'
+                trim(env('FRONTEND_URL_SUSCRIPTION')) . '?status=unknown&message=No se pudo determinar el estado de la suscripción no deberia entrar'
             );
         }
 
