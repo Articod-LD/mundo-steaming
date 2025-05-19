@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 export default function Transacction() {
   const { me } = useMe();
   const router = useRouter();
+
   const [plataformas, setPlataformas] = useState<SuscriptionPlataforma[]>([]);
   const [user, setuser] = useState<SuscriptionUser>();
   const [ordenCodeSuscription, setOrdenCode] = useState("");
@@ -47,7 +48,7 @@ export default function Transacction() {
     if (status == "cancelled") {
       setStatus("cancelled");
     }
-    
+
     if (status == "unknown") {
       setStatus("unknown");
     }
@@ -117,9 +118,7 @@ export default function Transacction() {
                                     {producto.email}
                                   </p>
                                   <p>
-                                    <span className="font-semibold">
-                                      Dias:
-                                    </span>{" "}
+                                    <span className="font-semibold">Dias:</span>{" "}
                                     {producto.months}
                                   </p>
                                   <p>
@@ -195,13 +194,20 @@ export default function Transacction() {
             <h2 className="text-xl font-semibold">
               Detalle de la orden ${referencet}
             </h2>
-
-            <button
-              className="mt-6 px-4 py-2 w-52 bg-yellow-500 text-black rounded disabled:opacity-50"
-              onClick={() => router.push("/")}
-            >
-              Volver al inicio
-            </button>
+            <div className="w-full flex flex-col items-center p-5 gap-2">
+              <button
+                className="mt-6 px-4 py-2 w-52 bg-yellow-500 text-black rounded disabled:opacity-50"
+                onClick={() => window.location.reload()}
+              >
+                Recargar Pagina
+              </button>
+              <button
+                className="mt-6 px-4 py-2 w-52 bg-yellow-500 text-black rounded disabled:opacity-50"
+                onClick={() => router.push("/")}
+              >
+                Volver al inicio
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -237,7 +243,13 @@ export default function Transacction() {
           <h2 className="text-2xl font-semibold">
             Orden en estado: Desconocido
           </h2>
-          <div className="w-full flex flex-col items-center p-5">
+          <div className="w-full flex flex-col items-center p-5 gap-2">
+            <button
+              className="mt-6 px-4 py-2 w-52 bg-yellow-500 text-black rounded disabled:opacity-50"
+              onClick={() => window.location.reload()}
+            >
+              Recargar Pagina
+            </button>
             <button
               className="mt-6 px-4 py-2 w-52 bg-yellow-500 text-black rounded disabled:opacity-50"
               onClick={() => router.push("/")}
