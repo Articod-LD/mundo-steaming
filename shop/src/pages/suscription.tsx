@@ -28,7 +28,7 @@ export default function Transacction() {
 
   useEffect(() => {
     const { ordenCode, status, reference } = router.query;
-
+    console.log(suscription, "xxxxxx", ordenCode, status, reference);
     if (status == "approved" && ordenCode) {
       setStatus("approved");
       setOrdenCode(ordenCode as string);
