@@ -124,10 +124,10 @@ class SuscripcionesController extends Controller
             'order_code' => $orderCode
         ], 201);
     }
-    function find(Request $request, string $ordenCode)
+    function find($orden_code)
     {
         $suscription = $this->repository
-            ->where('order_code', $ordenCode)
+            ->where('order_code', $orden_code)
             ->with(['user', 'productos', 'productos.plataforma', 'productos.credencial'])
             ->first();
     
