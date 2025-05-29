@@ -22,37 +22,75 @@ export default function Transacction() {
   const [ordenCodeSuscription, setOrdenCode] = useState("");
   const [status, setStatus] = useState("");
   const [referencet, setReference] = useState<any>("");
+  
+  // Obtener el código de orden de la URL o del localStorage
+  const getOrdenCode = () => {
+    // Primero intentar obtener de la URL
+    const ordenCodeFromUrl = router.query.ordenCode as string;
+    if (ordenCodeFromUrl) {
+      // Si está en la URL, guardarlo en localStorage
+      localStorage.setItem('ordenCode', ordenCodeFromUrl);
+      return ordenCodeFromUrl;
+    }
+    
+    // Si no está en la URL, intentar obtenerlo del localStorage
+    return localStorage.getItem('ordenCode') || "";
+  };
+  
+  const ordenCode = getOrdenCode();
+  
   const { suscription, loading } = useSuscriptionAdminQuery({
-    orden_code: router.query.ordenCode as string,
+    orden_code: ordenCode,
   });
 
   useEffect(() => {
-    const { ordenCode, status, reference } = router.query;
-    console.log(suscription, "xxxxxx", ordenCode, status, reference);
-    if (status == "approved" && ordenCode) {
+    // Si hay un código de orden, consultar el estado real en la base de datos
+    if (ordenCode && suscription) {
+      // La suscripción existe, lo que significa que el pago fue aprobado
       setStatus("approved");
-      setOrdenCode(ordenCode as string);
-      setPlataformas(suscription.plataformas);
+      setOrdenCode(ordenCode);
+      setPlataformas(suscription.plataformas || []);
       setuser(suscription.usuario);
+      
+      // Guardar en localStorage para futuras recargas
+      localStorage.setItem('ordenCode', ordenCode);
+      localStorage.setItem('status', 'approved');
+    } else {
+      // Si no hay suscripción pero hay parámetros en la URL, usar esos
+      const { status, reference } = router.query;
+      
+      if (status === "pending") {
+        setStatus("pending");
+        setReference(reference);
+        localStorage.setItem('status', 'pending');
+        localStorage.setItem('reference', reference as string);
+      } else if (status === "rejected") {
+        setStatus("rejected");
+        localStorage.setItem('status', 'rejected');
+      } else if (status === "cancelled") {
+        setStatus("cancelled");
+        localStorage.setItem('status', 'cancelled');
+      } else if (status === "unknown") {
+        setStatus("unknown");
+        localStorage.setItem('status', 'unknown');
+      } else if (!status && !loading) {
+        // Si no hay parámetros en la URL, intentar recuperar del localStorage
+        const savedStatus = localStorage.getItem('status');
+        if (savedStatus === 'approved' && ordenCode) {
+          setStatus('approved');
+        } else if (savedStatus === 'pending') {
+          setStatus('pending');
+          setReference(localStorage.getItem('reference'));
+        } else if (savedStatus === 'rejected') {
+          setStatus('rejected');
+        } else if (savedStatus === 'cancelled') {
+          setStatus('cancelled');
+        } else if (savedStatus === 'unknown') {
+          setStatus('unknown');
+        }
+      }
     }
-
-    if (status == "pending") {
-      setStatus("pending");
-      setReference(reference);
-    }
-
-    if (status == "rejected") {
-      setStatus("rejected");
-    }
-
-    if (status == "cancelled") {
-      setStatus("cancelled");
-    }
-
-    if (status == "unknown") {
-      setStatus("unknown");
-    }
-  }, [router.query, suscription]);
+  }, [router.query, suscription, loading, ordenCode]);
 
   return (
     <div className="flex flex-col gap-12 min-h-40 my-auto w-full items-center">
