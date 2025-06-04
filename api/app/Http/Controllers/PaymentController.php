@@ -16,6 +16,7 @@ use MercadoPago\MercadoPagoConfig;
 use Illuminate\Support\Str;
 use MercadoPago\Client\Payment\PaymentClient;
 use MercadoPago\Client\Preference\PreferenceClient;
+use App\Services\PaymentGateway;
 
 class PaymentController extends Controller
 {
@@ -382,6 +383,212 @@ class PaymentController extends Controller
     }
 
 
+
+    public function byCard(\App\Http\Requests\paymentCardRequest $request)
+    {
+        $user = User::where('id', $request->user_id)->first();
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+
+        $plataforma = plataforma::find($request->plataforma_id);
+        if (!$plataforma) {
+            return response()->json(['error' => 'Plataforma no encontrada'], 404);
+        }
+
+        $external_reference = 'CARD-' . strtoupper(Str::random(8));
+
+        $purchase = new purchase();
+        $purchase->user_id = $user->id;
+        $purchase->price = $plataforma->provider_price;
+        $purchase->payment_status = 'pending';
+        $purchase->payment_reference = $external_reference;
+        $purchase->external_reference = $external_reference;
+        $purchase->payment_method = 'CARD';
+        $purchase->save();
+
+        $productosDisponibles = $plataforma->productos()
+            ->where('status', 'DISPONIBLE')
+            ->limit(1)
+            ->get();
+
+        foreach ($productosDisponibles as $producto) {
+            $producto->purchase_id = $purchase->id;
+            $producto->save();
+        }
+
+        $cardData = [
+            'card_number' => $request->card_number,
+            'card_expiry' => $request->card_expiry,
+            'card_cvc' => $request->card_cvc,
+            'card_holder' => $request->card_holder
+        ];
+        
+        $paymentGateway = new PaymentGateway();
+        $response = $paymentGateway->processCardPayment($cardData, $purchase->price, [
+            'user_id' => $user->id,
+            'plataforma_id' => $plataforma->id,
+            'purchase_id' => $purchase->id
+        ]);
+        
+        if ($response['status'] !== 'approved') {
+            $purchase->payment_status = 'rejected';
+            $purchase->save();
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => $response['message'] ?? 'Error al procesar el pago con tarjeta'
+            ], 500);
+        }
+
+        $purchase->payment_status = 'approved';
+        $purchase->save();
+
+        $orde_code = 'ORD-' . strtoupper(Str::random(8));
+        $subscription = new suscription();
+        $subscription->start_date = now();
+        $subscription->end_date = now()->addMonths(1);
+        $subscription->price = $purchase->price;
+        $subscription->order_code = $orde_code;
+        $subscription->usuario_id = $user->id;
+        $subscription->save();
+
+        $productosAsociados = Producto::where('purchase_id', $purchase->id)->get();
+        foreach ($productosAsociados as $producto) {
+            $producto->suscripcion_id = $subscription->id;
+            $producto->status = 'COMPRADO';
+            $producto->save();
+            
+            $plataforma = Plataforma::find($producto->plataforma_id);
+            if ($plataforma) {
+                $plataforma->count_avaliable -= 1;
+                $plataforma->save();
+            }
+        }
+
+        return response()->json([
+            'status' => 'approved',
+            'message' => $response['message'] ?? 'Pago con tarjeta aprobado',
+            'external_reference' => $external_reference,
+            'transaction_id' => $response['transaction_id'] ?? null
+        ]);
+    }
+    
+    public function checkPSETransactionStatus(Request $request)
+    {
+        $reference = $request->get('reference');
+        if (!$reference) {
+            return response()->json(['error' => 'Referencia no proporcionada'], 400);
+        }
+        
+        $purchase = purchase::where('external_reference', $reference)->first();
+        if (!$purchase) {
+            return response()->json(['error' => 'Transacción no encontrada'], 404);
+        }
+        
+        $paymentGateway = new PaymentGateway();
+        $response = $paymentGateway->checkPSEStatus($reference);
+        
+        if ($response['status'] === 'approved' && $purchase->payment_status === 'pending') {
+            $purchase->payment_status = 'approved';
+            $purchase->save();
+            
+            $orde_code = 'ORD-' . strtoupper(Str::random(8));
+            $subscription = new suscription();
+            $subscription->start_date = now();
+            $subscription->end_date = now()->addMonths(1); 
+            $subscription->price = $purchase->price;
+            $subscription->order_code = $orde_code;
+            $subscription->usuario_id = $purchase->user->id;
+            $subscription->save();
+            
+            $productosAsociados = Producto::where('purchase_id', $purchase->id)->get();
+            foreach ($productosAsociados as $producto) {
+                $producto->suscripcion_id = $subscription->id;
+                $producto->status = 'COMPRADO';
+                $producto->save();
+                
+                $plataforma = Plataforma::find($producto->plataforma_id);
+                if ($plataforma) {
+                    $plataforma->count_avaliable -= 1;
+                    $plataforma->save();
+                }
+            }
+        }
+        
+        return response()->json([
+            'status' => $purchase->payment_status,
+            'reference' => $reference,
+            'message' => $response['message'] ?? 'Estado de la transacción PSE',
+            'transaction_id' => $response['transaction_id'] ?? null
+        ]);
+    }
+    
+    public function SendTransactionByPSE(\App\Http\Requests\paymentPSERequest $request)
+    {
+        $user = User::where('id', $request->user_id)->first();
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+
+        $plataforma = plataforma::find($request->plataforma_id);
+        if (!$plataforma) {
+            return response()->json(['error' => 'Plataforma no encontrada'], 404);
+        }
+
+        $external_reference = 'PSE-' . strtoupper(Str::random(8));
+
+        $purchase = new purchase();
+        $purchase->user_id = $user->id;
+        $purchase->price = $plataforma->provider_price;
+        $purchase->payment_status = 'pending';
+        $purchase->payment_reference = $external_reference;
+        $purchase->external_reference = $external_reference;
+        $purchase->payment_method = 'PSE';
+        $purchase->save();
+
+        $productosDisponibles = $plataforma->productos()
+            ->where('status', 'DISPONIBLE')
+            ->limit(1) 
+            ->get();
+
+        foreach ($productosDisponibles as $producto) {
+            $producto->purchase_id = $purchase->id;
+            $producto->save();
+        }
+
+        $pseData = [
+            'bank_code' => $request->FINANCIAL_INSTITUTION_CODE,
+            'user_type' => $request->USER_TYPE,
+            'reference' => $external_reference,
+            'pse_reference' => $request->PSE_REFERENCE2
+        ];
+        
+        $paymentGateway = new PaymentGateway();
+        $response = $paymentGateway->processPSEPayment($pseData, $purchase->price, [
+            'user_id' => $user->id,
+            'plataforma_id' => $plataforma->id,
+            'purchase_id' => $purchase->id
+        ]);
+        
+        if ($response['status'] === 'error') {
+            $purchase->payment_status = 'rejected';
+            $purchase->save();
+            
+            return response()->json([
+                'status' => 'error',
+                'message' => $response['message']
+            ], 500);
+        }
+        
+        return response()->json([
+            'status' => 'pending',
+            'message' => 'Transacción PSE iniciada',
+            'external_reference' => $external_reference,
+            'redirect_url' => $response['redirect_url'] ?? env('FRONTEND_URL_TRANSACTION') . '?status=pending&reference=' . $external_reference . '&payment_method=PSE',
+            'pse_data' => $pseData
+        ]);
+    }
 
     public function createPaymentCompraCliente(createSuscriptionRequest $request)
     {

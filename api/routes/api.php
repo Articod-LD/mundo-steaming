@@ -78,9 +78,10 @@ Route::post('/plataforma/{plataforma_id}', [PlataformaController::class, 'update
 Route::delete('/plataforma/{plataforma_id}', [PlataformaController::class, 'destroy']);
 
 
-Route::post('/payment/byCard', [PaymentController::class, 'SendTransactionByCard']);
+Route::post('/payment/byCard', [PaymentController::class, 'byCard']);
 Route::post('/payment/byNequi', [PaymentController::class, 'SendTransactionByNequi']);
 Route::post('/payment/byPSE', [PaymentController::class, 'SendTransactionByPSE']);
+Route::get('/payment/checkPSEStatus', [PaymentController::class, 'checkPSETransactionStatus']);
 Route::get('/payments/ping', [PaymentController::class, 'ping']);
 Route::get('/payments/methods', [PaymentController::class, 'index']);
 Route::get('/payments/banks', [PaymentController::class, 'bankList']);
