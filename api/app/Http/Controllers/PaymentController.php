@@ -516,11 +516,36 @@ class PaymentController extends Controller
             }
         }
         
+        // Preparar URL de redirección basada en el estado del pago
+        $redirectUrl = env('FRONTEND_URL_TRANSACTION') . '?status=' . $purchase->payment_status . '&reference=' . $reference . '&payment_method=PSE';
+        
+        // Obtener información de los productos asociados a la compra
+        $productos = [];
+        $productosAsociados = Producto::where('purchase_id', $purchase->id)->get();
+        foreach ($productosAsociados as $producto) {
+            $plataforma = Plataforma::find($producto->plataforma_id);
+            $productos[] = [
+                'id' => $producto->id,
+                'name' => $producto->name,
+                'status' => $producto->status,
+                'plataforma' => $plataforma ? $plataforma->name : null,
+                'suscripcion_id' => $producto->suscripcion_id
+            ];
+        }
+        
         return response()->json([
             'status' => $purchase->payment_status,
             'reference' => $reference,
             'message' => $response['message'] ?? 'Estado de la transacción PSE',
-            'transaction_id' => $response['transaction_id'] ?? null
+            'redirect_url' => $redirectUrl,
+            'transaction_id' => $response['transaction_id'] ?? null,
+            'purchase' => [
+                'id' => $purchase->id,
+                'price' => $purchase->price,
+                'payment_method' => $purchase->payment_method,
+                'created_at' => $purchase->created_at
+            ],
+            'productos' => $productos
         ]);
     }
     
